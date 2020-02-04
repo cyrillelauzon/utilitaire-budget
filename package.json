@@ -5,6 +5,7 @@
   "main": "app.js",
   "dependencies": {
     "csv-parser": "^2.3.2",
+    "jslint": "^0.12.1",
     "mongoose": "^5.8.11"
   },
   "devDependencies": {},
