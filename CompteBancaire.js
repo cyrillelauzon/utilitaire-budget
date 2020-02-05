@@ -1,7 +1,7 @@
 /*-------------------------------------------------------------------------
 Classe: CompteBancaire
 Description: 
-Gestion des transactions bancaires 
+Gestion d'un compte bancaire: ex compte personnel, carte de crédit
 -------------------------------------------------------------------------*/
 module.exports = class CompteBancaire {
 
@@ -12,12 +12,16 @@ module.exports = class CompteBancaire {
 	-------------------------------------------------------------------------*/
     constructor() {
         this.transactions = new Array();
+        this.type = "type"; //personnel, celi, crédit...
+        this.description = "description"; //Description de lutilisateur
+        this.nom = "nom"; //nom du compte
+        this.proprietaire = "proprietaire"; //proprio du compte
 
 
         //Création d'un schema de transaction Mangoose
         const mongooseDB = require('mongoose');
         const transactionSchema = new mongooseDB.Schema({
-            Clef: String,
+            _id: String,
             Date: Date,
             Description: String,
             Categorie: String,
@@ -53,14 +57,35 @@ module.exports = class CompteBancaire {
             .then(() => console.log('connected to mongodb'))
             .catch(err => console.error('could not connect to mongodb', err));
 
-        //Lecture du fichier csv et ajout des transaction par rangées dans la BD
+        //Lecture du fichier csv et ajout des transaction par rangées dans un array afin de verifier les dupliqués
         fs.createReadStream(nomFichierCsv)
             .pipe(csv())
-            .on('data', (row) => this.AjouterTransaction(row, mongooseDB))
+            .on('data', (row) => {
+                //Ici creer transaction (voir si schemamongoose ou mon objet)
+                //Ici ajouter transaction dans array d'importation
+
+                //let transaction = new Transaction(row['Date'], row['Description'], row['Categorie'], row['Debit'], row['Credit'], row['Solde']);
+                //this.transactions.push(transaction);
+            })
             .on('end', () => {
                 console.log('CSV file successfully processed');
             });
 
+
+        //Construire une Array de transactions candidates a partir du fichier csv
+        //Ensuite parcourir cet array 
+        //Regrouper par jour en un array
+        //Pour chaque array par jour : si transactions sont d'un meme montant et meme jour
+        //modifier String _id pour ajouter 1 puis 2 ... puis n
+
+        //Cette approche ne fonctionnera pas si le fichier csv commence ou se termine par une journée ou une transaction
+        //dupliquée est manquante, ce cas de figure me semble exceptionnel parce que les banques 
+        //exportent toutes les transactions d'une journée complete
+
+        //Ajouter dans la bd
+        //Si Erreur d'ajout parce que clé dupliquée, 
+        // on sait que c'est parce que cette partie du fichier CSV a été déja importée
+        //  this.AjouterTransaction(row, mongooseDB);
     }
 
     /*-------------------------------------------------------------------------
@@ -69,13 +94,13 @@ module.exports = class CompteBancaire {
     Ajoute une transaction dans la bd
 	-------------------------------------------------------------------------*/
     async AjouterTransaction(row, mongooseDB) {
-        //let transaction = new Transaction(row['Date'], row['Description'], row['Categorie'], row['Debit'], row['Credit'], row['Solde']);
-        //this.transactions.push(transaction);
 
-        if (row['Date'] === null) return; //TODO vérifier que rangée n'est pas vide
+
+        if (row['Date'] === null) return; //TODO vérifier dans fichier texte si n'est pas une ligne vide
+
 
         const transactionDB = new this.TransactionDB({
-            Clef: row['Date'] + row['Solde'],
+            _id: String(row['Date']) + String(row['Solde']),
             Date: row['Date'],
             Description: row['Description'],
             Categorie: row['Categorie'],
@@ -84,14 +109,10 @@ module.exports = class CompteBancaire {
             Solde: row['Solde']
         })
         try {
-            const resultat = await transactionDB.save();
-        } catch {
-            console.log("erreur ajouterTransaction");
-
+            await transactionDB.save();
+        } catch (erreur) {
+            console.error("erreur ajouterTransaction:" + erreur);
         }
-
-
-        //   console.log("Nouvelle rangee" + resultat);
 
     }
 
