@@ -19,6 +19,9 @@ Date,Description,Categorie,Debit,Credit,Solde
 2020-01-21,Marche Royal,Epicerie,24.26,0,701.39
 2020-01-20,Marche Royal,Epicerie,19.13,0,725.65
 2020-01-20,Retrait au guichet,Argent comptant,300.0,0,744.78
+2020-01-20,Retrait au guichet,Argent comptant,300.0,0,744.78
+2020-01-20,Retrait au guichet,Argent comptant,300.0,0,744.78
+2020-01-20,Retrait au guichet,Argent comptant,300.0,0,744.78
 2020-01-17,Frais fixes,Frais,14.95,0,1044.78
 2020-01-17,Service virement interac,Frais,0,0,1059.73
 2020-01-17,Frais achat carte-client,Frais,0,0,1059.73
@@ -29,9 +32,11 @@ Date,Description,Categorie,Debit,Credit,Solde
 2020-01-16,Ikea,Ameublement,71.31,0,1174.88
 2020-01-16,Ikea,Ameublement,6.44,0,1246.19
 2020-01-16,BNI,Finances,50.0,0,1252.63
+2020-01-16,BNI,Finances,50.0,0,1252.63
 2020-01-15,Usat_td,Non categorise,1.25,0,1302.63
 2020-01-14,Vrac En Folie,Non categorise,7.12,0,1303.88
 2020-01-14,Starbucks,Cafes,5.34,0,1311.00
+2020-01-16,BNI,Finances,50.0,0,1252.63
 2020-01-10,Usat_td,Non categorise,1.25,0,1316.34
 2020-01-10,Ikea,Restauration rapide,4.0,0,1317.59
 2020-01-10,Internet paiement facture,Factures et services,600.0,0,1321.59

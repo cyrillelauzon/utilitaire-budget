@@ -11,7 +11,7 @@ module.exports = class CompteBancaire {
     Lecture automatique de la liste des transactions dans le fichier CSV
 	-------------------------------------------------------------------------*/
     constructor() {
-        this.transactions = new Array();
+        this.transactions = new Map();
         this.type = "type"; //personnel, celi, crédit...
         this.description = "description"; //Description de lutilisateur
         this.nom = "nom"; //nom du compte
@@ -19,22 +19,21 @@ module.exports = class CompteBancaire {
 
 
         //Création d'un schema de transaction Mangoose
+        //NB: Montant négatif = Crédit, Montant Positif = Débit
         const mongooseDB = require('mongoose');
         const transactionSchema = new mongooseDB.Schema({
             _id: String,
             Date: Date,
             Description: String,
             Categorie: String,
-            Debit: Number,
-            Credit: Number,
+            Montant: Number,
             Solde: Number
         })
-
         this.TransactionDB = mongooseDB.model('Transactions', transactionSchema);
 
-        this.ImporterTransactionCSV("./epargne.csv");
-        this.ImprimerTransactions();
 
+        this.ImporterTransactionCSV("./epargne.csv");
+        //this.ImprimerTransactions();
     }
 
 
@@ -57,98 +56,116 @@ module.exports = class CompteBancaire {
             .then(() => console.log('connected to mongodb'))
             .catch(err => console.error('could not connect to mongodb', err));
 
-        //Lecture du fichier csv et ajout des transaction par rangées dans un array afin de verifier les dupliqués
+        //Lecture du fichier csv 
+        //ajout des transaction par rangées dans transactions afin de verifier les dupliqués
         fs.createReadStream(nomFichierCsv)
             .pipe(csv())
             .on('data', (row) => {
-                //Ici creer transaction (voir si schemamongoose ou mon objet)
-                //Ici ajouter transaction dans array d'importation
 
-                //let transaction = new Transaction(row['Date'], row['Description'], row['Categorie'], row['Debit'], row['Credit'], row['Solde']);
-                //this.transactions.push(transaction);
+                let transaction = this.CreerTransaction(0, row['Date'], row['Description'], row['Categorie'], row['Debit'], row['Credit'], row['Solde']);
+                if (transaction !== undefined) {
+                    this.AjouterTransaction(transaction);
+                }
+
             })
             .on('end', () => {
                 console.log('CSV file successfully processed');
+
+                //              this.ImprimerTransactions();
             });
 
-
-        //Construire une Array de transactions candidates a partir du fichier csv
-        //Ensuite parcourir cet array 
-        //Regrouper par jour en un array
-        //Pour chaque array par jour : si transactions sont d'un meme montant et meme jour
-        //modifier String _id pour ajouter 1 puis 2 ... puis n
-
-        //Cette approche ne fonctionnera pas si le fichier csv commence ou se termine par une journée ou une transaction
-        //dupliquée est manquante, ce cas de figure me semble exceptionnel parce que les banques 
-        //exportent toutes les transactions d'une journée complete
-
-        //Ajouter dans la bd
-        //Si Erreur d'ajout parce que clé dupliquée, 
-        // on sait que c'est parce que cette partie du fichier CSV a été déja importée
-        //  this.AjouterTransaction(row, mongooseDB);
     }
 
     /*-------------------------------------------------------------------------
-    Méthode: AjouterTransaction
+    Méthode: CreerTransaction
     Description: 
-    Ajoute une transaction dans la bd
+    Creer un objet transaction Mongoose en validant si l'objet n'est pas vide.
+    //TODO retourne null si ligne du fichier csv est vide.
 	-------------------------------------------------------------------------*/
-    async AjouterTransaction(row, mongooseDB) {
+    CreerTransaction(compteur, date, description, categorie, debit, credit, solde) {
 
+        //Colonnes débit et crédit sont combinées dans une colonne montant négatif ou positif
+        const montant = credit > 0 ? credit : (-1 * debit);
+        return this.CreerTransaction(compteur, date, description, categorie, montant, solde);
+    }
 
-        if (row['Date'] === null) return; //TODO vérifier dans fichier texte si n'est pas une ligne vide
+    /*-------------------------------------------------------------------------
+    Méthode: CreerTransaction
+    Description: 
+    Creer un objet transaction Mongoose en validant si l'objet n'est pas vide.
+    //TODO retourne null si ligne du fichier csv est vide.
+	-------------------------------------------------------------------------*/
+    CreerTransaction(compteur, date, description, categorie, montant, solde) {
 
-
-        const transactionDB = new this.TransactionDB({
-            _id: String(row['Date']) + String(row['Solde']),
-            Date: row['Date'],
-            Description: row['Description'],
-            Categorie: row['Categorie'],
-            Debit: row['Debit'],
-            Credit: row['Credit'],
-            Solde: row['Solde']
+        //TODO Valider si n'est pas Transaction vide et retourner null
+        let transaction = new this.TransactionDB({
+            _id: this.CreerIDTransaction(compteur, date, description, montant),
+            Date: date,
+            Description: description,
+            Categorie: categorie,
+            Montant: montant,
+            Solde: solde
         })
-        try {
-            await transactionDB.save();
-        } catch (erreur) {
-            console.error("erreur ajouterTransaction:" + erreur);
+
+        return transaction;
+    }
+
+    /*-------------------------------------------------------------------------
+    Méthode: CreerIDTransaction
+    Description: 
+	-------------------------------------------------------------------------*/
+    CreerIDTransaction(compteur, date, description, montant) {
+        let strCompteur = "";
+        compteur < 10 ? strCompteur = "0" + String(compteur) : strCompteur = String(compteur);
+        return strCompteur + String(date) + String(description) + String(montant);
+    }
+
+
+    /*-------------------------------------------------------------------------
+        Méthode: AjouterTransaction
+        Description: 
+        Ajoute une transaction dans la bd
+    	-------------------------------------------------------------------------*/
+    AjouterTransaction(transaction) {
+
+        
+        let compteur = 0;
+        let strID = transaction._id;
+        let creerNouvelleTransaction = false;
+        
+        //remplacer this.transaction.has par lecture dans bd
+        while (this.transactions.has(strID) === true) {
+            creerNouvelleTransaction = true;
+            compteur += 1;
+            strID = this.CreerIDTransaction(compteur, transaction.Date, transaction.Description, transaction.Montant);
         }
 
+        if (creerNouvelleTransaction === true) {
+            transaction = this.CreerTransaction(compteur, transaction.Date, transaction.Description, transaction.Categorie, transaction.Montant, transaction.Solde);
+            console.log("Ajout Transaction: " + transaction);
+        }
+
+        //Ajout dans une pile pour verifier si transaction n'existe pas deja
+        this.transactions.set(transaction._id, transaction);
+        
+        try {
+            await transaction.save();
+        } catch (erreur) {
+            //console.error("erreur ajouterTransaction:" + erreur);
+        }
     }
 
 
     /*-------------------------------------------------------------------------
-    Méthode: ImprimerTransactions
-    Description: 
-    Imprime la liste des transactions en mémoire sur la console
-	-------------------------------------------------------------------------*/
+        Méthode: ImprimerTransactions
+        Description: 
+        Imprime la liste des transactions en mémoire sur la console
+    	-------------------------------------------------------------------------*/
     ImprimerTransactions() {
-        /*      this.transactions.forEach(function (transaction) {
-                 if (transaction !== null) {
-                     transaction.Imprimer();
-                 }
-             }); */
+        this.transactions.forEach(function (transaction) {
+            if (transaction !== null) {
+                console.log("Transaction: " + transaction);
+            }
+        });
     }
 }
-
-
-/*-------------------------------------------------------------------------
-Classe: Transaction
-Description: 
-Classe utilitaire décrivant une transaction bancaire.
--------------------------------------------------------------------------*/
-/* class Transaction {
-    constructor(dateTransaction, description, categorie, debit, credit, solde) {
-        this.key = dateTransaction + solde;
-        this.dateTransaction = dateTransaction;
-        this.description = description;
-        this.categorie = categorie;
-        this.debit = debit;
-        this.credit = credit;
-        this.solde = solde;
-    }
-
-    Imprimer() {
-        console.log(`Transaction: ${this.key}, ${this.dateTransaction}, ${this.description}, ${this.categorie}, ${this.debit}, ${this.credit}, ${this.solde}`);
-    }
-} */
