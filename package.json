@@ -1,17 +1,23 @@
 {
   "name": "comptebancaire",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "app.js",
   "dependencies": {
     "csv-parser": "^2.3.2",
+    "csv-writer": "^1.6.0",
     "jslint": "^0.12.1",
     "mongoose": "^5.8.11"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "appTest"
+  "devDependencies": {
+    "jest": "^25.1.0"
   },
-  "author": "",
-  "license": "ISC"
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Cyrille Lauzon",
+  "license": "ISC",
+  "jest": {
+    "testEnvironment": "node"
+  }
 }
