@@ -1,7 +1,3 @@
-
-
-
-
 /*-------------------------------------------------------------------------
 Classe: CompteBancaire
 Description: 
@@ -31,31 +27,44 @@ Gestion d'un compte bancaire: ex compte personnel, carte de crédit
 
 module.exports = class CompteBancaire {
 
-
     /**
      * @constructor
      * @descriptionCreates an instance of CompteBancaire.
      */
     constructor() {
-        this.transactions = new Map();
+
         this.type = "type"; //personnel, celi, crédit...
         this.description = "description"; //Description de lutilisateur
         this.nom = "nom"; //nom du compte
         this.proprietaire = "proprietaire"; //proprio du compte
 
         //Création d'un schema de transaction Mangoose
-        //NB: Montant négatif = Crédit, Montant Positif = Débit
         const mongooseDB = require('mongoose');
         const transactionSchema = new mongooseDB.Schema({
             _id: String,
-            Date: Date,
-            Description: String,
-            Categorie: String,
-            Montant: Number,
-            Solde: Number
+            Date: {
+                type: Date,
+                required: true
+            },
+            Description: {
+                type: String,
+                required: true
+            },
+            Categorie: {
+                type: String,
+                required: true
+            },
+            Montant: {
+                type: Number,
+                required: true
+            },
+            Solde: {
+                type: Number,
+                required: true
+            },
         })
         this.TransactionDB = mongooseDB.model('Transactions', transactionSchema);
-        //  let transactions = this.ImporterTransactionsCSV("./epargne.csv")
+        let transactions = this.ImporterTransactionsCSV("./epargne.csv");
     }
 
 
@@ -70,7 +79,6 @@ module.exports = class CompteBancaire {
         console.log("Importation en cours fichier Csv: " + nomFichierCsv);
         let transactions = new Map();
 
-
         //Connexion à MongoDB
         const mongooseDB = require('mongoose');
         try {
@@ -78,12 +86,13 @@ module.exports = class CompteBancaire {
             await mongooseDB.connect('mongodb://localhost:27017/Budgets');
             console.log('Connecté à la base de données MongoDB');
 
-            transactions = await this.LireFichierCSV(nomFichierCsv);
-            console.log('Fichier Csv Lu avec success Doit etre a la fin');
 
-            this.ImprimerTransactions(transactions);
-            this.EcrireTransactionsDB(transactions);
 
+            //transactions = await this.LireFichierCSV(nomFichierCsv);
+            //console.log('Fichier Csv Lu avec success');
+
+           // await this.EcrireTransactionsDB(transactions);
+            //console.log('Transactions écrite avec success');
 
         } catch (err) {
             console.error('Erreur lecture TransactionsCsv', err);
@@ -96,7 +105,7 @@ module.exports = class CompteBancaire {
      * https://stackabuse.com/reading-and-writing-csv-files-with-node-js
      * 
      * @param {string} nomFichierCsv
-     * @returns {Map} Map des transactions
+     * @returns Map des transactions
      */
     async LireFichierCSV(nomFichierCsv) {
         let transactions = new Map();
@@ -109,11 +118,11 @@ module.exports = class CompteBancaire {
             //ajout des transaction par rangées dans l'objet Map transactions afin de verifier les dupliqués
             fs.createReadStream(nomFichierCsv)
                 .pipe(csv())
-                .on('data', (row) => {
+                .on('data', async (row) => {
 
-                    let transaction = this.CreerTransaction(0, row['Date'], row['Description'], row['Categorie'], row['Debit'], row['Credit'], row['Solde']);
+                    let transaction = await this.CreerTransaction(0, row['Date'], row['Description'], row['Categorie'], row['Debit'], row['Credit'], row['Solde']);
                     if (transaction !== undefined) {
-                        transactions = this.AjouterTransaction(transactions, transaction);
+                        transactions = this.AjouterTransactionMap(transactions, transaction);
                     }
 
                 })
@@ -126,31 +135,33 @@ module.exports = class CompteBancaire {
         return transactions;
     }
 
-        /**
-     * AjouterTransaction
+    /**
+     * AjouterTransactionMap
      * @description Ajoute une nouvelle transaction lors de la lecture d'un fichier CSV
      * 
      * @param {*} transactions Map Courante 
      * @param {*} transaction Nouvelle transaction à ajouter
      * @returns {Map} mise à jour de Map des transactions à écrire dans la BD
      */
-    AjouterTransaction(transactions, transaction) {
+    AjouterTransactionMap(transactions, transaction) {
         let compteur = 0;
         let strID = transaction._id;
         let creerNouvelleTransaction = false;
 
-        //Vérification si on a pas affaire à une double transaction d'un meme montant le meme jour
+        //Vérification si on a affaire à une double ou multiple transaction d'un meme montant le meme jour, au meme lieu
+        //Si oui: creer un nouveau _id unique pour cette transaction
         while (transactions.has(strID) === true) {
             creerNouvelleTransaction = true;
             compteur += 1;
             strID = this.CreerIDTransaction(compteur, transaction.Date, transaction.Description, transaction.Montant);
         }
 
+        //Créer une nouvelle transaction si duplication avec nouveau id généré plus haut
         if (creerNouvelleTransaction === true) {
             transaction = this.CreerTransactionMontant(compteur, transaction.Date, transaction.Description, transaction.Categorie, transaction.Montant, transaction.Solde);
         }
 
-        //Ajout dans une pile pour verifier si transaction n'existe pas deja
+//await transaction.save();
         return transactions.set(transaction._id, transaction);
     }
 
@@ -161,17 +172,18 @@ module.exports = class CompteBancaire {
      * 
      * @param {Map} transactions toutes les transactions candidates pour écriture dans la BD
      */
-    async EcrireTransactionsDB(transactions) {
+/*     async EcrireTransactionsDB(transactions) {
         try {
-            //new promise
-            //for each transactions  
-            //await transaction.save();
+
+            transactions.forEach(async transaction => {
+                await transaction.save();
+            });
 
             //await that we wrote everything
         } catch (erreur) {
-            //console.error("erreur ajouterTransaction:" + erreur);
+            console.error("erreur ajouterTransaction:" + erreur);
         }
-    }
+    } */
 
     /**
      * CreerTransaction
@@ -184,30 +196,19 @@ module.exports = class CompteBancaire {
      * @param {number} debit
      * @param {number} credit
      * @param {number} solde
-     * @returns {object}
+     * @returns 
      */
-    CreerTransaction(compteur, date, description, categorie, debit, credit, solde) {
-
-        //Validation des données:
-        /*         if (isNaN(compteur) || isNaN(Date.parse(date)) || isNaN(debit) || isNaN(credit) || isNaN(solde)) {
-                    throw new Error("CreerTransaction: Paramètres invalides");
-                }
-
-                if (compteur === null || debit === null || credit === null || solde === null) {
-                    throw new Error("CreerTransaction: Paramètres nulls");
-                } */
-
+    async CreerTransaction(compteur, date, description, categorie, debit, credit, solde) {
 
         //Colonnes débit et crédit sont combinées dans une colonne montant négatif ou positif
         const montant = credit > 0 ? credit : (-1 * debit);
-        return this.CreerTransactionMontant(compteur, date, description, categorie, montant, solde);
-
-
+        return await this.CreerTransactionMontant(compteur, date, description, categorie, montant, solde);
     }
 
     /**
      * CreerTransactionMontant
      * @description Creer un objet transaction Mongoose en validant si l'objet n'est pas vide.
+     * Validation des paramètres par schéma mongoose
      * 
      * @param {number} compteur
      * @param {Date} date
@@ -215,11 +216,11 @@ module.exports = class CompteBancaire {
      * @param {string} categorie
      * @param {number} montant
      * @param {number} solde
-     * @returns {object}
+     * @returns
      * 
      */
     //TODO Réécrire avec Validators Mongoose
-    CreerTransactionMontant(compteur, date, description, categorie, montant, solde) {
+    async CreerTransactionMontant(compteur, date, description, categorie, montant, solde) {
 
         let transaction = new this.TransactionDB({
             _id: this.CreerIDTransaction(compteur, date, description, montant),
@@ -230,12 +231,18 @@ module.exports = class CompteBancaire {
             Solde: solde
         })
 
+        try {
+            await transaction.validate();
+        } catch (exception) {
+            console.error("Paramètre invalide CréerTransaction" + exception);
+        }
+
         return transaction;
     }
 
     /**
      * CreerIDTransaction
-     * @description Crée un ID de transaction par concaténation des parametres suivants:
+     * @description Méthode utilitaire, crée un ID de transaction par concaténation des parametres suivants:
      * 
      * @param {number} compteur nombre entre 1 et 99 inclusivement
      * @param {Date} date
@@ -245,15 +252,11 @@ module.exports = class CompteBancaire {
      * @returns {string} strID de transaction
      */
     CreerIDTransaction(compteur, date, description, montant) {
-        if (compteur < 0) {
-            throw new Error("CreerIDTransaction: Nouvelle transaction avec compteur négatif");
-        }
-        if (compteur > 99) {
-            throw new Error("CreerIDTransaction: Nouvelle transaction avec compteur > 99");
+        if (compteur < 0 || compteur > 99 || isNaN(compteur) || compteur === null) {
+            throw new Error("CreerIDTransaction: Nouvelle transaction avec compteur invalide");
         }
 
         let strCompteur = "";
-
         compteur < 10 ? strCompteur = "0" + String(compteur) : strCompteur = String(compteur);
         return strCompteur + String(date) + String(description) + String(montant);
     }
