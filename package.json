@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
+    "@types/jest": "^25.1.2",
     "csv-parser": "^2.3.2",
     "csv-writer": "^1.6.0",
     "jslint": "^0.12.1",
