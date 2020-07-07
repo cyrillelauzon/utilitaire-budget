@@ -1,23 +1,8 @@
 /*-------------------------------------------------------------------------
 Classe: CompteBancaire
 Description: 
-Gestion d'un compte bancaire: ex compte personnel, carte de crédit
-    //TODO Méthodes à réaliser
-    //Ajouter Validateurs MongoDB
-    
-    //ExportTransactionsCSV---
-    //reinit bd  //pour débogage
-    //Vérifier espaces vides
-    //Refactoriser ImportTransactionCSV pour ajouter une map de transactions en parametre, 
-    //et créer nouvelle fonction ajouterBD qui prend cette map en parametre
-    //Fonctions Bancaires---
-    //OvrirCompte
-    //Support Multi-comptes dans objet CompteBancaire (voir ou gestionnaire comptes)
-    //Tous les comptes vers une nouvelle table
-    //GetSolde()
-    //Getter---
-    //GetTransactionsMensuelles()
-    //GetTransactions()
+Lecture d'un état de compte bancaire en format CSV et enregistrement
+dans une bd mongoDB
 -------------------------------------------------------------------------*/
 
 module.exports = class CompteBancaire {
