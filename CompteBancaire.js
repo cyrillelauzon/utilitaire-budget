@@ -1,10 +1,15 @@
 /*-------------------------------------------------------------------------
 Classe: CompteBancaire
 Description: 
+<<<<<<< HEAD
 Gestion d'un compte bancaire: ex compte personnel, carte de crédit
 
 Permet de 
  
+=======
+Lecture d'un état de compte bancaire en format CSV et enregistrement
+dans une bd mongoDB
+>>>>>>> 37d80ff4241455b73fe6805c1edd87635fea8740
 -------------------------------------------------------------------------*/
 
 module.exports = class CompteBancaire {
