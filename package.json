@@ -9,7 +9,8 @@
     "csv-writer": "^1.6.0",
     "fast-csv": "^4.0.2",
     "jslint": "^0.12.1",
-    "mongoose": "^5.8.11"
+    "mongoose": "^5.8.11",
+    "yargs": "^16.1.0"
   },
   "devDependencies": {
     "jest": "^25.1.0"

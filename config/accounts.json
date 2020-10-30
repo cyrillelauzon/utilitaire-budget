@@ -6,6 +6,7 @@
         "Description": "Description",
         "Category": "Categorie",
         "Deposit": "Debit",
-        "Withdraw": "Credit"
+        "Withdraw": "Credit",
+        "Balance" : "Solde"
     }
 }

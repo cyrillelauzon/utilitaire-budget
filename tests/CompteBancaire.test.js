@@ -1,17 +1,17 @@
 // @ts-nocheck
-const CompteBancaire = require('../CompteBancaire');
+const BankAccount = require('../BankAccount');
 
-let compteBancaire = new CompteBancaire;
+let bankAccount = new BankAccount;
 
 
 /*-------------------------------------------------------------------------
-    Test: ImporterTransactionsCSV
+    Test: ImportTransactionsCSV
 	-------------------------------------------------------------------------*/
-describe('ImporterTransactionsCSV', () => {
+describe('ImportTransactionsCSV', () => {
 
     it("Devrait lancer une exception pour un fichier inexistant", () => {
         expect(() => {
-            compteBancaire.ImporterTransactionsCSV("Mauvais nom de fichier");
+            bankAccount.ImportTransactionsCSV("Mauvais nom de fichier");
         }).toThrow();
     });
 
@@ -23,36 +23,36 @@ describe('ImporterTransactionsCSV', () => {
 	-------------------------------------------------------------------------*/
 describe('CreerIDTransaction', () => {
     it("Devrait creer une chaine ID qui commence par un compteur à 2 digits a partir d'un compteur entre 0 et 9 inclusivement", () => {
-        const resultat = compteBancaire.CreerIDTransaction(1, "2020-01-14", "Transaction Test", 1);
+        const resultat = bankAccount.CreerIDTransaction(1, "2020-01-14", "Transaction Test", 1);
         expect(resultat).toBe("012020-01-14Transaction Test1");
     });
 
     it("Devrait creer une chaine ID qui commence par un compteur à 2 digits a partir d'un compteur entre 10 et 99 inclusivement", () => {
-        const resultat = compteBancaire.CreerIDTransaction(10, "2020-01-14", "Transaction Test", 1);
+        const resultat = bankAccount.CreerIDTransaction(10, "2020-01-14", "Transaction Test", 1);
         expect(resultat).toBe("102020-01-14Transaction Test1");
     });
 
     it("Devrait lancer une exception pour un compteur négatif", () => {
         expect(() => {
-            compteBancaire.CreerIDTransaction(-1, "2020-01-14", "Transaction Test", 1)
+            bankAccount.CreerIDTransaction(-1, "2020-01-14", "Transaction Test", 1)
         }).toThrow();
     });
 
     it("Devrait lancer une exception pour un compteur > 99", () => {
         expect(() => {
-            compteBancaire.CreerIDTransaction(100, "2020-01-14", "Transaction Test", 1)
+            bankAccount.CreerIDTransaction(100, "2020-01-14", "Transaction Test", 1)
         }).toThrow();
     });
 
     it("Devrait lancer une exception pour un compteur string", () => {
         expect(() => {
-            compteBancaire.CreerIDTransaction("testString", "2020-01-14", "Transaction Test", 1)
+            bankAccount.CreerIDTransaction("testString", "2020-01-14", "Transaction Test", 1)
         }).toThrow();
     });
 
     it("Devrait lancer une exception pour un compteur null", () => {
         expect(() => {
-            compteBancaire.CreerIDTransaction(null, "2020-01-14", "Transaction Test", 1)
+            bankAccount.CreerIDTransaction(null, "2020-01-14", "Transaction Test", 1)
         }).toThrow();
     });
 
@@ -68,7 +68,7 @@ describe('CreerIDTransaction', () => {
 	-------------------------------------------------------------------------*/
 describe('CreerTransaction', () => {
     it("Devrait creer un objet transaction avec des parametres valides", () => {
-        const resultat = compteBancaire.CreerTransaction(0, "2019-02-24", "Transaction Test", "Categorie", 1, 0, 10);
+        const resultat = bankAccount.CreerTransaction(0, "2019-02-24", "Transaction Test", "Categorie", 1, 0, 10);
 
         expect(resultat._id).toBe("002019-02-24Transaction Test-1");
         expect(resultat.Date).toEqual(new Date("2019-02-24"));
@@ -80,31 +80,31 @@ describe('CreerTransaction', () => {
 
     it("Devrait lancer une exception pour une date invalide", () => {
         expect(() => {
-            compteBancaire.CreerTransaction(1, "Pas une date", "", "", 1, 0, 1)
+            bankAccount.CreerTransaction(1, "Pas une date", "", "", 1, 0, 1)
         }).toThrow();
     });
 
     it("Devrait lancer une exception pour compteur invalide", () => {
         expect(() => {
-            compteBancaire.CreerTransaction("", "2019-02-04", "", "", 1, 0, 1)
+            bankAccount.CreerTransaction("", "2019-02-04", "", "", 1, 0, 1)
         }).toThrow();
     });
 
     it("Devrait lancer une exception pour un débit invalide", () => {
         expect(() => {
-            compteBancaire.CreerTransaction(1, "2019-02-04", "", "", null, 0, 1)
+            bankAccount.CreerTransaction(1, "2019-02-04", "", "", null, 0, 1)
         }).toThrow();
     });
 
     it("Devrait lancer une exception pour un crédit invalide", () => {
         expect(() => {
-            compteBancaire.CreerTransaction(1, "2019-02-04", "", "", 0, undefined, 1)
+            bankAccount.CreerTransaction(1, "2019-02-04", "", "", 0, undefined, 1)
         }).toThrow();
     });
 
     it("Devrait lancer une exception pour un solde invalide", () => {
         expect(() => {
-            compteBancaire.CreerTransaction(1, "2019-02-04", "", "", 0, 1, null)
+            bankAccount.CreerTransaction(1, "2019-02-04", "", "", 0, 1, null)
         }).toThrow();
     });
 

@@ -1,5 +1,9 @@
-const CompteBancaire = require('./CompteBancaire');
+const RuleParser = require('./js/RuleParser');
+let ruleParser = new RuleParser;
 
-let compteBancaire = new CompteBancaire;
 
-compteBancaire.ImporterTransactionsCSV("./import_csv/epargne.csv");
+const BankAccount = require('./js/BankAccount');
+//let bankAccount = new BankAccount;
+
+//bankAccount.ImportTransactionsCSV("./import_csv/epargne.csv");
+

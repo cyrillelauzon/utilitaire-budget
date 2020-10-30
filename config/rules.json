@@ -1,32 +1,33 @@
 {
     "rules": [
         {
-            "type": "assign",
             "Description": "Ikea",
             "Category": "Revenu",
-            "isIncome": true
+            "Conditions": {
+                "isIncome": true
+            }
         },
         {
-            "type": "compare",
             "Description": "Ikea",
             "Category": "Restaurant",
-            "High": 15,
-            "isIncome": false
+            "Conditions": {
+                "High": 15,
+                "isIncome": false
+            }
         },
         {
-            "type": "compare",
             "Description": "Ikea",
             "Category": "Ameublement",
-            "Low": 15.1,
-            "isIncome": false
+            "Conditions": {
+                "Low": 15.1,
+                "isIncome": false
+            }
         },
         {
-            "type": "assign",
             "Description": "Vrac En Folie",
             "Category": "Épicerie"
         },
         {
-            "type": "assign",
             "Description": "Marche Royal",
             "Category": "Épicerie"
         }
