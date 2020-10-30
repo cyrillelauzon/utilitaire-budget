@@ -7,6 +7,7 @@
     "@types/jest": "^25.1.2",
     "csv-parser": "^2.3.2",
     "csv-writer": "^1.6.0",
+    "fast-csv": "^4.0.2",
     "jslint": "^0.12.1",
     "mongoose": "^5.8.11"
   },

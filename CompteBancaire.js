@@ -2,22 +2,9 @@
 Classe: CompteBancaire
 Description: 
 Gestion d'un compte bancaire: ex compte personnel, carte de crédit
-    //TODO Méthodes à réaliser
-    //Ajouter Validateurs MongoDB
-    
-    //ExportTransactionsCSV---
-    //reinit bd  //pour débogage
-    //Vérifier espaces vides
-    //Refactoriser ImportTransactionCSV pour ajouter une map de transactions en parametre, 
-    //et créer nouvelle fonction ajouterBD qui prend cette map en parametre
-    //Fonctions Bancaires---
-    //OvrirCompte
-    //Support Multi-comptes dans objet CompteBancaire (voir ou gestionnaire comptes)
-    //Tous les comptes vers une nouvelle table
-    //GetSolde()
-    //Getter---
-    //GetTransactionsMensuelles()
-    //GetTransactions()
+
+Permet de 
+ 
 -------------------------------------------------------------------------*/
 
 module.exports = class CompteBancaire {
@@ -34,7 +21,7 @@ module.exports = class CompteBancaire {
         this.proprietaire = "proprietaire"; //proprio du compte
 
         //Création d'un schema de transaction Mangoose
-        const mongooseDB = require('mongoose');
+        /* const mongooseDB = require('mongoose');
         const transactionSchema = new mongooseDB.Schema({
             _id: String,
             Date: {
@@ -58,12 +45,10 @@ module.exports = class CompteBancaire {
                 required: true
             },
         })
-        this.TransactionDB = mongooseDB.model('Transactions', transactionSchema);
+        this.TransactionDB = mongooseDB.model('Transactions', transactionSchema); */
         this.transactions = new Map();
-        this.ImporterTransactionsCSV("./epargne.csv");
-
-
-
+        //this.ImporterTransactionsCSV("./epargne.csv");
+     //   this.ImporterTransactionsCSV("./patate.csv");
     }
 
 
@@ -73,39 +58,51 @@ module.exports = class CompteBancaire {
      * et l'enregistre dans la base de données.
      * 
      * @param {string} nomFichierCsv
+     * @throws Error si le fichier est invalide
+     * @async
      */
     async ImporterTransactionsCSV(nomFichierCsv) {
-        const csv = require('csv-parser');
+        const csv = require('fast-csv');
         const fs = require('fs');
 
-        console.log("Importation en cours fichier Csv: " + nomFichierCsv);
+        console.log("Début d'importation du fichier Csv: " + nomFichierCsv);
 
         const p = new Promise((resolve, reject) => {
             //Lecture du fichier csv 
             //ajout des transaction par rangées dans l'objet Map transactions afin de verifier les dupliqués
+            //TODO remplacer par fast-cvs
             fs.createReadStream(nomFichierCsv)
-                .pipe(csv())
+                .on('error', (err) => {
+                    reject(p);
+                    throw (new Error("ImporterTransactionsCSV::> " + err));
+
+                })
                 .on('data', (row) => {
 
-                    let transaction = this.CreerTransaction(0, row['Date'], row['Description'], row['Categorie'], row['Debit'], row['Credit'], row['Solde']);
-                    this.AjouterTransactionMap(transaction);
+                    try {
+                        let transaction = this.CreerTransaction(0, row['Date'], row['Description'], row['Categorie'], row['Debit'], row['Credit'], row['Solde']);
+                        this.AjouterTransactionMap(transaction);
+                    } catch (err) {
+                        console.debug("Transaction lue dans fichier CSV est invalide: " + err);
+                    }
 
                 })
                 .on('end', async () => {
-                    console.log("Avant Ajouter transaction BD:");
-                    await this.AjouterTransactionsBD();
+
+                    //await this.AjouterTransactionsBD();
+
 
                     this.ExporterTransactionsCSV("./Test.csv", this.transactions);
                     resolve(p);
-                })
-                .on('error', () => {
-                    //TODO throw error?
-                    reject(p);
                 });
         });
 
         await p;
     }
+
+    
+
+
 
 
     /**
@@ -113,13 +110,15 @@ module.exports = class CompteBancaire {
      * @description méthode wrapper qui convertit le débit ou crédit
      * 
      * @param {number} compteur
-     * @param {Date} date
+     * @param {string} date
      * @param {string} description
      * @param {string} categorie
      * @param {number} debit
      * @param {number} credit
      * @param {number} solde
-     * @returns 
+     * @throws {Error} Paramètre invalid
+     * @returns {object} ou undefined si un paramètre est invalide
+     * 
      */
     CreerTransaction(compteur, date, description, categorie, debit, credit, solde) {
 
@@ -134,36 +133,37 @@ module.exports = class CompteBancaire {
      * Validation des paramètres par schéma mongoose
      * 
      * @param {number} compteur
-     * @param {Date} date
+     * @param {string} date
      * @param {string} description
      * @param {string} categorie
      * @param {number} montant
      * @param {number} solde
-     * @returns
+     * @throws {Error} Paramètre invalide, s'ils ne répondent pas au schéma de validation.
+     * @returns {object} nouvel objet transaction
      * 
      */
     CreerTransactionMontant(compteur, date, description, categorie, montant, solde) {
 
-        try {
-            let transaction = new this.TransactionDB({
-                _id: this.CreerIDTransaction(compteur, date, description, montant),
-                Date: date,
-                Description: description,
-                Categorie: categorie,
-                Montant: montant,
-                Solde: solde
-            })
+        //  try {
+        let transaction = new this.TransactionDB({
+            _id: this.CreerIDTransaction(compteur, date, description, montant),
+            Date: date,
+            Description: description,
+            Categorie: categorie,
+            Montant: montant,
+            Solde: solde
+        })
 
-            let err = transaction.validateSync();
-            if (err) {
-                // console.debug("Paramètre invalide CréerTransaction" + err);
-                throw (new Error("CreerTransactionMontant: Paramètres invalides"));
-            }
-
-            return transaction;
-        } catch (err) {
-            return undefined;
+        let err = transaction.validateSync();
+        if (err) {
+            // console.debug("Paramètre invalide CréerTransaction" + err);
+            throw (new Error("CreerTransactionMontant: Paramètres invalides"));
         }
+
+        return transaction;
+        //} catch (err) {
+        //    return undefined;
+        // }
 
     }
 
@@ -172,10 +172,10 @@ module.exports = class CompteBancaire {
      * @description Méthode utilitaire, crée un ID de transaction par concaténation des parametres suivants:
      * 
      * @param {number} compteur nombre entre 1 et 99 inclusivement
-     * @param {Date} date
+     * @param {string} date
      * @param {string} description
      * @param {number} montant
-     * @throws {InvalidArgumentException}
+     * @throws {Error} si le compteur est invalide
      * @returns {string} strID de transaction
      */
     CreerIDTransaction(compteur, date, description, montant) {
@@ -194,12 +194,12 @@ module.exports = class CompteBancaire {
      * @description Ajoute une nouvelle transaction lors de la lecture d'un fichier CSV
      * 
      * @param  transaction Nouvelle transaction à ajouter
-     * @returns mise à jour de Map des transactions à écrire dans la BD
+     * @throws {Error} Si paramètre transaction est invalide
      */
     AjouterTransactionMap(transaction) {
         //Lors de l'importation du fichier CSV, si erreur lors de validation des données, ne pas ajouter ces transactions.
         if (transaction === undefined) {
-            return;
+            throw (new Error("AjouterTransactionMap::Objet transaction est vide"));
         }
 
         let compteur = 0;
@@ -226,7 +226,7 @@ module.exports = class CompteBancaire {
         try {
 
             await mongooseDB.connect('mongodb://localhost:27017/Budgets');
-            console.log('Connecté à la base de données MongoDB');
+            console.debug('AjouterTransactionsBD::Connecté à la base de données MongoDB');
 
             let it = this.transactions.values();
             let transactionIter = it.next();
@@ -242,7 +242,7 @@ module.exports = class CompteBancaire {
 
 
         } catch (err) {
-            console.error('Erreur Ajouter TransactionsBd', err);
+            console.error('Connexion impossible à la BD', err);
         }
     }
 
@@ -250,7 +250,7 @@ module.exports = class CompteBancaire {
 
     /**
      * ExporterTransactionsCSV
-     * @description Exporte transaction dans bd //TODO vers un fichier CSV
+     * @description Exporte transaction de la bd vers un fichier CSV
        Utilisation de csv-writer:
        https://stackabuse.com/reading-and-writing-csv-files-with-node-js/
      * 
@@ -287,7 +287,7 @@ module.exports = class CompteBancaire {
         //TODO réécrire fin de fonction avec des Promise et await
         csvWriter
             .writeRecords(Array.from(transactions.values()))
-            .then(() => console.log('The CSV file was written successfully'));
+            .then(() => console.log('The CSV file ' + nomFichier + ' was written successfully'));
     }
 
     /**

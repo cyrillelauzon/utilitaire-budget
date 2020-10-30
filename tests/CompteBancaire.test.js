@@ -1,6 +1,22 @@
+// @ts-nocheck
 const CompteBancaire = require('../CompteBancaire');
 
 let compteBancaire = new CompteBancaire;
+
+
+/*-------------------------------------------------------------------------
+    Test: ImporterTransactionsCSV
+	-------------------------------------------------------------------------*/
+describe('ImporterTransactionsCSV', () => {
+
+    it("Devrait lancer une exception pour un fichier inexistant", () => {
+        expect(() => {
+            compteBancaire.ImporterTransactionsCSV("Mauvais nom de fichier");
+        }).toThrow();
+    });
+
+
+});
 
 /*-------------------------------------------------------------------------
     Test: CreerIDTransaction
@@ -27,8 +43,25 @@ describe('CreerIDTransaction', () => {
             compteBancaire.CreerIDTransaction(100, "2020-01-14", "Transaction Test", 1)
         }).toThrow();
     });
-// 
+
+    it("Devrait lancer une exception pour un compteur string", () => {
+        expect(() => {
+            compteBancaire.CreerIDTransaction("testString", "2020-01-14", "Transaction Test", 1)
+        }).toThrow();
+    });
+
+    it("Devrait lancer une exception pour un compteur null", () => {
+        expect(() => {
+            compteBancaire.CreerIDTransaction(null, "2020-01-14", "Transaction Test", 1)
+        }).toThrow();
+    });
+
+
+    // 
 });
+
+
+
 
 /*-------------------------------------------------------------------------
     Test: CreerTransaction
@@ -36,17 +69,12 @@ describe('CreerIDTransaction', () => {
 describe('CreerTransaction', () => {
     it("Devrait creer un objet transaction avec des parametres valides", () => {
         const resultat = compteBancaire.CreerTransaction(0, "2019-02-24", "Transaction Test", "Categorie", 1, 0, 10);
-        // @ts-ignore
+
         expect(resultat._id).toBe("002019-02-24Transaction Test-1");
-        // @ts-ignore
         expect(resultat.Date).toEqual(new Date("2019-02-24"));
-        // @ts-ignore
         expect(resultat.Description).toBe("Transaction Test");
-        // @ts-ignore
         expect(resultat.Categorie).toBe("Categorie");
-        // @ts-ignore
         expect(resultat.Montant).toBe(-1);
-        // @ts-ignore
         expect(resultat.Solde).toBe(10);
     });
 
@@ -64,7 +92,7 @@ describe('CreerTransaction', () => {
 
     it("Devrait lancer une exception pour un débit invalide", () => {
         expect(() => {
-            compteBancaire.CreerTransaction(1, "2019-02-04", "", "", undefined, 0, 1)
+            compteBancaire.CreerTransaction(1, "2019-02-04", "", "", null, 0, 1)
         }).toThrow();
     });
 

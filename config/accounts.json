@@ -1,0 +1,11 @@
+{
+    "Compte chèque de Cyrille": {
+        "Owner": "Cyrille Lauzon",
+        "Type": "Checking account",
+        "Date": "Date",
+        "Description": "Description",
+        "Category": "Categorie",
+        "Deposit": "Debit",
+        "Withdraw": "Credit"
+    }
+}
