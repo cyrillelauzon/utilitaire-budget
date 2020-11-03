@@ -3,6 +3,8 @@ const Util = require('./Util');
 let util = new Util;
 
 
+
+
 module.exports = class RuleParser {
 
     /**

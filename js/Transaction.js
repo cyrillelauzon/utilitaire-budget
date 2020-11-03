@@ -15,6 +15,7 @@ module.exports = class Transaction {
         this.Balance = 0;           //Account balance if available
     }
 
+    GetID(){ return this._id;}
    
     /**
      * SetTransaction
@@ -64,19 +65,38 @@ module.exports = class Transaction {
 
     /**
      * SetTransactionID
-     * @description Méthode utilitaire, crée un ID de transaction par concaténation des parametres suivants:
+     * @description  Builds a transaction ID by concatenation of the following parameters
      * 
      * @param {number} counter nombre entre 1 et 99 inclusivement
      * @throws {Error} si le counter est invalide
      */
     SetTransactionID(counter) {
+        this._id = Transaction.BuildTransactionID(counter, this.date, this.Description, this.Amount);
+    }
+
+
+    /**
+     * @description Builds a new TransactionID
+     * @static
+     * @param {number} counter
+     * @param {Date} date
+     * @param {string} description
+     * @param {number} amount
+     * @returns
+     */
+    static BuildTransactionID(counter, date, description, amount){
+        let newTransactionID = "";
+
         if (counter < 0 || counter > 99 || isNaN(counter) || counter === null) {
-            throw new Error("SetTransactionID: Nouvelle transaction avec counter invalide");
+            throw new Error("BuildTransactionID: Invalid counter for new transaction");
         }
 
+        //Padd counter to 2 digits:
         let strcounter = "";
         counter < 10 ? strcounter = "0" + String(counter) : strcounter = String(counter);
-        this._id = strcounter + String(this.date) + String(this.Description) + String(this.Amount);
+        newTransactionID = strcounter + String(date) + String(description) + String(amount);
+
+        return newTransactionID;
     }
 
 }

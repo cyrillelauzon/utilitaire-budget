@@ -2,7 +2,11 @@
 Classe: BankAccount
 Description: 
 Lecture d'un état de compte bancaire en format CSV, formattage et exportation vers un autre CSV
+
+//Utilise le RuleParser et rules.csv.
+//Pour l'instant le fichiers categories n'a pas d'utilité
 -------------------------------------------------------------------------*/
+
 
 const Transaction = require('./Transaction');
 const RuleParser = require('./RuleParser');
@@ -15,17 +19,12 @@ module.exports = class BankAccount {
      */
     constructor() {
 
-        //TODO add csv schema for bank account
-
         this.type = "type"; //personnel, celi, crédit...
         this.description = "description"; //Description de lutilisateur
         this.nom = "nom"; //nom du compte
         this.proprietaire = "proprietaire"; //proprio du compte
-
        
         this.transactions = new Map();
-        //this.ImportTransactionsCSV("./epargne.csv");
-     //   this.ImportTransactionsCSV("./patate.csv");
     }
 
 
@@ -48,16 +47,19 @@ module.exports = class BankAccount {
             //Lecture du fichier csv 
             //ajout des transaction par rangées dans l'objet Map transactions afin de verifier les dupliqués
             fs.createReadStream(nomFichierCsv)
+                .pipe(csv.parse({ headers: true }))
                 .on('error', (err) => {
-                    reject(p);
-                    throw (new Error("ImportTransactionsCSV::> " + err));
+                  //  reject(p);
+                  //  throw (new Error("ImportTransactionsCSV::> " + err));
 
                 })
                 .on('data', (row) => {
 
                     try {
-                      //  let transaction = this.CreerTransaction(0, row['Date'], row['Description'], row['Categorie'], row['Debit'], row['Credit'], row['Solde']);
-                       // this.AjouterTransactionMap(transaction);
+                      let transaction = new Transaction();
+                      transaction.SetTransaction(0, row['Date'], row['Description'], row['Categorie'], row['Debit'], row['Credit'], row['Solde']);
+                      this.AjouterTransactionMap(transaction);
+
                     } catch (err) {
                         console.debug("Transaction lue dans fichier CSV est invalide: " + err);
                     }
@@ -66,9 +68,7 @@ module.exports = class BankAccount {
                 .on('end', async () => {
 
                     //await this.AjouterTransactionsBD();
-
-
-                    this.ExporterTransactionsCSV("./Test.csv", this.transactions);
+                    this.ExporterTransactionsCSV("./testexport.csv", this.transactions);
                     resolve(p);
                 });
         });
@@ -81,7 +81,7 @@ module.exports = class BankAccount {
      * AjouterTransactionMap
      * @description Ajoute une nouvelle transaction lors de la lecture d'un fichier CSV
      * 
-     * @param  transaction Nouvelle transaction à ajouter
+     * @param {Transaction} transaction Nouvelle transaction à ajouter
      * @throws {Error} Si paramètre transaction est invalide
      */
     AjouterTransactionMap(transaction) {
@@ -90,17 +90,19 @@ module.exports = class BankAccount {
             throw (new Error("AjouterTransactionMap::Objet transaction est vide"));
         }
 
-        let compteur = 0;
+        let counter = 0;
+        
         //Vérification si on a affaire à une double ou multiple transaction d'un meme montant le meme jour, au meme lieu
         //Si oui: creer un nouveau _id unique pour cette transaction
-        let strID = transaction._id;
+        let strID = transaction.GetID();
         while (this.transactions.has(strID)) {
-            compteur += 1;
-           // strID = this.CreerIDTransaction(compteur, transaction.Date, transaction.Description, transaction.Montant);
+           counter += 1;
+           strID = Transaction.BuildTransactionID(counter, transaction.date, transaction.Description, transaction.Amount);
         }
 
-        //let nouvTransaction = this.CreerTransactionMontant(compteur, transaction.Date, transaction.Description, transaction.Categorie, transaction.Montant, transaction.Solde);
-        //this.transactions.set(strID, nouvTransaction);
+        let nouvTransaction = new Transaction();
+        nouvTransaction.SetTransactionWithAmount(counter, transaction.date, transaction.Description, transaction.Category, transaction.Amount, transaction.Balance);
+        this.transactions.set(strID, nouvTransaction);
     }
 
 

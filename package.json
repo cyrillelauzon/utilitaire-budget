@@ -2,7 +2,7 @@
   "name": "comptebancaire",
   "version": "0.0.1",
   "description": "",
-  "main": "app.js",
+  "main": "budget_cli.js",
   "dependencies": {
     "@types/jest": "^25.1.2",
     "csv-parser": "^2.3.2",
