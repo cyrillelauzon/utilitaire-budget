@@ -55,6 +55,7 @@ module.exports = class Transaction {
 
         //Colonnes débit et crédit sont combinées dans une colonne amount négatif ou positif
         const amount = newTransaction['Withdraw'] > 0 ? newTransaction['Withdraw'] : (-1 * newTransaction['Deposit']);
+        newTransaction['Amount'] = amount;
         this.SetTransactionWithAmount(newTransaction, counter);
     }
 

@@ -15,10 +15,9 @@ module.exports = class CsvAccountExporter {
      * @description
      * @param {*} nomFichier
      */
-    ExportCsv(nomFichier){
-      /*   const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-        let arrTransactions = this.GetTransactionsArray();
-
+    ExportCsv(nomFichier, transactions){
+        const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+        console.debug("csv file export: " + nomFichier);
 
         const csvWriter = createCsvWriter({
             path: nomFichier,
@@ -45,8 +44,8 @@ module.exports = class CsvAccountExporter {
             ]
         });
         csvWriter
-            .writeRecords(Array.from(this.transactions.values()))
-            .then(() => console.log('The CSV file ' + nomFichier + ' was written successfully')); */
+            .writeRecords(Array.from(transactions.values()))
+            .then(() => console.log('The CSV file ' + nomFichier + ' was written successfully')); 
     }
 
 }

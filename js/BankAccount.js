@@ -34,8 +34,9 @@ module.exports = class BankAccount {
 
 
 
-    ImportTransactionsCSV(nomFichier, accountName) {
-        this.accountImporter.ImportTransactionsCSV(nomFichier, accountName);        
+    async ImportTransactionsCSV(nomFichier, accountName) {
+        await this.accountImporter.ImportTransactionsCSV(nomFichier, accountName);      
+        this.ExportCSVTransactions("./testexport2.csv");  
         
     }   
 
@@ -48,9 +49,9 @@ module.exports = class BankAccount {
      * 
      * @param {string} nomFichier
      */
-    ExporterTransactionsCSV(nomFichier) {
+    ExportCSVTransactions(nomFichier) {
         let csvExport = new CsvAccountExporter();
-        csvExport.ExportCsv(nomFichier);
+        csvExport.ExportCsv(nomFichier, this.accountImporter.transactions);
       }
 
    

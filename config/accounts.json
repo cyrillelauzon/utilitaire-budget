@@ -1,11 +1,21 @@
 {
     "Compte chèque de Cyrille": {
         "Owner": "Cyrille Lauzon",
-        "Type": "Date",
+        "date": "Date",
+        "Description": "Description",
+        "Category": "Categorie",
+        "Deposit": "Debit",
+        "Withdraw": "Credit",
+        "Balance" : "Solde"
+    },
+    "Mastercard de Cyrille": {
+        "Owner": "Cyrille Lauzon",
+        "date": "Date",
         "Description": "Description",
         "Category": "Categorie",
         "Deposit": "Debit",
         "Withdraw": "Credit",
         "Balance" : "Solde"
     }
+
 }

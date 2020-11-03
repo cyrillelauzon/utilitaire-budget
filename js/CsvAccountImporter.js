@@ -40,39 +40,38 @@ module.exports = class CsvAccountImporter {
         const fs = require('fs');
 
         console.log("Début d'importation du fichier Csv: " + nomFichierCsv);
+        var accountImporter = this;
+        var name = accountName;
+        var nomFichier = nomFichierCsv
+        return new Promise((resolve, reject) => {
 
-        const p = new Promise((resolve, reject) => {
-
-            fs.createReadStream(nomFichierCsv)
+            fs.createReadStream(nomFichier)
                 .pipe(csv.parse({ headers: true }))
                 .on('error', (err) => {
-                    reject(p);
+                    reject();
                 })
                 .on('data', (row) => {
 
                     try {
-
                         //Processing of a new row of data 
                         let transaction = new Transaction();
-                        let mappedRow = this.accountsInfo.MapFieldNames(row, accountName);
+                        let mappedRow = accountImporter.accountsInfo.MapFieldNames(row, name);
                         transaction.SetTransaction(mappedRow);
 
-                        this.AddTransaction(transaction);
+                        accountImporter.AddTransaction(transaction);
 
                     } catch (err) {
                         console.debug("Transaction lue dans fichier CSV est invalide: " + err);
                     }
 
                 })
-                .on('end', async () => {
-                    //await this.AjouterTransactionsBD();
-                    //  this.ExporterTransactionsCSV("./testexport.csv");
-                    resolve(p);
+                .on('end', async (err) => {
+                    console.debug("resolve p: " + err);
+                    resolve();
+             
                 });
         }).catch(error => { console.log('caught promise', error.message); });
-
-        await p;
-
+      
 
     }
 
