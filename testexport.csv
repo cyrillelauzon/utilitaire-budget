@@ -1,166 +1,156 @@
 Date,Description,Categorie,Montant,Solde
-,Ikea,,,
-,Ikea,,,
-,Virement d'un autre compte,,,
-,Ikea,,,
-,Virement Interac,,,
-,Ikea,,,
-,Marche Royal,,,
-,Virement Interac,,,
-,Virement Interac,,,
-,Desjardins Assurance Generales,,,
-,Marche Royal,,,
-,Ikea,,,
-,,,,
-,Ikea,,,
-,Ikea,,,
-,Ikea,,,
-,Ikea,,,
-,Ikea,,,
-,Internet paiement facture,,,
-,Marche Royal,,,
-,Marche Royal,,,
-,Retrait au guichet,,,
-,Retrait au guichet,,,
-,Retrait au guichet,,,
-,Retrait au guichet,,,
-,Frais fixes,,,
-,Service virement interac,,,
-,Frais achat carte-client,,,
-,Frais de transaction,,,
-,Communauto,,,
-,Ikea,,,
-,Marche Royal,,,
-,Ikea,,,
-,Ikea,,,
-,BNI,,,
-,BNI,,,
-,Usat_td,,,
-,Vrac En Folie,,,
-,Starbucks,,,
-,BNI,,,
-,Usat_td,,,
-,Ikea,,,
-,Internet paiement facture,,,
-,Ikea,,,
-,Internet paiement facture,,,
-,Pizzeria Be,,,
-,Marche Royal,,,
-,The UPS Store,,,
-,Casse Croute,,,
-,Paiement autorise sur marge de credit,,,
-,PayPal Transfer,,,
-,Pharmaprix,,,
-,Canada,,,
-,Gouv. Quebec,,,
-,Ikea,,,
-,Virement Interac,,,
-,Virement Interac,,,
-,Virement d'un autre compte,,,
-,Ikea,,,
-,Usat_td,,,
-,Ikea,,,
-,Dollarama,,,
-,Marche Royal,,,
-,Ikea,,,
-,Desjardins Assurance Generales,,,
-,Ikea,,,
-,Internet paiement facture,,,
-,Internet paiement facture,,,
-,Ikea,,,
-,Ikea,,,
-,Ikea,,,
-,Ikea,,,
-,Frais fixes,,,
-,Service virement interac,,,
-,Frais achat carte-client,,,
-,Frais de transaction,,,
-,BNI,,,
-,Communauto,,,
-,Bottes Et Baske,,,
-,Lozeau,,,
-,SAQ,,,
-,Marche Royal,,,
-,Virement Interac,,,
-,Ikea,,,
-,Internet paiement facture,,,
-,UQAM,,,
-,Marche Royal,,,
-,Internet paiement facture,,,
-,Ikea,,,
-,Paiement autorise sur marge de credit,,,
-,Pharmaprix,,,
-,The Home Depot,,,
-,Ikea,,,
-,Marche Royal,,,
-,Petite Italie,,,
-,Salon,,,
-,Casse Croute,,,
-,PayPal Transfer,,,
-,The Home Depot,,,
-,Gouv. Quebec,,,
-,Virement d'un autre compte,,,
-,Virement Interac,,,
-,Virement Interac,,,
-,Virement Interac,,,
-,Internet paiement facture,,,
-,Ikea,,,
-,Casse Croute,,,
-,Jean Coutu,,,
-,Cafe Des Arts,,,
-,Internet paiement facture,,,
-,Internet paiement facture,,,
-,Desjardins Assurance Generales,,,
-,Cafe Des Arts,,,
-,Marche Royal,,,
-,Marche Royal,,,
-,Pharmaprix,,,
-,Marche Royal,,,
-,Da Giovanni Ori,,,
-,Ikea,,,
-,Decorateurs,,,
-,Cafe Des Arts,,,
-,Salon,,,
-,Coop Uqam Art,,,
-,Uqam Cafeteria,,,
-,Frais d'administration Interac,,,
-,Retrait au guichet,,,
-,Repro,,,
-,BNI,,,
-,Frais fixes,,,
-,Service virement interac,,,
-,Frais achat carte-client,,,
-,Frais de transaction,,,
-,Communauto,,,
-,Frais d'administration Interac,,,
-,Taximo Montreal,,,
-,Coop Uqam Art,,,
-,Coop Uqam Art,,,
-,Cafe Des Arts,,,
-,Retrait au guichet,,,
-,Uqam Cafeteria,,,
-,Ikea,,,
-,Ikea,,,
-,Ikea,,,
-,Ikea,,,
-,Marche Royal,,,
-,Resto L'eggsoeu,,,
-,St Houblon,,,
-,Usat_td,,,
-,Paiement autorise sur marge de credit,,,
-,Ikea,,,
-,Ikea,,,
-,Internet paiement facture,,,
-,Ikea,,,
-,Internet paiement facture,,,
-,PayPal Transfer,,,
-,Gouv. Quebec,,,
-,Virement Interac,,,
-,Internet virement credit,,,
-,Virement d'un autre compte,,,
-,Paiement des interets,,,
-,Virement d'un autre compte,,,
-,Paiement des interets,,,
-,Virement d'un autre compte,,,
-,Paiement des interets,,,
-,Internet virement debit,,,
+2020-02-03,Ikea,Ameublemento,-6.44,529.23
+2020-02-03,Ikea,Ameublemento,-6.44,529.23
+2020-01-31,Virement d'un autre compte,Transfert,-10,535.67
+2020-01-31,Ikea,Ameublemento,-12,545.67
+2020-01-31,Virement Interac,Transfert,-1025,557.67
+2020-01-29,Ikea,Ameublemento,-6.44,1582.67
+2020-01-27,Marche Royal,Épicerie,-7.44,1589.11
+2020-01-27,Virement Interac,Transfert,-120,1596.55
+2020-01-27,Virement Interac,Transfert,452.5,1716.55
+2020-01-27,Desjardins Assurance Generales,Finances,-36.13,1264.05
+2020-01-27,Marche Royal,Épicerie,-11.97,1300.18
+2020-01-27,Ikea,Ameublemento,-4,1312.15
+2020-01-24,Ikea,Ameublemento,-1.47,1316.15
+2020-01-24,Ikea,Ameublemento,-4,1317.62
+2020-01-24,Ikea,Ameublemento,911.89,1321.62
+2020-01-23,Ikea,Ameublemento,-4,409.73
+2020-01-22,Ikea,Ameublemento,-3.91,413.73
+2020-01-22,Internet paiement facture,Factures et services,-283.75,417.64
+2020-01-21,Marche Royal,Épicerie,-24.26,701.39
+2020-01-20,Marche Royal,Épicerie,-19.13,725.65
+2020-01-20,Retrait au guichet,Argent comptant,-300,744.78
+2020-01-20,Retrait au guichet,Argent comptant,-300,744.78
+2020-01-20,Retrait au guichet,Argent comptant,-300,744.78
+2020-01-20,Retrait au guichet,Argent comptant,-300,744.78
+2020-01-17,Frais fixes,Frais,-14.95,1044.78
+2020-01-17,Communauto,Non categorise,-92.25,1059.73
+2020-01-17,Ikea,Ameublemento,-4,1151.98
+2020-01-16,Marche Royal,Épicerie,-18.9,1155.98
+2020-01-16,Ikea,Ameublemento,-71.31,1174.88
+2020-01-16,Ikea,Ameublemento,-6.44,1246.19
+2020-01-16,BNI,Finances,-50,1252.63
+2020-01-16,BNI,Finances,-50,1252.63
+2020-01-15,Usat_td,Non categorise,-1.25,1302.63
+2020-01-14,Vrac En Folie,Épicerie,-7.12,1303.88
+2020-01-14,Starbucks,Cafes,-5.34,1311.00
+2020-01-16,BNI,Finances,-50,1252.63
+2020-01-10,Usat_td,Non categorise,-1.25,1316.34
+2020-01-10,Ikea,Ameublemento,-4,1317.59
+2020-01-10,Internet paiement facture,Factures et services,-600,1321.59
+2020-01-10,Ikea,Ameublemento,1179.94,1921.59
+2020-01-09,Internet paiement facture,Factures et services,-155.76,741.65
+2020-01-09,Pizzeria Be,Restaurant,-35.35,897.41
+2020-01-09,Marche Royal,Épicerie,-10.34,932.76
+2020-01-09,The UPS Store,Frais de livraison,-2.58,943.10
+2020-01-08,Casse Croute,Restaurants,-27,945.68
+2020-01-07,Paiement autorise sur marge de credit,Transfert,-22.68,972.68
+2020-01-07,PayPal Transfer,Transfert,-12.65,995.36
+2020-01-07,Pharmaprix,Pharmacie,-24.12,1008.01
+2020-01-03,Canada,Revenus,110.75,1032.13
+2020-01-03,Gouv. Quebec,Taxes,71.58,921.38
+2020-01-02,Ikea,Ameublemento,-3.91,849.80
+2020-01-02,Virement Interac,Transfert,450.0,853.71
+2020-01-02,Virement Interac,Transfert,-865,403.71
+2019-12-31,Virement d'un autre compte,Transfert,-10,1268.71
+2019-12-31,Ikea,Ameublemento,-6.44,1278.71
+2019-12-31,Usat_td,Non categorise,-1.25,1285.15
+2019-12-30,Ikea,Ameublemento,-12,1286.40
+2019-12-30,Dollarama,Magasinage,-3.45,1298.40
+2019-12-30,Marche Royal,Épicerie,-12.04,1301.85
+2019-12-27,Ikea,Ameublemento,-7.22,1313.89
+2019-12-27,Desjardins Assurance Generales,Finances,-38.51,1321.11
+2019-12-27,Ikea,Ameublemento,587.47,1359.62
+2019-12-27,Internet paiement facture,Factures et services,-300,772.15
+2019-12-27,Internet paiement facture,Factures et services,-119.15,1072.15
+2019-12-24,Ikea,Ameublemento,-4,1191.30
+2019-12-20,Ikea,Ameublemento,-4,1195.30
+2019-12-18,Ikea,Ameublemento,-3.91,1199.30
+2019-12-18,Ikea,Ameublemento,-4,1203.21
+2019-12-17,Frais fixes,Frais,-14.95,1207.21
+2019-12-17,BNI,Finances,-50,1222.16
+2019-12-16,Communauto,Non categorise,-92.25,1272.16
+2019-12-16,Bottes Et Baske,Non categorise,-37.94,1364.41
+2019-12-16,Lozeau,Non categorise,-34.49,1402.35
+2019-12-16,SAQ,Bar et alcool,-16,1436.84
+2019-12-16,Marche Royal,Épicerie,-7.98,1452.84
+2019-12-16,Virement Interac,Transfert,-130,1460.82
+2019-12-13,Ikea,Ameublemento,1028.18,1590.82
+2019-12-12,Internet paiement facture,Factures et services,-425.92,562.64
+2019-12-12,UQAM,Revenus,326.94,988.56
+2019-12-11,Marche Royal,Épicerie,-4.99,661.62
+2019-12-11,Internet paiement facture,Factures et services,-98.26,666.61
+2019-12-10,Ikea,Ameublemento,-4,764.87
+2019-12-09,Paiement autorise sur marge de credit,Transfert,-23.38,768.87
+2019-12-09,Pharmaprix,Pharmacie,-12.13,792.25
+2019-12-09,The Home Depot,Renovations,25.14,804.38
+2019-12-09,Ikea,Ameublemento,-4,779.24
+2019-12-09,Marche Royal,Épicerie,-3.99,783.24
+2019-12-09,Petite Italie,Nourriture et boisson,-5.4,787.23
+2019-12-06,Salon,Salon de coiffure,-3.39,792.63
+2019-12-05,Casse Croute,Non categorise,-20.4,796.02
+2019-12-05,PayPal Transfer,Transfert,-12.65,816.42
+2019-12-05,The Home Depot,Renovations,-58.33,829.07
+2019-12-05,Gouv. Quebec,Taxes,71.58,887.40
+2019-12-02,Virement d'un autre compte,Transfert,-10,815.82
+2019-12-02,Virement Interac,Transfert,-733,825.82
+2019-12-02,Virement Interac,Transfert,-865,1558.82
+2019-11-29,Virement Interac,Transfert,70.0,2423.82
+2019-11-29,Internet paiement facture,Factures et services,-200,2353.82
+2019-11-29,Ikea,Ameublemento,797.87,2553.82
+2019-11-28,Casse Croute,Non categorise,-23.3,1755.95
+2019-11-28,Jean Coutu,Pharmacie,-9.18,1779.25
+2019-11-28,Cafe Des Arts,Nourriture et boisson,-2.26,1788.43
+2019-11-26,Internet paiement facture,Factures et services,-119.15,1790.69
+2019-11-26,Internet paiement facture,Factures et services,-98.26,1909.84
+2019-11-26,Desjardins Assurance Generales,Finances,-38.55,2008.10
+2019-11-25,Cafe Des Arts,Nourriture et boisson,-4.52,2046.65
+2019-11-25,Marche Royal,Épicerie,-7.37,2051.17
+2019-11-25,Marche Royal,Épicerie,-8.17,2058.54
+2019-11-25,Pharmaprix,Pharmacie,-22.98,2066.71
+2019-11-22,Marche Royal,Épicerie,-3.64,2089.69
+2019-11-22,Da Giovanni Ori,Nourriture et boisson,-18.45,2093.33
+2019-11-22,Ikea,Ameublemento,1354.95,2111.78
+2019-11-21,Decorateurs,Non categorise,-27.54,756.83
+2019-11-21,Cafe Des Arts,Nourriture et boisson,-2.25,784.37
+2019-11-21,Salon,Salon de coiffure,-13.46,786.62
+2019-11-21,Coop Uqam Art,Non categorise,-11.21,800.08
+2019-11-19,Uqam Cafeteria,Restauration rapide,-17.19,811.29
+2019-11-18,Frais d'administration Interac,Frais,-2,828.48
+2019-11-18,Retrait au guichet,Argent comptant,-104,830.48
+2019-11-18,Repro,Non categorise,-7.25,934.48
+2019-11-18,BNI,Finances,-50,941.73
+2019-11-15,Frais fixes,Frais,-14.95,991.73
+2019-11-15,Communauto,Non categorise,-92.25,1006.68
+2019-11-15,Frais d'administration Interac,Frais,-2,1098.93
+2019-11-15,Taximo Montreal,Location d'auto et taxi,-21.65,1100.93
+2019-11-15,Coop Uqam Art,Non categorise,-3.73,1122.58
+2019-11-15,Coop Uqam Art,Non categorise,-56.34,1126.31
+2019-11-15,Cafe Des Arts,Nourriture et boisson,-2.25,1182.65
+2019-11-15,Retrait au guichet,Argent comptant,-124,1184.90
+2019-11-15,Uqam Cafeteria,Restauration rapide,-12.59,1308.90
+2019-11-15,Ikea,Ameublemento,587.47,1321.49
+2019-11-14,Ikea,Ameublemento,-1.47,734.02
+2019-11-14,Ikea,Ameublemento,-6.44,735.49
+2019-11-13,Ikea,Ameublemento,-12,741.93
+2019-11-12,Marche Royal,Épicerie,-12.94,753.93
+2019-11-12,Resto L'eggsoeu,Nourriture et boisson,-47.6,766.87
+2019-11-08,St Houblon,Non categorise,-21.16,814.47
+2019-11-08,Usat_td,Non categorise,-1.25,835.63
+2019-11-07,Paiement autorise sur marge de credit,Transfert,-22.59,836.88
+2019-11-07,Ikea,Ameublemento,-3.91,859.47
+2019-11-07,Ikea,Ameublemento,-4,863.38
+2019-11-07,Internet paiement facture,Factures et services,-119.15,867.38
+2019-11-06,Ikea,Ameublemento,-4,986.53
+2019-11-05,Internet paiement facture,Factures et services,-84.69,990.53
+2019-11-05,PayPal Transfer,Transfert,-12.65,1075.22
+2019-11-05,Gouv. Quebec,Taxes,71.58,1087.87
+2019-11-04,Virement Interac,Transfert,-400,1016.29
+2019-11-04,Internet virement credit,Transfert,400.0,1416.29
+2020-01-31,Virement d'un autre compte,Transfert,10.0,248.11
+2020-01-17,Paiement des interets,Revenu d'interets,0.02,238.11
+2019-12-31,Virement d'un autre compte,Transfert,10.0,238.09
+2019-12-17,Paiement des interets,Revenu d'interets,0.02,228.09
+2019-12-02,Virement d'un autre compte,Transfert,10.0,228.07
+2019-11-15,Paiement des interets,Revenu d'interets,0.04,218.07
+2019-11-04,Internet virement debit,Transfert,-400,218.03

@@ -8,15 +8,28 @@ module.exports = class Transaction {
     constructor() {
 
         this._id = "";              //a transaction ID built using other data
-        this.date = new Date();     
+        this.date = undefined;     
         this.Description = "";
         this.Category = "";
         this.Amount = 0;            //Transaction amount negative or positive
         this.Balance = 0;           //Account balance if available
     }
 
+    /**
+     * @description
+     * @returns
+     */
     GetID(){ return this._id;}
    
+
+    /**
+     * @description
+     * @returns
+     */
+    IsEmpty(){
+        return (this.Amount===0 || isNaN(this.Amount))
+    }
+
     /**
      * SetTransaction
      * @description wrapper method that set transaction data and converts unsigned debit and credit
@@ -55,8 +68,11 @@ module.exports = class Transaction {
     SetTransactionWithAmount(counter, date, description, category, amount, balance) {
         
         this.date = date;
+        
         this.Description = description;
         this.Category = category;
+        if(this.Category === ""){ this.Category="Aucune Catégorie";}
+
         this.Amount = amount;
         this.Balance = balance;
 

@@ -17,7 +17,7 @@
         },
         {
             "Description": "Ikea",
-            "Category": "Ameublement",
+            "Category": "Ameublemento",
             "Conditions": {
                 "Low": 15.1,
                 "isIncome": false
@@ -30,6 +30,10 @@
         {
             "Description": "Marche Royal",
             "Category": "Épicerie"
+        },
+        {
+            "Description": "Pizzeria Be",
+            "Category": "Restaurant"
         }
     ]
 }

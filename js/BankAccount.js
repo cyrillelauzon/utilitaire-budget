@@ -25,6 +25,7 @@ module.exports = class BankAccount {
         this.proprietaire = "proprietaire"; //proprio du compte
        
         this.transactions = new Map();
+        this.ruleParser = new RuleParser();
     }
 
 
@@ -49,9 +50,7 @@ module.exports = class BankAccount {
             fs.createReadStream(nomFichierCsv)
                 .pipe(csv.parse({ headers: true }))
                 .on('error', (err) => {
-                  //  reject(p);
-                  //  throw (new Error("ImportTransactionsCSV::> " + err));
-
+                    reject(p);
                 })
                 .on('data', (row) => {
 
@@ -66,14 +65,15 @@ module.exports = class BankAccount {
 
                 })
                 .on('end', async () => {
-
                     //await this.AjouterTransactionsBD();
-                    this.ExporterTransactionsCSV("./testexport.csv", this.transactions);
+                    this.ExporterTransactionsCSV("./testexport.csv");
                     resolve(p);
                 });
-        });
+        }).catch(error => { console.log('caught promise', error.message); });
 
         await p;
+
+
     }
 
 
@@ -86,22 +86,26 @@ module.exports = class BankAccount {
      */
     AjouterTransactionMap(transaction) {
         //Lors de l'importation du fichier CSV, si erreur lors de validation des données, ne pas ajouter ces transactions.
-        if (transaction === undefined) {
-            throw (new Error("AjouterTransactionMap::Objet transaction est vide"));
-        }
+        if (transaction === undefined) return;
+        if(transaction.IsEmpty() === true) return;
 
-        let counter = 0;
-        
         //Vérification si on a affaire à une double ou multiple transaction d'un meme montant le meme jour, au meme lieu
         //Si oui: creer un nouveau _id unique pour cette transaction
+        let counter = 0;
         let strID = transaction.GetID();
         while (this.transactions.has(strID)) {
            counter += 1;
            strID = Transaction.BuildTransactionID(counter, transaction.date, transaction.Description, transaction.Amount);
         }
 
+        
         let nouvTransaction = new Transaction();
         nouvTransaction.SetTransactionWithAmount(counter, transaction.date, transaction.Description, transaction.Category, transaction.Amount, transaction.Balance);
+        
+        //Parse new transaction to auto apply categories
+        nouvTransaction = this.ruleParser.ParseTransaction(nouvTransaction);
+
+        //Add transaction to map
         this.transactions.set(strID, nouvTransaction);
     }
 
@@ -113,7 +117,17 @@ module.exports = class BankAccount {
 
     }
 
-
+    /**
+     * @description Transform categories based on RuleParser object
+     */
+    /* ParseCategoryRules(){
+        let rules = new RuleParser();
+        rules.ParseBankAccount(this.GetTransactionsArray());
+    }
+ */
+    GetTransactionsArray(){
+        return Array.from(this.transactions.values());
+    }
 
     /**
      * ExporterTransactionsCSV
@@ -122,15 +136,17 @@ module.exports = class BankAccount {
        https://stackabuse.com/reading-and-writing-csv-files-with-node-js/
      * 
      * @param {string} nomFichier
-     * @param {Map} transactions
      */
-    ExporterTransactionsCSV(nomFichier, transactions) {
+    ExporterTransactionsCSV(nomFichier) {
 
         const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+        let arrTransactions = this.GetTransactionsArray();
+
+
         const csvWriter = createCsvWriter({
             path: nomFichier,
             header: [{
-                    id: 'Date',
+                    id: 'date',
                     title: 'Date'
                 },
                 {
@@ -138,22 +154,21 @@ module.exports = class BankAccount {
                     title: 'Description'
                 },
                 {
-                    id: 'Categorie',
+                    id: 'Category',
                     title: 'Categorie'
                 },
                 {
-                    id: 'Montant',
+                    id: 'Amount',
                     title: 'Montant'
                 },
                 {
-                    id: 'Solde',
+                    id: 'Balance',
                     title: 'Solde'
                 }
             ]
         });
-        //TODO réécrire fin de fonction avec des Promise et await
         csvWriter
-            .writeRecords(Array.from(transactions.values()))
+            .writeRecords(Array.from(this.transactions.values()))
             .then(() => console.log('The CSV file ' + nomFichier + ' was written successfully'));
     }
 

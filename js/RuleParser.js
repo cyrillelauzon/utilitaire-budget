@@ -1,9 +1,7 @@
 
 const Util = require('./Util');
 let util = new Util;
-
-
-
+const Transaction = require('./Transaction');
 
 module.exports = class RuleParser {
 
@@ -17,20 +15,36 @@ module.exports = class RuleParser {
     }
 
     
-    /**
-     * @description Parse all the rules in the parser and apply them 
-     *              to the bank account
-     */
-    ParseBankAccount() {
 
+/*     ParseBankAccount(transactions) {
+
+        for(let rule of this.parseRules['rules']){
+            
+            console.log("New rule: " + rule['Description'])
+            for(let transaction of transactions){
+
+                console.log("Testing transaction " + rule['Description'] + "Transaction: " + transaction['Description'])
+                if(rule['Description']===transaction['Description']){
+                    transaction['Category'] = rule['Category'];
+                }
+            }  
+        }
+          
     }
-
+ */
 
     /**
      * @description Parse 1 indivudal rule and return the affected transaction
+     * @paran {transaction}
+     * @returns {transaction}
      */
-    ParseRule(){
-
+    ParseTransaction(transaction){
+        for(let rule of this.parseRules['rules']){
+            if(rule['Description']===transaction['Description']){
+                transaction['Category'] = rule['Category'];
+            }
+        }
+        return transaction;
     }
 
 

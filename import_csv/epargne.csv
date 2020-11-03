@@ -1,8 +1,8 @@
 Date,Description,Categorie,Debit,Credit,Solde
-2020-02-03,Ikea,Ameublement,6.44,0,529.23
+2020-02-03,Ikea,,6.44,0,529.23
 2020-02-03,Ikea,Ameublement,6.44,0,529.23
 2020-01-31,Virement d'un autre compte,Transfert,10.0,0,535.67
-2020-01-31,Ikea,Ameublement,12.0,0,545.67
+2020-01-31,Ikea,,12.0,0,545.67
 2020-01-31,Virement Interac,Transfert,1025.0,0,557.67
 2020-01-29,Ikea,Ameublement,6.44,0,1582.67
 2020-01-27,Marche Royal,Epicerie,7.44,0,1589.11
