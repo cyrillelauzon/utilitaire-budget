@@ -35,9 +35,12 @@ module.exports = class BankAccount {
 
 
     async ImportTransactionsCSV(nomFichier, accountName) {
-        await this.accountImporter.ImportTransactionsCSV(nomFichier, accountName);      
-        this.ExportCSVTransactions("./testexport2.csv");  
-        
+        //await this.accountImporter.ImportTransactionsCSV(nomFichier, accountName);      
+        await this.accountImporter.ImportTransactionsCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille");
+        await this.accountImporter.ImportTransactionsCSV("./import_csv/credit.csv", "Mastercard de Cyrille");
+
+        this.ExportCSVTransactions("./testexport2.csv");
+
     }   
 
 

@@ -1,6 +1,7 @@
 {
     "Compte chèque de Cyrille": {
         "Owner": "Cyrille Lauzon",
+        "csv-delimiter": ",",
         "date": "Date",
         "Description": "Description",
         "Category": "Categorie",
@@ -9,7 +10,8 @@
         "Balance" : "Solde"
     },
     "Mastercard de Cyrille": {
-        "Owner": "Cyrille Lauzon",
+        "Owner": "Cyrille Labrosse",
+        "csv-delimiter": ";",
         "date": "Date",
         "Description": "Description",
         "Category": "Categorie",

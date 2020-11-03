@@ -42,11 +42,14 @@ module.exports = class CsvAccountImporter {
         console.log("Début d'importation du fichier Csv: " + nomFichierCsv);
         var accountImporter = this;
         var name = accountName;
-        var nomFichier = nomFichierCsv
+        var nomFichier = nomFichierCsv;
+        var delimitercsv = this.accountsInfo.accountsInfo[accountName]["csv-delimiter"];
+        var a = "b";
+
         return new Promise((resolve, reject) => {
 
             fs.createReadStream(nomFichier)
-                .pipe(csv.parse({ headers: true }))
+                .pipe(csv.parse({ headers: true, delimiter: delimitercsv }))
                 .on('error', (err) => {
                     reject();
                 })
