@@ -1,6 +1,16 @@
+/*-------------------------------------------------------------------------
+Classe: RuleParser
+Description: 
+Modify transactions using a sets of rules defined in config/rules.json
+If the rule is found in the json file and the transaction meets the conditions,
+the rule is applied to the transaction. Handy to autoapply categories based on description field.
+ex: apply grocery category to all transactions made at grocery store
+    apply Salary category only if transaction amount is > 0
 
+Priority is defined by order in which each rule appears in the conf file
+starting from top to bottom of file.
+-------------------------------------------------------------------------*/
 const Util = require('./Util');
-let util = new Util;
 const Transaction = require('./Transaction');
 
 module.exports = class RuleParser {
@@ -9,29 +19,12 @@ module.exports = class RuleParser {
      * @constructor
      * @descriptionCreates an instance of RuleParser.
      */
-    constructor() {
-        //Read the parsing rules that will be applied sequentially by the parser
-        this.parseRules = util.ReadJsonObject("./config/rules.json");
+    constructor(rulesFileName) {
+
+        //Read the parsing rules conf files 
+        this.parseRules = Util.ReadJsonObject(rulesFileName);
     }
 
-    
-
-/*     ParseBankAccount(transactions) {
-
-        for(let rule of this.parseRules['rules']){
-            
-            console.log("New rule: " + rule['Description'])
-            for(let transaction of transactions){
-
-                console.log("Testing transaction " + rule['Description'] + "Transaction: " + transaction['Description'])
-                if(rule['Description']===transaction['Description']){
-                    transaction['Category'] = rule['Category'];
-                }
-            }  
-        }
-          
-    }
- */
 
     /**
      * @description Parse 1 indivudal rule and return the affected transaction
@@ -41,11 +34,57 @@ module.exports = class RuleParser {
     ParseTransaction(transaction){
         for(let rule of this.parseRules['rules']){
             if(rule['Description']===transaction['Description']){
-                transaction['Category'] = rule['Category'];
+                if(this.ParseConditions(transaction, rule)){
+                    transaction['Category'] = rule['Category'];
+                }
             }
         }
         return transaction;
     }
+
+
+    /**
+     * @description returns true if rule meets all defined conditions to be applied
+    * @param {Transaction} transaction
+    * @param {Array} rule
+     * @returns {boolean}
+     */
+    ParseConditions(transaction, rule){
+        let conditions = rule['Conditions'];
+
+        if(typeof conditions === 'object' && conditions !== null ){
+            
+            //isIncome field is defined:
+            if(conditions['isIncome'] !== undefined){
+                //Condition: IsIncome must be true
+                if (conditions['isIncome'] === true){
+                    let isIncome = transaction.IsIncome();
+                    if (!isIncome) return false;
+                }
+                
+                //Condition: IsIncome must be false
+                if (conditions['isIncome'] === false){
+                    let isIncome = transaction.IsIncome();
+                    if (isIncome) return false;
+                }
+            }
+
+            //if defined: Transaction amount must not be lower then low field
+            if(conditions['Low'] !== undefined){
+                let lowestAmount = conditions['Low'];
+                if(transaction.Amount < lowestAmount) return false;
+            }
+
+            //if defined: Transaction amount must not be higher then high field
+            if(conditions['High'] !== undefined){
+                let highestAmount = conditions['High'];
+                if(transaction.Amount > highestAmount) return false;
+            }
+        }
+         
+        return true;
+    }
+
 
 
 }

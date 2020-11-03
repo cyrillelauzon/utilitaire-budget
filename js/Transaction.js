@@ -13,21 +13,32 @@ module.exports = class Transaction {
         this.Category = "";
         this.Amount = 0;            //Transaction amount negative or positive
         this.Balance = 0;           //Account balance if available
+        
+        this.Owner = "";        
+        this.Tags = "";            //To be able to easily tag and group certain transactions : ex  holiday spendings...
     }
 
     /**
      * @description
-     * @returns
+     * @returns {string}
      */
     GetID(){ return this._id;}
    
 
     /**
      * @description
-     * @returns
+     * @returns {boolean}
      */
     IsEmpty(){
         return (this.Amount===0 || isNaN(this.Amount))
+    }
+
+    /**
+     * @description return true if transaction is an income
+     * @returns {boolean}
+     */
+    IsIncome(){
+        return this.Amount > 0;
     }
 
     /**
@@ -35,49 +46,61 @@ module.exports = class Transaction {
      * @description wrapper method that set transaction data and converts unsigned debit and credit
      *              to signed amount variable
      * 
+     * @param {array} newTransaction information
      * @param {number} counter
-     * @param {Date} date
-     * @param {string} description
-     * @param {string} category
-     * @param {number} debit
-     * @param {number} credit
-     * @param {number} balance
      * @throws {Error} Paramètre invalid
      * 
      */
-    SetTransaction(counter, date, description, category, debit, credit, balance) {
+    SetTransaction(newTransaction, counter=0) {
 
         //Colonnes débit et crédit sont combinées dans une colonne amount négatif ou positif
-        const amount = credit > 0 ? credit : (-1 * debit);
-        this.SetTransactionWithAmount(counter, date, description, category, amount, balance);
+        const amount = newTransaction['Withdraw'] > 0 ? newTransaction['Withdraw'] : (-1 * newTransaction['Deposit']);
+        this.SetTransactionWithAmount(newTransaction, counter);
     }
+
 
     /**
      * SetTransactionWithAmount
      * @description Simple set of transaction data using an amount parameter instead of debit credit
      * 
+     * @param {array} newTransaction information
      * @param {number} counter
-     * @param {Date} date
-     * @param {string} description
-     * @param {string} category
-     * @param {number} amount
-     * @param {number} balance
      * @throws {Error} Paramètre invalide, s'ils ne répondent pas au schéma de validation.
      * 
      */
-    SetTransactionWithAmount(counter, date, description, category, amount, balance) {
+    SetTransactionWithAmount(newTransaction, counter=0) {
         
-        this.date = date;
+        this.date = newTransaction['date'];
         
-        this.Description = description;
-        this.Category = category;
+        this.Description = newTransaction['Description'];
+        this.Category  = newTransaction['Category'];
         if(this.Category === ""){ this.Category="Aucune Catégorie";}
 
-        this.Amount = amount;
-        this.Balance = balance;
+        this.Amount = newTransaction['Amount'];
+        this.Balance = newTransaction['Balance'];
+        this.Owner = newTransaction['Owner'];
+        this.Tags = newTransaction['Tags'];
 
         this.SetTransactionID(counter);
     }
+
+
+    /**
+     * @description
+     * @param {Transaction} transaction
+     */
+    CopyTransaction(transaction){
+        this.date = transaction.date;
+        this.Description = transaction.Description;
+        this.Category = transaction.Category;
+        this.Amount = transaction.Amount;
+        this.Balance = transaction.Balance;
+        this.Owner = transaction.Owner;
+        this.Tags = transaction.Tags;
+        this._id = transaction._id;
+    }
+
+
 
     /**
      * SetTransactionID

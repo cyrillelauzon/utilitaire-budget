@@ -11,15 +11,15 @@
             "Description": "Ikea",
             "Category": "Restaurant",
             "Conditions": {
-                "High": 15,
+                "Low": -15,
                 "isIncome": false
             }
         },
         {
             "Description": "Ikea",
-            "Category": "Ameublemento",
+            "Category": "Ameublement",
             "Conditions": {
-                "Low": 15.1,
+                "High": -15.1,
                 "isIncome": false
             }
         },

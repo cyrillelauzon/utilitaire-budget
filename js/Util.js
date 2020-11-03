@@ -9,7 +9,12 @@ module.exports = class Util {
     }
 
 
-    ReadJsonObject(filename){
+    /**
+     * @description Read a JSON object from file
+     * @param {string} filename
+     * @returns {object}
+     */
+    static ReadJsonObject(filename){
         const fs = require('fs');
         var jobj = undefined;
                     
@@ -21,7 +26,6 @@ module.exports = class Util {
             console.log("Error reading file from disk:", err)
         }
 
-        console.log(jobj);
         return jobj;
     }
 
