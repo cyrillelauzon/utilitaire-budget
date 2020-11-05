@@ -1,4 +1,8 @@
-
+/*-------------------------------------------------------------------------
+Class Transaction
+Description: 
+Encapsulation of a single bank Transaction
+-------------------------------------------------------------------------*/
 module.exports = class Transaction {
 
     /**
@@ -134,7 +138,7 @@ module.exports = class Transaction {
         //Padd counter to 2 digits:
         let strcounter = "";
         counter < 10 ? strcounter = "0" + String(counter) : strcounter = String(counter);
-        newTransactionID = strcounter + String(date) + String(description) + String(amount);
+        newTransactionID =  String(date) + String(description) + String(amount) + strcounter;
 
         return newTransactionID;
     }

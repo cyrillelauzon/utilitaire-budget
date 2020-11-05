@@ -1,24 +1,25 @@
 /*-------------------------------------------------------------------------
-Classe: BankAccount
+Class: AccountsBook
 Description: 
-Simple wrapper class to regroup and enable the import of multiple CSV files using 
-specific parameters for each account or account's owner
+The object regroups all banking transactions for one user into a single collection
+Delegates the book management to other subclasses (AccountCSvImporter, AccountMysqlDB, AccountRulesParser, AccountsBookinfo...etc)
 -------------------------------------------------------------------------*/
 
 
 const Transaction = require('./Transaction');
-const RuleParser = require('./RuleParser');
-const CsvAccountImporter = require('./CsvAccountImporter');
-const CsvAccountExporter = require('./CsvAccountExporter');
+const AccountRulesParser = require('./AccountRulesParser');
+const AccountCsvImporter = require('./AccountCsvImporter');
+const AccountCsvExporter = require('./AccountCsvExporter');
+const AccountMySqlDB = require('./AccountMySqlDB');
 
 
 
-module.exports = class BankAccount {
+module.exports = class AccountsBook {
 
 
     /**
      * @constructor
-     * @descriptionCreates an instance of BankAccount.
+     * @descriptionCreates an instance of AccountsBook.
      */
     constructor() {
 
@@ -26,10 +27,14 @@ module.exports = class BankAccount {
         this.description = "description"; //Description de lutilisateur
         this.nom = "nom"; //nom du compte
         this.proprietaire = "proprietaire"; //proprio du compte
-       
-    //    this.transactions = new Map();
-        this.accountImporter = new CsvAccountImporter("./config/rules.json", './config/accounts.json');
-        //this.ruleParser = new RuleParser();
+
+        //    this.transactions = new Map();
+        this.accountImporter = new AccountCsvImporter("./config/rules.json", './config/accounts.json');
+        //this.ruleParser = new AccountRulesParser();
+
+        this.accountMySql = new AccountMySqlDB();
+        this.accountMySql.Connect();
+
     }
 
 
@@ -41,7 +46,7 @@ module.exports = class BankAccount {
 
         this.ExportCSVTransactions("./testexport2.csv");
 
-    }   
+    }
 
 
     /**
@@ -53,9 +58,9 @@ module.exports = class BankAccount {
      * @param {string} nomFichier
      */
     ExportCSVTransactions(nomFichier) {
-        let csvExport = new CsvAccountExporter();
+        let csvExport = new AccountCsvExporter();
         csvExport.ExportCsv(nomFichier, this.accountImporter.transactions);
-      }
+    }
 
-   
+
 }

@@ -1,3 +1,8 @@
+/*-------------------------------------------------------------------------
+Class Util
+Description: 
+Misc helper functions regrouped in static methods
+-------------------------------------------------------------------------*/
 
 module.exports = class Util {
 

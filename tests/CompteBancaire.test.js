@@ -1,12 +1,12 @@
 // @ts-nocheck
-const BankAccount = require('../BankAccount');
+const AccountsBook = require('../AccountsBook');
 
-let bankAccount = new BankAccount;
+let bankAccount = new AccountsBook;
 
 
 /*-------------------------------------------------------------------------
     Test: ImportTransactionsCSV
-	-------------------------------------------------------------------------*/
+    -------------------------------------------------------------------------*/
 describe('ImportTransactionsCSV', () => {
 
     it("Devrait lancer une exception pour un fichier inexistant", () => {
@@ -20,7 +20,7 @@ describe('ImportTransactionsCSV', () => {
 
 /*-------------------------------------------------------------------------
     Test: CreerIDTransaction
-	-------------------------------------------------------------------------*/
+    -------------------------------------------------------------------------*/
 describe('CreerIDTransaction', () => {
     it("Devrait creer une chaine ID qui commence par un compteur à 2 digits a partir d'un compteur entre 0 et 9 inclusivement", () => {
         const resultat = bankAccount.CreerIDTransaction(1, "2020-01-14", "Transaction Test", 1);
@@ -65,7 +65,7 @@ describe('CreerIDTransaction', () => {
 
 /*-------------------------------------------------------------------------
     Test: CreerTransaction
-	-------------------------------------------------------------------------*/
+    -------------------------------------------------------------------------*/
 describe('CreerTransaction', () => {
     it("Devrait creer un objet transaction avec des parametres valides", () => {
         const resultat = bankAccount.CreerTransaction(0, "2019-02-24", "Transaction Test", "Categorie", 1, 0, 10);

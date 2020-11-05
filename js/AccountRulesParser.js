@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------
-Classe: RuleParser
+Class: AccountRulesParser
 Description: 
 Modify transactions using a sets of rules defined in config/rules.json
 If the rule is found in the json file and the transaction meets the conditions,
@@ -13,11 +13,11 @@ starting from top to bottom of file.
 const Util = require('./Util');
 const Transaction = require('./Transaction');
 
-module.exports = class RuleParser {
+module.exports = class AccountRulesParser {
 
     /**
      * @constructor
-     * @descriptionCreates an instance of RuleParser.
+     * @descriptionCreates an instance of AccountRulesParser.
      */
     constructor(rulesFileName) {
 
@@ -31,10 +31,10 @@ module.exports = class RuleParser {
      * @paran {transaction}
      * @returns {transaction}
      */
-    ParseTransaction(transaction){
-        for(let rule of this.parseRules['rules']){
-            if(rule['Description']===transaction['Description']){
-                if(this.ParseConditions(transaction, rule)){
+    ParseTransaction(transaction) {
+        for (let rule of this.parseRules['rules']) {
+            if (rule['Description'] === transaction['Description']) {
+                if (this.ParseConditions(transaction, rule)) {
                     transaction['Category'] = rule['Category'];
                 }
             }
@@ -49,39 +49,39 @@ module.exports = class RuleParser {
     * @param {Array} rule
      * @returns {boolean}
      */
-    ParseConditions(transaction, rule){
+    ParseConditions(transaction, rule) {
         let conditions = rule['Conditions'];
 
-        if(typeof conditions === 'object' && conditions !== null ){
-            
+        if (typeof conditions === 'object' && conditions !== null) {
+
             //isIncome field is defined:
-            if(conditions['isIncome'] !== undefined){
+            if (conditions['isIncome'] !== undefined) {
                 //Condition: IsIncome must be true
-                if (conditions['isIncome'] === true){
+                if (conditions['isIncome'] === true) {
                     let isIncome = transaction.IsIncome();
                     if (!isIncome) return false;
                 }
-                
+
                 //Condition: IsIncome must be false
-                if (conditions['isIncome'] === false){
+                if (conditions['isIncome'] === false) {
                     let isIncome = transaction.IsIncome();
                     if (isIncome) return false;
                 }
             }
 
             //if defined: Transaction amount must not be lower then low field
-            if(conditions['Low'] !== undefined){
+            if (conditions['Low'] !== undefined) {
                 let lowestAmount = conditions['Low'];
-                if(transaction.Amount < lowestAmount) return false;
+                if (transaction.Amount < lowestAmount) return false;
             }
 
             //if defined: Transaction amount must not be higher then high field
-            if(conditions['High'] !== undefined){
+            if (conditions['High'] !== undefined) {
                 let highestAmount = conditions['High'];
-                if(transaction.Amount > highestAmount) return false;
+                if (transaction.Amount > highestAmount) return false;
             }
         }
-         
+
         return true;
     }
 

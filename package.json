@@ -10,6 +10,7 @@
     "fast-csv": "^4.0.2",
     "jslint": "^0.12.1",
     "mongoose": "^5.8.11",
+    "mysql": "^2.18.1",
     "yargs": "^16.1.0"
   },
   "devDependencies": {

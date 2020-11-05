@@ -1,29 +1,27 @@
 /*-------------------------------------------------------------------------
-Classe: CsvAccountImporter
+Class: AccountCsvImporter
 Description: 
 Imports and sanitize a csv file containing banking transactions
-
-//Utilise le RuleParser et rules.csv.
-//Pour l'instant le fichiers categories n'a pas d'utilité
 -------------------------------------------------------------------------*/
 
 
 const Util = require('./Util');
 const Transaction = require('./Transaction');
-const RuleParser = require('./RuleParser');
-const AccountsInfo = require('./AccountsInfo');
+const AccountRulesParser = require('./AccountRulesParser');
+const AccountsBookInfo = require('./AccountsBookInfo');
+const { rejects } = require('assert');
 
-module.exports = class CsvAccountImporter {
+module.exports = class AccountCsvImporter {
 
     /**
-     *Creates an instance of CsvAccountImporter.
+     *Creates an instance of AccountCsvImporter.
      * @param {string} rulesFileName
      * @param {string} accountsFileName
      */
     constructor(rulesFileName, accountsFileName) {
         this.transactions = new Map();
-        this.ruleParser = new RuleParser(rulesFileName);
-        this.accountsInfo = new AccountsInfo(accountsFileName);
+        this.ruleParser = new AccountRulesParser(rulesFileName);
+        this.accountsInfo = new AccountsBookInfo(accountsFileName);
     }
 
     /**
@@ -39,17 +37,15 @@ module.exports = class CsvAccountImporter {
         const csv = require('fast-csv');
         const fs = require('fs');
 
-        console.log("Début d'importation du fichier Csv: " + nomFichierCsv);
-        var accountImporter = this;
-        var name = accountName;
-        var nomFichier = nomFichierCsv;
-        var delimitercsv = this.accountsInfo.accountsInfo[accountName]["csv-delimiter"];
-        var a = "b";
+        console.log("Importing CSV File: " + nomFichierCsv);
 
+        var accountImporter = this;
+        var accountName = accountName;
+        var nomFichierCsv = nomFichierCsv;
         return new Promise((resolve, reject) => {
 
-            fs.createReadStream(nomFichier)
-                .pipe(csv.parse({ headers: true, delimiter: delimitercsv }))
+            fs.createReadStream(nomFichierCsv)
+                .pipe(csv.parse({ headers: true, delimiter: accountImporter.accountsInfo.GetDelimiter(accountName) }))
                 .on('error', (err) => {
                     reject();
                 })
@@ -58,23 +54,21 @@ module.exports = class CsvAccountImporter {
                     try {
                         //Processing of a new row of data 
                         let transaction = new Transaction();
-                        let mappedRow = accountImporter.accountsInfo.MapFieldNames(row, name);
+                        let mappedRow = accountImporter.accountsInfo.MapFieldNames(row, accountName);
                         transaction.SetTransaction(mappedRow);
 
                         accountImporter.AddTransaction(transaction);
 
                     } catch (err) {
-                        console.debug("Transaction lue dans fichier CSV est invalide: " + err);
+                        //console.debug("Transaction lue dans fichier CSV est invalide: " + err);
                     }
 
                 })
-                .on('end', async (err) => {
-                    console.debug("resolve p: " + err);
+                .on('end', async () => {
                     resolve();
-             
+
                 });
-        }).catch(error => { console.log('caught promise', error.message); });
-      
+        }).catch(error => { console.log('Error importing CSV file: ', error.message); });
 
     }
 
@@ -100,7 +94,7 @@ module.exports = class CsvAccountImporter {
             strID = Transaction.BuildTransactionID(counter, transaction.date, transaction.Description, transaction.Amount);
         }
 
-        //Create a new transaction that reflects the duplicate check
+        //Create a new transaction object that reflects the duplicate check
         let nouvTransaction = new Transaction();
         nouvTransaction.CopyTransaction(transaction);
         nouvTransaction.SetTransactionID(counter);

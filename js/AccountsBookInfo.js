@@ -1,19 +1,19 @@
 /*-------------------------------------------------------------------------
 Class AccountInfo
 Description: 
-Regroup and read from bank account's metadata from config files
+Regroup and read all of an AccountsBook metadata from json config files
 -------------------------------------------------------------------------*/
 
 const Util = require('./Util');
 
 
-module.exports = class AccountsInfo {
+module.exports = class AccountsBookInfo {
 
     /**
-     *Creates an instance of CsvAccountExporter.
+     *Creates an instance of AccountCsvExporter.
      */
-    constructor(configFileName){
-        this.accountsInfo = Util.ReadJsonObject(configFileName);
+    constructor(configFileName) {
+        this.info = Util.ReadJsonObject(configFileName);
     }
 
 
@@ -27,10 +27,11 @@ module.exports = class AccountsInfo {
      * @param {Array} newDataRow
      * @param {string} accountName
      */
-    MapFieldNames(newDataRow, accountName){
-        let accountInfo = this.accountsInfo[accountName];        
+    MapFieldNames(newDataRow, accountName) {
+        let accountInfo = this.info[accountName];
         let mappedData = new Array;
 
+        mappedData['Owner'] = this.GetOwner(accountName);
         mappedData['date'] = newDataRow[accountInfo['date']];
         mappedData['Description'] = newDataRow[accountInfo['Description']];
         mappedData['Category'] = newDataRow[accountInfo['Category']];
@@ -42,5 +43,22 @@ module.exports = class AccountsInfo {
         return mappedData;
     }
 
-    
+    /**
+     * @description
+     * @param {string} accountName
+     * @returns {string}
+     */
+    GetDelimiter(accountName) {
+        return this.info[accountName]["csv-delimiter"];
+    }
+
+    /**
+     * @description
+     * @param {string} accountName
+     * @returns {string}
+     */
+    GetOwner(accountName) {
+        return this.info[accountName]["Owner"];
+    }
+
 }
