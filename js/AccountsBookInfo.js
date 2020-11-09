@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------
-Class AccountInfo
+Class AccountBookInfo
 Description: 
 Regroup and read all of an AccountsBook metadata from json config files
 -------------------------------------------------------------------------*/
@@ -31,14 +31,15 @@ module.exports = class AccountsBookInfo {
         let accountInfo = this.info[accountName];
         let mappedData = new Array;
 
-        mappedData['Owner'] = this.GetOwner(accountName);
+        mappedData['owner'] = this.GetOwner(accountName);
+        
         mappedData['date'] = newDataRow[accountInfo['date']];
-        mappedData['Description'] = newDataRow[accountInfo['Description']];
-        mappedData['Category'] = newDataRow[accountInfo['Category']];
-        mappedData['Amount'] = newDataRow[accountInfo['Amount']];
-        mappedData['Deposit'] = newDataRow[accountInfo['Deposit']];
-        mappedData['Withdraw'] = newDataRow[accountInfo['Withdraw']];
-        mappedData['Balance'] = newDataRow[accountInfo['Balance']];
+        mappedData['description'] = newDataRow[accountInfo['description']];
+        mappedData['category'] = newDataRow[accountInfo['category']];
+        mappedData['amount'] = newDataRow[accountInfo['amount']];
+        mappedData['deposit'] = newDataRow[accountInfo['deposit']];
+        mappedData['withdraw'] = newDataRow[accountInfo['withdraw']];
+        mappedData['balance'] = newDataRow[accountInfo['balance']];
 
         return mappedData;
     }
@@ -50,6 +51,15 @@ module.exports = class AccountsBookInfo {
      */
     GetDelimiter(accountName) {
         return this.info[accountName]["csv-delimiter"];
+    }
+
+     /**
+     * @description
+     * @param {string} accountName
+     * @returns {string}
+     */
+    GetDateFormat(accountName) {
+        return this.info[accountName]["date-format"];
     }
 
     /**

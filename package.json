@@ -2,19 +2,19 @@
   "name": "comptebancaire",
   "version": "0.0.1",
   "description": "",
-  "main": "budget_cli.js",
+  "main": "app.js",
   "dependencies": {
-    "@types/jest": "^25.1.2",
-    "csv-parser": "^2.3.2",
+    "@types/jest": "^26.0.15",
+    "csv-parser": "^2.3.3",
     "csv-writer": "^1.6.0",
-    "fast-csv": "^4.0.2",
+    "fast-csv": "^4.3.5",
     "jslint": "^0.12.1",
     "mongoose": "^5.8.11",
     "mysql": "^2.18.1",
     "yargs": "^16.1.0"
   },
   "devDependencies": {
-    "jest": "^25.1.0"
+    "jest": "^26.6.3"
   },
   "scripts": {
     "test": "jest"

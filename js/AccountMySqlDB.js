@@ -33,6 +33,7 @@ module.exports = class AccountMySqlDB {
 
             console.log('connected as id ' + connection.threadId);
 
+            
             connection.end(function (err) {
                 console.log('disconneted ' + connection.threadId);
                 // The connection is terminated now
@@ -40,5 +41,7 @@ module.exports = class AccountMySqlDB {
         });
 
     }
+
+    
 
 }

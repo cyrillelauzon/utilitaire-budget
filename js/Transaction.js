@@ -1,3 +1,4 @@
+// @ts-nocheck
 /*-------------------------------------------------------------------------
 Class Transaction
 Description: 
@@ -5,143 +6,180 @@ Encapsulation of a single bank Transaction
 -------------------------------------------------------------------------*/
 module.exports = class Transaction {
 
+    #_id;
+    #date;
+    #description;
+    #category;
+    #amount;
+    #balance;       //Account balance if available
+    #owner;
+    #tags;          //To be able to easily tag and group certain transactions : ex  holiday spendings...
+    #counter;       //To manage duplicates of same day transactions
+
+
     /**
      * @constructor
-     * @descriptionCreates an instance of transaction.
+     *Creates an instance of Transaction.
+     * @param {string} date in a YYYY-MM-DD format /, - and space delimiters accepted
+     * @param {string} dateFormat
+     * @param {string} description
+     * @param {string} category
+     * @param {number} withdraw
+     * @param {number} deposit
+     * @param {string} owner
+     * @param {string} tags
+     * @param {number} [balance=undefined]
+     * @param {number} [amount=undefined]
+     * @param {number} [counter=0]
+     * @throws error if parameters are invalid
      */
-    constructor() {
+    constructor(date, dateFormat, description, category, withdraw, deposit, owner, tags, balance = undefined, amount = undefined, counter = 0) {
 
-        this._id = "";              //a transaction ID built using other data
-        this.date = undefined;     
-        this.Description = "";
-        this.Category = "";
-        this.Amount = 0;            //Transaction amount negative or positive
-        this.Balance = 0;           //Account balance if available
+        this.#date = this.#ProcessDate(date, dateFormat);
+
+        this.#description = description;
+        this.#category = category;
+        if (this.#category === "") { this.#category = "Aucune Catégorie"; }
+
+        this.#amount = amount;
+        if (amount === undefined) {
+            this.#amount = withdraw > 0 ? withdraw : (-1 * deposit);
+        }
+
+        this.#balance = balance;
+        this.#owner = owner;
+        this.#tags = tags;
+
+        this.#counter = counter;
+        this.SetID(counter);
+    }
+
+
+    /**
+     * @description
+     * @param {string} strDate the new date string
+     * @param {string} dateFormat simple string delimited by - to specify format
+     * @returns
+     */
+    #ProcessDate(strDate, dateFormat) {
         
-        this.Owner = "";        
-        this.Tags = "";            //To be able to easily tag and group certain transactions : ex  holiday spendings...
+        if (strDate.length != 10) throw new Error("Transaction: Date string length is invalid");
+        
+        //Interpret date format: for simplicity: valid strings are:
+        //(YYYY MM DD)
+        //Delimiter is -
+        let formatTokens = dateFormat.split("-");
+        let counter = 0;
+        let year = -1; 
+        let month = -1; 
+        let day = -1;
+        for (let token of formatTokens) {
+            if (token === "YYYY") year = counter;
+            if (token === "MM") month = counter;
+            if (token === "DD") day = counter;
+            if (!(token === "YYYY" || token === "MM" || token === "DD")) throw new Error("Transaction: date format is invalid");
+            counter++;
+        }
+
+        //Accepts space, / and - characters for date delimiters
+        let dateTokens = strDate.split(/[\/ -]/);
+
+        //Validates date elements:
+        if(/^\d{4}$/.test(dateTokens[year]) === false) throw new Error("Transaction: year format is invalid");
+        if(/^\d{2}$/.test(dateTokens[month]) === false) throw new Error("Transaction: month format is invalid");
+        if(/^\d{2}$/.test(dateTokens[day]) === false) throw new Error("Transaction: day format is invalid");
+        if(Number(dateTokens[month]) > 12) throw new Error("Transaction: month is invalid");
+        if(Number(dateTokens[day]) > 31) throw new Error("Transaction: day is invalid");
+
+        //Build date using the following format: YYYY-MM-DD
+        let date = dateTokens[year] + "-" + dateTokens[month] + "-" + dateTokens[day];
+
+        //Avoid JS date Quirk where date is equal to -1 day
+        date += "T00:00:00";
+
+        return new Date(date);
     }
 
     /**
      * @description
      * @returns {string}
      */
-    GetID(){ return this._id;}
-   
+    GetID() { return this.#_id; }
+    GetDate() { return this.#date; }
+    GetDateString() {
+        const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+        return this.#date.toLocaleString(undefined, options);
+    }
+    GetDescription() { return this.#description; }
+    GetCategory() { return this.#category; }
+    GetAmount() { return this.#amount; }
+    GetBalance() { return this.#balance; }
+    GetOwner() { return this.#owner; }
+    GetTags() { return this.#tags; }
+
 
     /**
      * @description
      * @returns {boolean}
      */
-    IsEmpty(){
-        return (this.Amount===0 || isNaN(this.Amount))
+    IsEmpty() {
+        return (this.#amount === 0 || isNaN(this.#amount))
     }
 
     /**
      * @description return true if transaction is an income
      * @returns {boolean}
      */
-    IsIncome(){
-        return this.Amount > 0;
+    IsIncome() {
+        return this.#amount > 0;
     }
 
+
     /**
-     * SetTransaction
-     * @description wrapper method that set transaction data and converts unsigned debit and credit
-     *              to signed amount variable
-     * 
-     * @param {array} newTransaction information
-     * @param {number} counter
-     * @throws {Error} Paramètre invalid
-     * 
+     * @description Return a copy of current transaction object
+     * @returns {Transaction}
      */
-    SetTransaction(newTransaction, counter=0) {
+    Clone() {
 
-        //Colonnes débit et crédit sont combinées dans une colonne amount négatif ou positif
-        const amount = newTransaction['Withdraw'] > 0 ? newTransaction['Withdraw'] : (-1 * newTransaction['Deposit']);
-        newTransaction['Amount'] = amount;
-        this.SetTransactionWithAmount(newTransaction, counter);
+        return new Transaction(this.#date,
+            this.#description,
+            this.#category, undefined, undefined,
+            this.#owner,
+            this.#tags,
+            this.#balance,
+            this.#amount,
+            this.#counter);
+
+        /* this.#date = transaction.#date;
+        this.#description = transaction.#description;
+        this.#category = transaction.#category;
+        this.#amount = transaction.#amount;
+        this.#balance = transaction.#balance;
+        this.#owner = transaction.#owner;
+        this.#tags = transaction.#tags;
+        this.#_id = transaction.#_id; */
     }
 
-
     /**
-     * SetTransactionWithAmount
-     * @description Simple set of transaction data using an amount parameter instead of debit credit
-     * 
-     * @param {array} newTransaction information
-     * @param {number} counter
-     * @throws {Error} Paramètre invalide, s'ils ne répondent pas au schéma de validation.
-     * 
-     */
-    SetTransactionWithAmount(newTransaction, counter=0) {
-        
-        this.date = newTransaction['date'];
-        
-        this.Description = newTransaction['Description'];
-        this.Category  = newTransaction['Category'];
-        if(this.Category === ""){ this.Category="Aucune Catégorie";}
-
-        this.Amount = newTransaction['Amount'];
-        this.Balance = newTransaction['Balance'];
-        this.Owner = newTransaction['Owner'];
-        this.Tags = newTransaction['Tags'];
-
-        this.SetTransactionID(counter);
-    }
-
-
-    /**
-     * @description
-     * @param {Transaction} transaction
-     */
-    CopyTransaction(transaction){
-        this.date = transaction.date;
-        this.Description = transaction.Description;
-        this.Category = transaction.Category;
-        this.Amount = transaction.Amount;
-        this.Balance = transaction.Balance;
-        this.Owner = transaction.Owner;
-        this.Tags = transaction.Tags;
-        this._id = transaction._id;
-    }
-
-
-
-    /**
-     * SetTransactionID
+     * SetID
      * @description  Builds a transaction ID by concatenation of the following parameters
      * 
      * @param {number} counter nombre entre 1 et 99 inclusivement
      * @throws {Error} si le counter est invalide
      */
-    SetTransactionID(counter) {
-        this._id = Transaction.BuildTransactionID(counter, this.date, this.Description, this.Amount);
-    }
-
-
-    /**
-     * @description Builds a new TransactionID
-     * @static
-     * @param {number} counter
-     * @param {Date} date
-     * @param {string} description
-     * @param {number} amount
-     * @returns
-     */
-    static BuildTransactionID(counter, date, description, amount){
-        let newTransactionID = "";
+    SetID(counter) {
 
         if (counter < 0 || counter > 99 || isNaN(counter) || counter === null) {
-            throw new Error("BuildTransactionID: Invalid counter for new transaction");
+            throw new Error("Transaction.SetID(): Invalid counter for transaction");
         }
 
         //Padd counter to 2 digits:
         let strcounter = "";
         counter < 10 ? strcounter = "0" + String(counter) : strcounter = String(counter);
-        newTransactionID =  String(date) + String(description) + String(amount) + strcounter;
-
-        return newTransactionID;
+        this.#_id = String(this.GetDateString()) + String(this.#description) + String(this.#amount) + strcounter;
     }
+
+
 
 }
 

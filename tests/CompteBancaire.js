@@ -1,13 +1,13 @@
 // @ts-nocheck
-const AccountsBook = require('../AccountsBook');
+/* const AccountsBook = require('../AccountsBook');
 
 let bankAccount = new AccountsBook;
 
-
+ */
 /*-------------------------------------------------------------------------
     Test: ImportTransactionsCSV
     -------------------------------------------------------------------------*/
-describe('ImportTransactionsCSV', () => {
+/* describe('ImportTransactionsCSV', () => {
 
     it("Devrait lancer une exception pour un fichier inexistant", () => {
         expect(() => {
@@ -18,55 +18,14 @@ describe('ImportTransactionsCSV', () => {
 
 });
 
-/*-------------------------------------------------------------------------
-    Test: CreerIDTransaction
-    -------------------------------------------------------------------------*/
-describe('CreerIDTransaction', () => {
-    it("Devrait creer une chaine ID qui commence par un compteur à 2 digits a partir d'un compteur entre 0 et 9 inclusivement", () => {
-        const resultat = bankAccount.CreerIDTransaction(1, "2020-01-14", "Transaction Test", 1);
-        expect(resultat).toBe("012020-01-14Transaction Test1");
-    });
-
-    it("Devrait creer une chaine ID qui commence par un compteur à 2 digits a partir d'un compteur entre 10 et 99 inclusivement", () => {
-        const resultat = bankAccount.CreerIDTransaction(10, "2020-01-14", "Transaction Test", 1);
-        expect(resultat).toBe("102020-01-14Transaction Test1");
-    });
-
-    it("Devrait lancer une exception pour un compteur négatif", () => {
-        expect(() => {
-            bankAccount.CreerIDTransaction(-1, "2020-01-14", "Transaction Test", 1)
-        }).toThrow();
-    });
-
-    it("Devrait lancer une exception pour un compteur > 99", () => {
-        expect(() => {
-            bankAccount.CreerIDTransaction(100, "2020-01-14", "Transaction Test", 1)
-        }).toThrow();
-    });
-
-    it("Devrait lancer une exception pour un compteur string", () => {
-        expect(() => {
-            bankAccount.CreerIDTransaction("testString", "2020-01-14", "Transaction Test", 1)
-        }).toThrow();
-    });
-
-    it("Devrait lancer une exception pour un compteur null", () => {
-        expect(() => {
-            bankAccount.CreerIDTransaction(null, "2020-01-14", "Transaction Test", 1)
-        }).toThrow();
-    });
 
 
-    // 
-});
-
-
-
+ */
 
 /*-------------------------------------------------------------------------
     Test: CreerTransaction
     -------------------------------------------------------------------------*/
-describe('CreerTransaction', () => {
+/* describe('CreerTransaction', () => {
     it("Devrait creer un objet transaction avec des parametres valides", () => {
         const resultat = bankAccount.CreerTransaction(0, "2019-02-24", "Transaction Test", "Categorie", 1, 0, 10);
 
@@ -108,4 +67,4 @@ describe('CreerTransaction', () => {
         }).toThrow();
     });
 
-});
+}); */

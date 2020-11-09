@@ -32,8 +32,8 @@ module.exports = class AccountsBook {
         this.accountImporter = new AccountCsvImporter("./config/rules.json", './config/accounts.json');
         //this.ruleParser = new AccountRulesParser();
 
-        this.accountMySql = new AccountMySqlDB();
-        this.accountMySql.Connect();
+       // this.accountMySql = new AccountMySqlDB();
+       // this.accountMySql.Connect();
 
     }
 

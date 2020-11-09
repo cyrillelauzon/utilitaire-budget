@@ -25,42 +25,49 @@ module.exports = class AccountCsvImporter {
     }
 
     /**
-        *ImporterTransactionCSV
-        * @description Lit une liste de transactions à partir d'un fichier CSV donné en paramètre
-        * et l'enregistre dans la base de données.
-        * 
-        * @param {string} nomFichierCsv
-        * @throws Error si le fichier est invalide
-        * @async
-        */
+    *ImporterTransactionCSV
+    * @description Lit une liste de transactions à partir d'un fichier CSV donné en paramètre
+    * et l'enregistre dans la base de données.
+    * 
+    * @param {string} nomFichierCsv
+    * @throws Error si le fichier est invalide
+    * @async
+    */
     async ImportTransactionsCSV(nomFichierCsv, accountName) {
         const csv = require('fast-csv');
         const fs = require('fs');
 
         console.log("Importing CSV File: " + nomFichierCsv);
 
-        var accountImporter = this;
         var accountName = accountName;
         var nomFichierCsv = nomFichierCsv;
         return new Promise((resolve, reject) => {
 
             fs.createReadStream(nomFichierCsv)
-                .pipe(csv.parse({ headers: true, delimiter: accountImporter.accountsInfo.GetDelimiter(accountName) }))
+                .pipe(csv.parse({ headers: true, delimiter: this.accountsInfo.GetDelimiter(accountName) }))
                 .on('error', (err) => {
                     reject();
                 })
                 .on('data', (row) => {
-
+                    
+                    //Processing of a new row of data 
                     try {
-                        //Processing of a new row of data 
-                        let transaction = new Transaction();
-                        let mappedRow = accountImporter.accountsInfo.MapFieldNames(row, accountName);
-                        transaction.SetTransaction(mappedRow);
+   
+                        let mappedRow = this.accountsInfo.MapFieldNames(row, accountName);
+                        let transaction = new Transaction(mappedRow['date'],
+                            this.accountsInfo.GetDateFormat(accountName),
+                            mappedRow['description'],
+                            mappedRow['category'],
+                            mappedRow['withdraw'],
+                            mappedRow['deposit'],
+                            mappedRow['owner'],
+                            mappedRow['tags'],
+                            mappedRow['balance']);
 
-                        accountImporter.AddTransaction(transaction);
+                        this.#AddTransaction(transaction);
 
                     } catch (err) {
-                        //console.debug("Transaction lue dans fichier CSV est invalide: " + err);
+                        console.debug("Transaction lue dans fichier CSV est invalide: " + err);
                     }
 
                 })
@@ -80,7 +87,8 @@ module.exports = class AccountCsvImporter {
      * @param {Transaction} transaction Nouvelle transaction à ajouter
      * @throws {Error} Si paramètre transaction est invalide
      */
-    AddTransaction(transaction) {
+    // @ts-ignore
+    #AddTransaction(transaction) {
         //Empty transactions are not added
         if (transaction === undefined) return;
         if (transaction.IsEmpty() === true) return;
@@ -88,16 +96,17 @@ module.exports = class AccountCsvImporter {
         //Create a new transaction even if transaction is of same amount, day and description as an existing one
         //Use the counter to create a unique ID to the transaction
         let counter = 0;
-        let strID = transaction.GetID();
-        while (this.transactions.has(strID)) {
-            counter += 1;
-            strID = Transaction.BuildTransactionID(counter, transaction.date, transaction.Description, transaction.Amount);
-        }
 
         //Create a new transaction object that reflects the duplicate check
-        let nouvTransaction = new Transaction();
-        nouvTransaction.CopyTransaction(transaction);
-        nouvTransaction.SetTransactionID(counter);
+        let nouvTransaction = transaction.Clone();
+        nouvTransaction.SetID(counter);
+        let strID = nouvTransaction.GetID();
+
+        while (this.transactions.has(strID)) {
+            counter += 1;
+            nouvTransaction.SetID(counter);
+            strID = nouvTransaction.GetID();
+        }
 
         //Parse new transaction to auto apply categories
         nouvTransaction = this.ruleParser.ParseTransaction(nouvTransaction);
