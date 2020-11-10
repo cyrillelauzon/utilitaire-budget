@@ -54,52 +54,6 @@ module.exports = class Transaction {
         this.SetID(counter);
     }
 
-
-    /**
-     * @description
-     * @param {string} strDate the new date string
-     * @param {string} dateFormat simple string delimited by - to specify format
-     * @returns
-     */
-    #ProcessDate(strDate, dateFormat) {
-        
-        if (strDate.length != 10) throw new Error("Transaction: Date string length is invalid");
-        
-        //Interpret date format: for simplicity: valid strings are:
-        //(YYYY MM DD)
-        //Delimiter is -
-        let formatTokens = dateFormat.split("-");
-        let counter = 0;
-        let year = -1; 
-        let month = -1; 
-        let day = -1;
-        for (let token of formatTokens) {
-            if (token === "YYYY") year = counter;
-            if (token === "MM") month = counter;
-            if (token === "DD") day = counter;
-            if (!(token === "YYYY" || token === "MM" || token === "DD")) throw new Error("Transaction: date format is invalid");
-            counter++;
-        }
-
-        //Accepts space, / and - characters for date delimiters
-        let dateTokens = strDate.split(/[\/ -]/);
-
-        //Validates date elements:
-        if(/^\d{4}$/.test(dateTokens[year]) === false) throw new Error("Transaction: year format is invalid");
-        if(/^\d{2}$/.test(dateTokens[month]) === false) throw new Error("Transaction: month format is invalid");
-        if(/^\d{2}$/.test(dateTokens[day]) === false) throw new Error("Transaction: day format is invalid");
-        if(Number(dateTokens[month]) > 12) throw new Error("Transaction: month is invalid");
-        if(Number(dateTokens[day]) > 31) throw new Error("Transaction: day is invalid");
-
-        //Build date using the following format: YYYY-MM-DD
-        let date = dateTokens[year] + "-" + dateTokens[month] + "-" + dateTokens[day];
-
-        //Avoid JS date Quirk where date is equal to -1 day
-        date += "T00:00:00";
-
-        return new Date(date);
-    }
-
     /**
      * @description
      * @returns {string}
@@ -117,8 +71,7 @@ module.exports = class Transaction {
     GetOwner() { return this.#owner; }
     GetTags() { return this.#tags; }
 
-
-    /**
+ /**
      * @description
      * @returns {boolean}
      */
@@ -134,6 +87,58 @@ module.exports = class Transaction {
         return this.#amount > 0;
     }
 
+
+    /**
+     * @description
+     * @param {string} strDate the new date string
+     * @param {string} dateFormat simple string delimited by - with YYYY-MM-DD in any order
+     * @returns
+     */
+    #ProcessDate(strDate, dateFormat) {
+
+        //Date format validation:
+        //For simplicity: valid tokens are:(YYYY MM DD) Delimiter is -
+        //NB: Regular expression does not test if all tokens are present ie YYYY-MM-MM would be valid
+        if (/^(YYYY|MM|DD){1}-(YYYY|MM|DD){1}-(YYYY|MM|DD){1}$/.test(dateFormat) === false)
+            throw new Error("Transaction: date format is invalid");
+
+        let formatTokens = dateFormat.split("-");
+        let counter = 0;
+        let year = -1;
+        let month = -1;
+        let day = -1;
+        for (let token of formatTokens) {
+            if (token === "YYYY") year = counter;
+            if (token === "MM") month = counter;
+            if (token === "DD") day = counter;
+            counter++;
+        }
+        if (year === -1 || month === -1 || day === -1) throw new Error("Transaction: missing year, month or day in date format");
+
+
+        //Date validation:
+        //Accepts space, / and - characters for date delimiters
+        if (strDate.length != 10) throw new Error("Transaction: Date string length is invalid");
+        if(/^\d{2,4}[\/ -]\d{2,4}[\/ -]\d{2,4}$/.test(strDate) === false) throw new Error("Transaction: Date string is invalid");
+        
+        
+        //Validates date tokens:
+        let dateTokens = strDate.split(/[\/ -]/);
+        if (/^\d{4}$/.test(dateTokens[year]) === false) throw new Error("Transaction: date(year) is invalid");
+        if (/^\d{2}$/.test(dateTokens[month]) === false) throw new Error("Transaction: date(month) is invalid");
+        if (/^\d{2}$/.test(dateTokens[day]) === false) throw new Error("Transaction: date(day) is invalid");
+        if (Number(dateTokens[month]) > 12 || Number(dateTokens[month]) <= 0 ) throw new Error("Transaction: month is invalid");
+        if (Number(dateTokens[day]) > 31 || Number(dateTokens[day]) <= 0) throw new Error("Transaction: day is invalid");
+
+        //Build date using the following format (javascript Date object requirement): YYYY-MM-DD
+        let date = dateTokens[year] + "-" + dateTokens[month] + "-" + dateTokens[day];
+
+        //Avoid JS date Quirk where date is equal to -1 day
+        date += "T00:00:00";
+
+        return new Date(date);
+    }
+   
 
     /**
      * @description Return a copy of current transaction object

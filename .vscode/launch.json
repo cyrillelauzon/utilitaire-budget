@@ -13,6 +13,15 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\app.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Jest test suite debugging",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceRoot}\\node_modules\\jest\\bin\\jest.js"
         }
     ]
 }
