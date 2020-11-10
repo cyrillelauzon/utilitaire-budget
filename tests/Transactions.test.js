@@ -131,15 +131,23 @@ describe('Transaction amounts validations', () => {
 
     it("Should create a transaction with correct Withdraw (-10) (amount param undefined)", () => {
         const result = new Transaction("2019-24-02", "YYYY-DD-MM",
-            "test description", "test category", 0, 10, "test owner", "test tags", 99, 
+            "test description", "test category", 10, 0, "test owner", "test tags", 99, 
             undefined);
 
         expect(result.GetAmount()).toBe(-10);
     });
 
-    it("Should create a transaction with correct Deposit(10) (amount param undefined)", () => {
+    it("Should create a transaction with correct Deposit(+10) (amount param undefined)", () => {
         const result = new Transaction("2019-24-02", "YYYY-DD-MM",
-            "test description", "test category", 10, 0, "test owner", "test tags", 99, 
+            "test description", "test category", 0, 10, "test owner", "test tags", 99, 
+            undefined);
+
+        expect(result.GetAmount()).toBe(10);
+    });
+
+    it("Should create a transaction with correct Deposit(+10) when numbers are passed as string (amount param undefined)", () => {
+        const result = new Transaction("2019-24-02", "YYYY-DD-MM",
+            "test description", "test category", '0', '10', "test owner", "test tags", 99, 
             undefined);
 
         expect(result.GetAmount()).toBe(10);
@@ -164,7 +172,7 @@ describe('Transaction amounts validations', () => {
     it("Should throw an error if Amount is defined at same time of withdraw", () => {
         expect(() => {
             const result = new Transaction("2019-12-02", "YYYY-MM-DD",
-            "test description", "test category", 10, null, "test owner", "test tags", 99
+            "test description", "test category", 10, null, "test owner", "test tags", 99,
             -150);
         }).toThrow();
     });
@@ -172,7 +180,7 @@ describe('Transaction amounts validations', () => {
     it("Should throw an error if Amount is defined at same time of deposit", () => {
         expect(() => {
             const result = new Transaction("2019-12-02", "YYYY-MM-DD",
-            "test description", "test category", "", 10, "test owner", "test tags", 99
+            "test description", "test category", "", 10, "test owner", "test tags", 99,
             -150);
         }).toThrow();
     });
@@ -181,6 +189,13 @@ describe('Transaction amounts validations', () => {
         expect(() => {
             const result = new Transaction("2019-12-02", "YYYY-MM-DD",
             "test description", "test category", 10, 10, "test owner", "test tags", 99);
+        }).toThrow();
+    });
+
+    it("Should throw an error if both Deposit and Withdraw are != 0 and passed as string", () => {
+        expect(() => {
+            const result = new Transaction("2019-12-02", "YYYY-MM-DD",
+            "test description", "test category", '10', '10', "test owner", "test tags", 99);
         }).toThrow();
     });
 
@@ -269,8 +284,7 @@ describe('Transaction object cloning tests', () => {
         expect(transactionB.GetID()).toBe("2019-02-24test description-10003");
     });
 
-    //Only verifying if ID is changed since
-    //by design it's not possible to modify a transaction onced it's created
+
     it("A cloned transaction ID should not be modified if original transaction ID is altered", () => {
         let transactionA = new Transaction("2019-24-02", "YYYY-DD-MM",
             "test description", "test category", "", null, "test owner", "test tags", 99, 
@@ -278,8 +292,10 @@ describe('Transaction object cloning tests', () => {
         let transactionB = transactionA.Clone();
         
 
-        transactionB.SetID(30);
-        expect(transactionA.GetID()).toBe("2019-02-24test description-10003");
+        transactionA.SetID(30);
+        transactionA.SetCategory("new assigned category");
+        expect(transactionB.GetID()).toBe("2019-02-24test description-10003");
+        expect(transactionB.GetCategory()).toBe("test category");
     });
 
 

@@ -25,7 +25,7 @@ module.exports = class AccountCsvExporter {
         const createCsvWriter = require('csv-writer').createObjectCsvWriter;
         console.debug("csv file export: " + nomFichier);
 
-        var mapAsc = new Map([...transactions.entries()].sort());
+     //   var mapAsc = new Map([...transactions.entries()].sort());
 
 
         const csvWriter = createCsvWriter({
@@ -53,7 +53,7 @@ module.exports = class AccountCsvExporter {
             ]
         });
         csvWriter
-            .writeRecords(Array.from(mapAsc.values()))
+            .writeRecords(Array.from(transactions.values()))
             .then(() => console.log('The CSV file ' + nomFichier + ' was written successfully'));
     }
 

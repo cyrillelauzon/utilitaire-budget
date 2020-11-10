@@ -1,0 +1,35 @@
+{
+    "rules": [
+        {
+            "Description": "test description",
+            "Category": "new category assigned"
+        },
+        {
+            "Description": "test description",
+            "Category": "new category with Income",
+            "Conditions": {
+                "isIncome": true
+            }
+        },
+        {
+            "Description": "test description",
+            "Category": "category assigned spending max is 15$",
+            "Conditions": {
+                "High": -15.1,
+                "isIncome": false
+            }
+        },
+        {
+            "Description": "Vrac En Folie",
+            "Category": "Épicerie"
+        },
+        {
+            "Description": "Marche Royal",
+            "Category": "Épicerie"
+        },
+        {
+            "Description": "Pizzeria Be",
+            "Category": "Restaurant"
+        }
+    ]
+}

@@ -36,9 +36,9 @@ module.exports = class AccountRulesParser {
      */
     ParseTransaction(transaction) {
         for (let rule of this.#parseRules['rules']) {
-            if (rule['Description'] === transaction['Description']) {
+            if (rule['Description'] === transaction.GetDescription()) {
                 if (this.#ParseConditions(transaction, rule)) {
-                    transaction['Category'] = rule['Category'];
+                    transaction.SetCategory(rule['Category']);
                 }
             }
         }
@@ -52,6 +52,7 @@ module.exports = class AccountRulesParser {
     * @param {Array} rule
      * @returns {boolean}
      */
+    // @ts-ignore
     #ParseConditions(transaction, rule) {
         const conditions = rule['Conditions'];
 

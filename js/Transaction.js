@@ -40,9 +40,9 @@ module.exports = class Transaction {
      */
     constructor(date, dateFormat, description, category, withdraw, deposit, owner, tags, balance = undefined, amount = undefined, counter = 0) {
 
-        this.#date = this.#ProcessDate(date, dateFormat);
-        this.#dateFormat = dateFormat;
-        this.#dateString = date;
+        this.#ProcessDate(date, dateFormat);
+        this.#dateFormat = dateFormat;      //store for cloning purposes
+        this.#dateString = date;            //store for cloning purposes
 
         this.#description = description;
         this.#category = category;
@@ -69,8 +69,13 @@ module.exports = class Transaction {
         const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
         return this.#date.toLocaleString(undefined, options);
     }
+    
     GetDescription() { return this.#description; }
+    
+    SetCategory(category) { this.#category = category;}    
     GetCategory() { return this.#category; }
+    
+
     GetAmount() { return this.#amount; }
     GetBalance() { return this.#balance; }
     GetOwner() { return this.#owner; }
@@ -94,10 +99,10 @@ module.exports = class Transaction {
 
 
     /**
-     * @description
+     * @description Validate date format and date 
      * @param {string} strDate the new date string
      * @param {string} dateFormat simple string delimited by - with YYYY-MM-DD in any order
-     * @returns
+     * @throws {Error} if format is invalid or for any error inside date string
      */
     #ProcessDate(strDate, dateFormat) {
 
@@ -125,8 +130,8 @@ module.exports = class Transaction {
         //Accepts space, / and - characters for date delimiters
         if (strDate.length != 10) throw new Error("Transaction: Date string length is invalid");
         if(/^\d{2,4}[\/ -]\d{2,4}[\/ -]\d{2,4}$/.test(strDate) === false) throw new Error("Transaction: Date string is invalid");
-        
-        
+       
+       
         //Validates date tokens:
         let dateTokens = strDate.split(/[\/ -]/);
         if (/^\d{4}$/.test(dateTokens[year]) === false) throw new Error("Transaction: date(year) is invalid");
@@ -141,11 +146,11 @@ module.exports = class Transaction {
         //Avoid JS date Quirk where date is equal to -1 day
         date += "T00:00:00";
 
-        return new Date(date);
+        this.#date = new Date(date);
     }
    
     /**
-     * @description
+     * @description Process withdraw, deposit or amount. Store withdraw internally as amount with negative value
      * @param {number} withdraw 
      * @param {number} deposit
      * @param {number} amount Amount variable has precedence over withdraw and deposit
@@ -154,7 +159,8 @@ module.exports = class Transaction {
         
         //Amount variable has precedence over withdraw and deposit
         if (!Util.isNullOrUndefined(amount)) {
-            if((!Util.isNullOrUndefined(deposit)) || (!Util.isNullOrUndefined(withdraw))) throw new Error("Transaction: amount cannot be defined at same time of withdraw and deposit");
+            if(!Util.isNullOrUndefined(deposit)) throw new Error("Transaction: amount cannot be defined at same time of deposit");
+            if(!Util.isNullOrUndefined(withdraw)) throw new Error("Transaction: amount cannot be defined at same time of withdraw");
             if(isNaN(amount)) throw new Error("Transaction: only numerical values are accepted for amount");
             this.#amount = amount;
         }
@@ -163,13 +169,16 @@ module.exports = class Transaction {
             if(Util.isNullOrUndefined(deposit) && Util.isNullOrUndefined(withdraw)) throw new Error("Transaction: neither withdraw, deposit or amount is defined");
     
             if(isNaN(withdraw) || isNaN(deposit))  throw new Error("Transaction: only numerical values are accepted for withdraw or deposit");
+            
+            //Convert to Number to make sure that these variables passed as string are still read properly
+            withdraw = Number(withdraw);
+            deposit = Number(deposit);
             if(withdraw !== 0 && deposit !== 0)  throw new Error("Transaction: withdraw and deposit cannot be defined at the same time");
             if(withdraw < 0 || deposit < 0)  throw new Error("Transaction: withdraw or deposit cannot have a negative value");
             
-            this.#amount = withdraw > 0 ? withdraw : (-1 * deposit);
-            
+            //Assign negative amount to withdraw to store internaly
+            this.#amount = withdraw > 0 ? (-1 * Number(withdraw)) : Number(deposit);
         }
-
     }
 
 
@@ -188,15 +197,6 @@ module.exports = class Transaction {
             this.#balance,
             this.#amount,
             this.#counter);
-
-        /* this.#date = transaction.#date;
-        this.#description = transaction.#description;
-        this.#category = transaction.#category;
-        this.#amount = transaction.#amount;
-        this.#balance = transaction.#balance;
-        this.#owner = transaction.#owner;
-        this.#tags = transaction.#tags;
-        this.#_id = transaction.#_id; */
     }
 
     /**
