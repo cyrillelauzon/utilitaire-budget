@@ -34,4 +34,14 @@ module.exports = class Util {
         return jobj;
     }
 
+    /**
+     * @description 
+     * @static
+     * @param {*} value
+     * @returns {boolean}
+     */
+    static isNullOrUndefined(value){
+        return (value === undefined || value === 0 || value === "" || value === null)
+    }
+
 }

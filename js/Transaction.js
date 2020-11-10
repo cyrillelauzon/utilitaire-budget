@@ -4,10 +4,15 @@ Class Transaction
 Description: 
 Encapsulation of a single bank Transaction
 -------------------------------------------------------------------------*/
+
+const Util = require('./Util');
+
 module.exports = class Transaction {
 
     #_id;
     #date;
+    #dateString;    //for cloning purposes
+    #dateFormat;    //for cloning purposes
     #description;
     #category;
     #amount;
@@ -36,16 +41,16 @@ module.exports = class Transaction {
     constructor(date, dateFormat, description, category, withdraw, deposit, owner, tags, balance = undefined, amount = undefined, counter = 0) {
 
         this.#date = this.#ProcessDate(date, dateFormat);
+        this.#dateFormat = dateFormat;
+        this.#dateString = date;
 
         this.#description = description;
         this.#category = category;
         if (this.#category === "") { this.#category = "Aucune Catégorie"; }
 
-        this.#amount = amount;
-        if (amount === undefined) {
-            this.#amount = withdraw > 0 ? withdraw : (-1 * deposit);
-        }
-
+        
+        this.#ProcessAmount(withdraw,deposit,amount);
+        
         this.#balance = balance;
         this.#owner = owner;
         this.#tags = tags;
@@ -98,7 +103,7 @@ module.exports = class Transaction {
 
         //Date format validation:
         //For simplicity: valid tokens are:(YYYY MM DD) Delimiter is -
-        //NB: Regular expression does not test if all tokens are present ie YYYY-MM-MM would be valid
+        //NB: this regular expression does not tests if all tokens are present ie YYYY-MM-MM would be valid
         if (/^(YYYY|MM|DD){1}-(YYYY|MM|DD){1}-(YYYY|MM|DD){1}$/.test(dateFormat) === false)
             throw new Error("Transaction: date format is invalid");
 
@@ -130,7 +135,7 @@ module.exports = class Transaction {
         if (Number(dateTokens[month]) > 12 || Number(dateTokens[month]) <= 0 ) throw new Error("Transaction: month is invalid");
         if (Number(dateTokens[day]) > 31 || Number(dateTokens[day]) <= 0) throw new Error("Transaction: day is invalid");
 
-        //Build date using the following format (javascript Date object requirement): YYYY-MM-DD
+        //Build date string using the following format (javascript Date object requirement): YYYY-MM-DD
         let date = dateTokens[year] + "-" + dateTokens[month] + "-" + dateTokens[day];
 
         //Avoid JS date Quirk where date is equal to -1 day
@@ -139,6 +144,34 @@ module.exports = class Transaction {
         return new Date(date);
     }
    
+    /**
+     * @description
+     * @param {number} withdraw 
+     * @param {number} deposit
+     * @param {number} amount Amount variable has precedence over withdraw and deposit
+     */
+    #ProcessAmount(withdraw, deposit, amount){
+        
+        //Amount variable has precedence over withdraw and deposit
+        if (!Util.isNullOrUndefined(amount)) {
+            if((!Util.isNullOrUndefined(deposit)) || (!Util.isNullOrUndefined(withdraw))) throw new Error("Transaction: amount cannot be defined at same time of withdraw and deposit");
+            if(isNaN(amount)) throw new Error("Transaction: only numerical values are accepted for amount");
+            this.#amount = amount;
+        }
+        else{
+            
+            if(Util.isNullOrUndefined(deposit) && Util.isNullOrUndefined(withdraw)) throw new Error("Transaction: neither withdraw, deposit or amount is defined");
+    
+            if(isNaN(withdraw) || isNaN(deposit))  throw new Error("Transaction: only numerical values are accepted for withdraw or deposit");
+            if(withdraw !== 0 && deposit !== 0)  throw new Error("Transaction: withdraw and deposit cannot be defined at the same time");
+            if(withdraw < 0 || deposit < 0)  throw new Error("Transaction: withdraw or deposit cannot have a negative value");
+            
+            this.#amount = withdraw > 0 ? withdraw : (-1 * deposit);
+            
+        }
+
+    }
+
 
     /**
      * @description Return a copy of current transaction object
@@ -146,7 +179,8 @@ module.exports = class Transaction {
      */
     Clone() {
 
-        return new Transaction(this.#date,
+        return new Transaction(this.#dateString,
+            this.#dateFormat,
             this.#description,
             this.#category, undefined, undefined,
             this.#owner,
