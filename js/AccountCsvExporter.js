@@ -25,7 +25,12 @@ module.exports = class AccountCsvExporter {
         const createCsvWriter = require('csv-writer').createObjectCsvWriter;
         console.debug("csv file export: " + nomFichier);
 
+        //TODO use DB to export transactions by month or selected period and keep map of transaction as exchange format
      //   var mapAsc = new Map([...transactions.entries()].sort());
+/*         let arrTransactions
+        for(let transaction of transactions){
+            
+        } */
 
 
         const csvWriter = createCsvWriter({
@@ -52,6 +57,7 @@ module.exports = class AccountCsvExporter {
             }
             ]
         });
+
         csvWriter
             .writeRecords(Array.from(transactions.values()))
             .then(() => console.log('The CSV file ' + nomFichier + ' was written successfully'));

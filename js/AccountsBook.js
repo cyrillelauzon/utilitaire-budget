@@ -32,20 +32,18 @@ module.exports = class AccountsBook {
         this.accountImporter = new AccountCsvImporter("./config/rules.json", './config/accounts.json');
         //this.ruleParser = new AccountRulesParser();
 
-       // this.accountMySql = new AccountMySqlDB();
-       // this.accountMySql.Connect();
-
+       this.accountMySql = new AccountMySqlDB();
     }
 
 
 
     async ImportTransactionsCSV(nomFichier, accountName) {
         //await this.accountImporter.ImportTransactionsCSV(nomFichier, accountName);      
-        await this.accountImporter.ImportTransactionsCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille");
-        await this.accountImporter.ImportTransactionsCSV("./import_csv/credit.csv", "Mastercard de Cyrille");
+        await this.accountImporter.ImportTransactionsCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille", this.accountMySql.AddTransaction);
+        await this.accountImporter.ImportTransactionsCSV("./import_csv/credit.csv", "Mastercard de Cyrille", this.accountMySql.AddTransaction);
 
         this.ExportCSVTransactions("./testexport2.csv");
-
+        this.accountMySql.Disconnect();
     }
 
 

@@ -19,7 +19,7 @@ module.exports = class Transaction {
     #balance;       //Account balance if available
     #owner;
     #tags;          //To be able to easily tag and group certain transactions : ex  holiday spendings...
-    #counter;       //To manage duplicates of same day transactions
+    #counter;       //for cloning purposes
 
 
     /**
@@ -187,7 +187,6 @@ module.exports = class Transaction {
      * @returns {Transaction}
      */
     Clone() {
-
         return new Transaction(this.#dateString,
             this.#dateFormat,
             this.#description,

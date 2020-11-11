@@ -30,8 +30,7 @@ describe('RulesParser category assignation using rules.test.json', () => {
         const result = parser.ParseTransaction(initialTransaction);
         expect(result.GetCategory()).toBe("new category with Income");
     });
-
-    
+   
   
 });
 

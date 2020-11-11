@@ -30,10 +30,11 @@ module.exports = class AccountCsvImporter {
     * et l'enregistre dans la base de données.
     * 
     * @param {string} nomFichierCsv
+    * @param {*} dbAddCallback
     * @throws Error si le fichier est invalide
     * @async
     */
-    async ImportTransactionsCSV(nomFichierCsv, accountName) {
+    async ImportTransactionsCSV(nomFichierCsv, accountName, dbAddCallback) {
         const csv = require('fast-csv');
         const fs = require('fs');
 
@@ -49,10 +50,8 @@ module.exports = class AccountCsvImporter {
                     reject();
                 })
                 .on('data', (row) => {
-                    
                     //Processing of a new row of data 
                     try {
-   
                         let mappedRow = this.accountsInfo.MapFieldNames(row, accountName);
                         let transaction = new Transaction(mappedRow['date'],
                             this.accountsInfo.GetDateFormat(accountName),
@@ -64,9 +63,10 @@ module.exports = class AccountCsvImporter {
                             mappedRow['tags'],
                             mappedRow['balance']);
 
-                        this.#AddTransaction(transaction);
+                        this.#AddTransaction(transaction, dbAddCallback);
 
                     } catch (err) {
+                        //TODO add failed to read row to an array for summary
                         console.debug("Transaction lue dans fichier CSV est invalide: " + err);
                     }
 
@@ -88,7 +88,7 @@ module.exports = class AccountCsvImporter {
      * @throws {Error} Si paramètre transaction est invalide
      */
     // @ts-ignore
-    #AddTransaction(transaction) {
+    #AddTransaction(transaction, dbAddCallback) {
         //Empty transactions are not added
         if (transaction === undefined) return;
         if (transaction.IsEmpty() === true) return;
@@ -113,6 +113,7 @@ module.exports = class AccountCsvImporter {
 
         //Add transaction to map
         this.transactions.set(strID, nouvTransaction);
+        dbAddCallback(nouvTransaction);
     }
 
 
