@@ -28,36 +28,34 @@ module.exports = class AccountsBook {
         this.nom = "nom"; //nom du compte
         this.proprietaire = "proprietaire"; //proprio du compte
 
-        //    this.transactions = new Map();
         this.accountImporter = new AccountCsvImporter("./config/rules.json", './config/accounts.json');
-        //this.ruleParser = new AccountRulesParser();
 
-       this.accountMySql = new AccountMySqlDB();
+        this.accountMySql = new AccountMySqlDB();
     }
 
-
-
-    async ImportTransactionsCSV(nomFichier, accountName) {
-        //await this.accountImporter.ImportTransactionsCSV(nomFichier, accountName);      
-        await this.accountImporter.ImportTransactionsCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille", this.accountMySql.AddTransaction);
-        await this.accountImporter.ImportTransactionsCSV("./import_csv/credit.csv", "Mastercard de Cyrille", this.accountMySql.AddTransaction);
-
-        this.ExportCSVTransactions("./testexport2.csv");
-        this.accountMySql.Disconnect();
-    }
 
 
     /**
-     * ExporterTransactionsCSV
-     * @description Exporte transaction de la bd vers un fichier CSV
-       Utilisation de csv-writer:
-       https://stackabuse.com/reading-and-writing-csv-files-with-node-js/
-     * 
-     * @param {string} nomFichier
+     * @description
+     * @param {string} fileName
+     * @param {string} accountName
      */
-    ExportCSVTransactions(nomFichier) {
+    async ImportTransactionsCSV(fileName, accountName) {
+        
+        await this.accountMySql.Connect();
+
+        //await this.accountImporter.ImportTransactionsCSV(fileName, accountName);      
+        await this.accountImporter.ImportTransactionsCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille", this.accountMySql);
+        await this.accountImporter.ImportTransactionsCSV("./import_csv/credit.csv", "Mastercard de Cyrille", this.accountMySql);
+
+
+        let transactions = await this.accountMySql.SelectTransactions();
+        console.log("transaction are read from database: " + transactions);
+
         let csvExport = new AccountCsvExporter();
-        csvExport.ExportCsv(nomFichier, this.accountImporter.transactions);
+        csvExport.ExportCsv("./testexport2.csv", transactions);
+
+        this.accountMySql.Disconnect();
     }
 
 

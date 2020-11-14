@@ -7,7 +7,7 @@ Simple utilitaire en ligne de commande sous Node.JS permettant d'importer des fi
 
 ## À Faire
 - Connecter le logiciel à une interface simple permettant d'importer des transactions et d'assigner un type de dépense pour chaque transaction.
-- Exportation par la suite vers un fichier CSV correctement formaté pour permettre de gérer son budget plus facilement depuis Excel
+- Exportation vers un fichier CSV correctement formaté pour permettre de gérer son budget plus facilement depuis Excel
 - Conserver l'idée d'1 utilisateur et non de transfomer le systeme en site web complet multiusager
 
 

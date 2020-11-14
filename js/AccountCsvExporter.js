@@ -14,27 +14,21 @@ module.exports = class AccountCsvExporter {
      *Creates an instance of AccountCsvExporter.
      */
     constructor() {
-
+        
     }
 
     /**
      * @description
-     * @param {*} nomFichier
+     * @param {string} fileName
+     * @param {Map<Transaction>} transactionsMap
      */
-    ExportCsv(nomFichier, transactions) {
+    async ExportCsv(fileName, transactionsMap) {
         const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-        console.debug("csv file export: " + nomFichier);
+        console.debug("Exporting CSV file: " + fileName);
 
-        //TODO use DB to export transactions by month or selected period and keep map of transaction as exchange format
-     //   var mapAsc = new Map([...transactions.entries()].sort());
-/*         let arrTransactions
-        for(let transaction of transactions){
-            
-        } */
-
-
+        //TODO Implement accountInfo Object to output correct column names
         const csvWriter = createCsvWriter({
-            path: nomFichier,
+            path: fileName,
             header: [{
                 id: 'date',
                 title: 'Date'
@@ -58,9 +52,35 @@ module.exports = class AccountCsvExporter {
             ]
         });
 
-        csvWriter
-            .writeRecords(Array.from(transactions.values()))
-            .then(() => console.log('The CSV file ' + nomFichier + ' was written successfully'));
+        let transactions = this.GetMapEntries(transactionsMap);
+        await csvWriter.writeRecords(transactions);
+        console.log('The CSV file ' + fileName + ' was written successfully');
+    }
+
+
+    /**
+     * @description Extract private member data from transaction liste
+     * Return an array of transaction data. 
+     * @param {Map<Transaction>} transactionsMap
+     * @returns {Array}
+     */
+    GetMapEntries(transactionsMap){
+
+        let transactions = new Array();
+        
+        for (const [key, value] of transactionsMap.entries()) {
+            let newEntry = { 
+                date: value.GetDateString(),
+                Description: value.GetDescription(),
+                Category: value.GetCategory(),
+                Amount: value.GetAmount(),
+                Balance: value.GetBalance()                
+            };            
+            
+            transactions.push(newEntry);
+          }
+                
+        return transactions;
     }
 
 }

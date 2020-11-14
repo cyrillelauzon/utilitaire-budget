@@ -25,7 +25,7 @@ module.exports = class Transaction {
     /**
      * @constructor
      *Creates an instance of Transaction.
-     * @param {string} date in a YYYY-MM-DD format /, - and space delimiters accepted
+     * @param {*} date A date object or a String in a YYYY-MM-DD format /, - and space delimiters accepted
      * @param {string} dateFormat
      * @param {string} description
      * @param {string} category
@@ -100,11 +100,20 @@ module.exports = class Transaction {
 
     /**
      * @description Validate date format and date 
-     * @param {string} strDate the new date string
+     * @param {*} strDate the new date string
      * @param {string} dateFormat simple string delimited by - with YYYY-MM-DD in any order
      * @throws {Error} if format is invalid or for any error inside date string
      */
     #ProcessDate(strDate, dateFormat) {
+
+        //If date is already a date object, assign date to class member and skip all checks for string
+        if(strDate instanceof Date){
+            this.#date = strDate;
+            return;
+        }
+
+        //Verify if param is a valid string object
+        if((typeof strDate) !== 'string')  throw new Error("Transaction: Date is not a String object");
 
         //Date format validation:
         //For simplicity: valid tokens are:(YYYY MM DD) Delimiter is -
