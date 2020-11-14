@@ -29,7 +29,6 @@ module.exports = class AccountsBook {
         this.proprietaire = "proprietaire"; //proprio du compte
 
         this.accountImporter = new AccountCsvImporter("./config/rules.json", './config/accounts.json');
-
         this.accountMySql = new AccountMySqlDB();
     }
 
@@ -40,23 +39,27 @@ module.exports = class AccountsBook {
      * @param {string} fileName
      * @param {string} accountName
      */
-    async ImportTransactionsCSV(fileName, accountName) {
-        
+    async ImportCSV(fileName, accountName) {
+
+        await this.accountMySql.Connect();
+        await this.accountImporter.Import(fileName, accountName, this.accountMySql);
+        this.accountMySql.Disconnect();
+
+    }
+
+
+    /**
+     * @description
+     */
+    async SelectTransactions() {
+
         await this.accountMySql.Connect();
 
-        //await this.accountImporter.ImportTransactionsCSV(fileName, accountName);      
-        await this.accountImporter.ImportTransactionsCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille", this.accountMySql);
-        await this.accountImporter.ImportTransactionsCSV("./import_csv/credit.csv", "Mastercard de Cyrille", this.accountMySql);
-
-
         let transactions = await this.accountMySql.SelectTransactions();
-        console.log("transaction are read from database: " + transactions);
-
         let csvExport = new AccountCsvExporter();
         csvExport.ExportCsv("./testexport2.csv", transactions);
 
         this.accountMySql.Disconnect();
     }
-
 
 }

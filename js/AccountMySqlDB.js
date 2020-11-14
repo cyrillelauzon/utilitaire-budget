@@ -5,6 +5,8 @@ Encapsulation of mysql database access
 -------------------------------------------------------------------------*/
 const Util = require('./Util');
 const Transaction = require('./Transaction');
+const TransactionsMap = require('./TransactionsMap');
+
 
 module.exports = class AccountMySqlDB {
 
@@ -74,54 +76,22 @@ module.exports = class AccountMySqlDB {
      */
     SelectTransactions() {
 
+        var transactions = new TransactionsMap();
         return new Promise((resolve, reject) => {
 
             console.debug("MySQL: Reading entries from DB");
 
             var query = this.connection.query('SELECT * FROM `transactions` ORDER BY `_id` DESC ', (error, results, fields) => {
                 if (error) reject(new Error("MySql error reading query " + error));
-
-                resolve(this.BuildTransactionsMap(results));
+                console.log("transaction are read from database: ");
+                transactions.BuildFromArray(results)
+                resolve(transactions);
             });
 
         });
     }
 
 
-    /**
-     * @description build a map of transaction objects using MySql results read from database
-     * @param {*} results
-     */
-    BuildTransactionsMap(results) {
-
-        console.debug("MySQL: Building Map<string, Transaction> of fetched queries");
-        let transactionsMap = new Map();
-        for (const entry of results) {
-            try {
-                let counter = 0;
-
-                let newTransaction = new Transaction(entry.date, "",
-                    entry.description, entry.category,
-                    undefined, undefined, "", "", entry.balance, entry.amount, counter);
-
-                //check for duplicates and update counter:
-                let strID = newTransaction.GetID();
-                while (transactionsMap.has(strID)) {
-                    counter += 1;
-                    newTransaction.SetID(counter);
-                    strID = newTransaction.GetID();
-                }
-
-                transactionsMap.set(newTransaction.GetID(), newTransaction);
-
-            }
-            catch (err) {
-                console.debug("MySQL: Error adding new entry to transactionsMap " + err);
-            }
-
-        }
-        return transactionsMap;
-    }
 
     /**
      * @description Add a transaction to DB
@@ -132,8 +102,7 @@ module.exports = class AccountMySqlDB {
         //console.log("Transaction added to db:");
         //console.log(transaction);
 
-        //TODO integrate this into transaction.GetDateString 
-        //TODO read date from DB and create transaction object
+        //TODO integrate this line into transaction.GetDateString 
         var d = transaction.GetDate(); d.toISOString().split('T')[0] + ' ' + d.toTimeString().split(' ')[0];
 
         var post = {
@@ -155,5 +124,7 @@ module.exports = class AccountMySqlDB {
 
     }
 
+
+   
 
 }

@@ -1,6 +1,5 @@
 Date,Description,Categorie,Montant,Solde
 2020-02-03,Ikea,Revenu,6.44,529
-2020-02-03,Ikea,Revenu,6.44,529
 2020-02-03,Frais interet,Frais,19.96,
 2020-02-01,B And M Restaurant Montreal,Restaurants,41.65,
 2020-01-31,Virement Interac,Transfert,1025,558
@@ -26,9 +25,6 @@ Date,Description,Categorie,Montant,Solde
 2020-01-22,Ikea,Revenu,3.91,414
 2020-01-21,Marche Royal,Épicerie,24.26,701
 2020-01-20,Retrait au guichet,Argent comptant,300,745
-2020-01-20,Retrait au guichet,Argent comptant,300,745
-2020-01-20,Retrait au guichet,Argent comptant,300,745
-2020-01-20,Retrait au guichet,Argent comptant,300,745
 2020-01-20,Marche Royal,Épicerie,19.13,726
 2020-01-19,Petite Italie Montreal,Non categorise,15.25,
 2020-01-19,Domino's Pizza,Restauration rapide,38.95,
@@ -39,8 +35,6 @@ Date,Description,Categorie,Montant,Solde
 2020-01-16,Marche Royal,Épicerie,18.9,1156
 2020-01-16,Ikea,Revenu,71.31,1175
 2020-01-16,Ikea,Revenu,6.44,1246
-2020-01-16,BNI,Finances,50,1253
-2020-01-16,BNI,Finances,50,1253
 2020-01-16,BNI,Finances,50,1253
 2020-01-15,Usat_td,Non categorise,1.25,1303
 2020-01-14,Vrac En Folie,Épicerie,7.12,1304
