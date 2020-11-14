@@ -2,16 +2,23 @@
 
 ## Description
 
-Simple utilitaire en ligne de commande sous Node.JS permettant d'importer des fichiers CSV d'états bancaires dans une base de données MySql.
+Utilitaire sous Node.JS permettant d'importer des fichiers CSV d'états bancaires dans une base de données MySql.
 
 
 ## À Faire
-- Connecter le logiciel à une interface simple permettant d'importer des transactions et d'assigner un type de dépense pour chaque transaction.
-- Exportation vers un fichier CSV correctement formaté pour permettre de gérer son budget plus facilement depuis Excel
-- Conserver l'idée d'1 utilisateur et non de transfomer le systeme en site web complet multiusager
-
+- Implantation de la base de données MySQL
+- Implantation du serveur REST avec Express.js
+- Connecter le logiciel à une vue mensuelle des transactions. 
+  - L'usager peut assigner des catégories de dépenses à chaque transaction.
+  - Un résumé permet de voir l'argent dépensé par mois et par catégories.
 
 ## Fonctions vedettes
-- Gestion intelligente des doublons. Le logiciel fait la différence entre une transaction déjà importée et une transaction d'un même montant au même endroit dans la même journée. 
+
+- Système de règles automatisées permettant d'affecter automatiquement des catégories données à certaines transactions bancaires (ex épicerie, finances...)
+- Configuration du système à l'aide de fichiers JSON
 - Sauvegarde des transactions dans une bd MySql
+
+- Exportation des transactions bancaires consolidées vers un fichier CSV 
+- Gestion intelligente des doublons de transactions.
+- Tests unitaires réalisés avec Jest
 
