@@ -29,8 +29,8 @@ module.exports = class Transaction {
      * @param {string} dateFormat
      * @param {string} description
      * @param {string} category
-     * @param {number} withdraw
      * @param {number} deposit
+     * @param {number} withdraw
      * @param {string} owner
      * @param {string} tags
      * @param {number} [balance=undefined]
@@ -38,7 +38,7 @@ module.exports = class Transaction {
      * @param {number} [counter=0]
      * @throws error if parameters are invalid
      */
-    constructor(date, dateFormat, description, category, withdraw, deposit, owner, tags, balance = undefined, amount = undefined, counter = 0) {
+    constructor(date, dateFormat, description, category, deposit, withdraw, owner, tags, balance = undefined, amount = undefined, counter = 0) {
 
         this.#ProcessDate(date, dateFormat);
         this.#dateFormat = dateFormat;      //store for cloning purposes
@@ -49,7 +49,7 @@ module.exports = class Transaction {
         if (this.#category === "") { this.#category = "Aucune Catégorie"; }
 
         
-        this.#ProcessAmount(withdraw,deposit,amount);
+        this.#ProcessAmount(deposit, withdraw,amount);
         
         this.#balance = balance;
         this.#owner = owner;
@@ -165,7 +165,7 @@ module.exports = class Transaction {
      * @param {number} deposit
      * @param {number} amount Amount variable has precedence over withdraw and deposit
      */
-    #ProcessAmount(withdraw, deposit, amount){
+    #ProcessAmount(deposit,withdraw, amount){
         
         //Amount variable has precedence over withdraw and deposit
         if (!Util.isNullOrUndefined(amount)) {
@@ -177,7 +177,7 @@ module.exports = class Transaction {
         else{
             
             if(Util.isNullOrUndefined(deposit) && Util.isNullOrUndefined(withdraw)) {
-                throw new Error("Transaction: neither withdraw, deposit or amount is defined");
+                throw new Error("Transaction: neither withdraw, deposit or amount is defined" + amount );
             }
     
             if(isNaN(withdraw) || isNaN(deposit))  throw new Error("Transaction: only numerical values are accepted for withdraw or deposit");

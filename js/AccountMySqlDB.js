@@ -95,12 +95,19 @@ module.exports = class AccountMySqlDB {
 
             console.debug("MySQL: Reading entries from DB");
 
-            var query = this.connection.query('SELECT * FROM '+ this.#transactionsTable+' WHERE description=? ORDER BY `_id` DESC ', [description], (error, results, fields) => {
-                if (error) reject(new Error("MySql error reading query " + error));
+            //SELECT * FROM transactions Where Month(date)='1' && YEAR(date)='2020' && description='Ikea'
+
+            var query = this.connection.query('SELECT * FROM '+ this.#transactionsTable +
+                ' WHERE description=? ORDER BY `_id` DESC ', [description], (error, results, fields) => {
+                
+                //FIXME include error detection in test suite
+                if (error){
+                    reject(new Error("MySql error reading query " + error));
+                } 
 
                 console.log("MySQL: Reading from database completed ");
 
-                transactions.BuildFromArray(results)
+                transactions.BuildFromArray(results);
                 resolve(transactions);
             });
 

@@ -129,28 +129,28 @@ describe('Transaction amounts validations', () => {
         expect(result.GetAmount()).toBe(100);
     });
 
-    it("Should create a transaction with correct Withdraw (-10) (amount param undefined)", () => {
+    it("Should create a transaction with correct Deposit (+10) (amount param undefined)", () => {
         const result = new Transaction("2019-24-02", "YYYY-DD-MM",
             "test description", "test category", 10, 0, "test owner", "test tags", 99, 
+            undefined);
+
+        expect(result.GetAmount()).toBe(10);
+    });
+
+    it("Should create a transaction with correct Withdraw(-10) (amount param undefined)", () => {
+        const result = new Transaction("2019-24-02", "YYYY-DD-MM",
+            "test description", "test category", 0, 10, "test owner", "test tags", 99, 
             undefined);
 
         expect(result.GetAmount()).toBe(-10);
     });
 
-    it("Should create a transaction with correct Deposit(+10) (amount param undefined)", () => {
-        const result = new Transaction("2019-24-02", "YYYY-DD-MM",
-            "test description", "test category", 0, 10, "test owner", "test tags", 99, 
-            undefined);
-
-        expect(result.GetAmount()).toBe(10);
-    });
-
-    it("Should create a transaction with correct Deposit(+10) when numbers are passed as string (amount param undefined)", () => {
+    it("Should create a transaction with correct Withdraw(-10) when numbers are passed as string (amount param undefined)", () => {
         const result = new Transaction("2019-24-02", "YYYY-DD-MM",
             "test description", "test category", '0', '10', "test owner", "test tags", 99, 
             undefined);
 
-        expect(result.GetAmount()).toBe(10);
+        expect(result.GetAmount()).toBe(-10);
     });
 
 

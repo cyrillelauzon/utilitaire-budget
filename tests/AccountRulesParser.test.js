@@ -9,7 +9,7 @@ describe('RulesParser category assignation using rules.test.json', () => {
     
     it("Should assign a new category based on parser rules (new category assigned)", () => {
         const initialTransaction = new Transaction("2019-02-20", "YYYY-MM-DD",
-            "test description", "test category", 10, 0, "test owner", "test tags", 99, 
+            "test description", "test category", 0, 10, "test owner", "test tags", 99, 
             undefined);
         const result = parser.ParseTransaction(initialTransaction);
         expect(result.GetCategory()).toBe("new category assigned");
@@ -25,7 +25,7 @@ describe('RulesParser category assignation using rules.test.json', () => {
 
     it("Should assign a new category when isIncome condition met(new category with Income) and rules down the list should overwrite precedent rules", () => {
         const initialTransaction = new Transaction("2019-02-20", "YYYY-MM-DD",
-            "test description", "test category", 0, 10, "test owner", "test tags", 99, 
+            "test description", "test category", 10, 0, "test owner", "test tags", 99, 
             undefined);
         const result = parser.ParseTransaction(initialTransaction);
         expect(result.GetCategory()).toBe("new category with Income");

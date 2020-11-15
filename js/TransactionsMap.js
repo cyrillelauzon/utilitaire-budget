@@ -55,6 +55,8 @@ module.exports = class TransactionsMap {
     BuildFromArray(entries){
 
         let transactionsMap = new Map();
+        if(Util.isNullOrUndefined(entries)) return transactionsMap;
+
         for (const entry of entries) {
             try {
 
