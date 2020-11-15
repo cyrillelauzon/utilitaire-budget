@@ -27,7 +27,7 @@ module.exports = class AccountCsvExporter {
         const createCsvWriter = require('csv-writer').createObjectCsvWriter;
         console.debug("Exporting CSV file: " + fileName);
 
-        //TODO Implement accountInfo Object to output correct column names
+        //FEATURE Implement accountInfo Object to output correct column names
         const csvWriter = createCsvWriter({
             path: fileName,
             header: [{
@@ -35,19 +35,19 @@ module.exports = class AccountCsvExporter {
                 title: 'Date'
             },
             {
-                id: 'Description',
+                id: 'description',
                 title: 'Description'
             },
             {
-                id: 'Category',
+                id: 'category',
                 title: 'Categorie'
             },
             {
-                id: 'Amount',
+                id: 'amount',
                 title: 'Montant'
             },
             {
-                id: 'Balance',
+                id: 'balance',
                 title: 'Solde'
             }
             ]

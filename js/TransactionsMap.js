@@ -32,7 +32,7 @@ module.exports = class TransactionsMap {
 
         //Empty transactions are not added
         if (transaction === undefined) return;
-        if (transaction.IsEmpty() === true) return;
+      //  if (transaction.IsEmpty() === true) return;
 
         let counter = 0;
         let newTransaction = transaction.Clone();
@@ -46,8 +46,7 @@ module.exports = class TransactionsMap {
         }
         
         this.#transactionsMap.set(newTransaction.GetID(), newTransaction);
-        console.log("transaction added");
-        if(mySqlObj !== undefined)mySqlObj.AddTransaction(transaction);
+        if(mySqlObj !== undefined) mySqlObj.AddTransaction(transaction);
     }
 
     /**
@@ -88,10 +87,10 @@ module.exports = class TransactionsMap {
         for (const [key, value] of this.#transactionsMap.entries()) {
             let newEntry = { 
                 date: value.GetDateString(),
-                Description: value.GetDescription(),
-                Category: value.GetCategory(),
-                Amount: value.GetAmount(),
-                Balance: value.GetBalance()                
+                description: value.GetDescription(),
+                category: value.GetCategory(),
+                amount: value.GetAmount(),
+                balance: value.GetBalance()                
             };            
             
             transactions.push(newEntry);

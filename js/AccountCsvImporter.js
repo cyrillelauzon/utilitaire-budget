@@ -4,7 +4,6 @@ Description:
 Imports and sanitize a csv file containing banking transactions
 -------------------------------------------------------------------------*/
 
-
 const Util = require('./Util');
 const Transaction = require('./Transaction');
 const AccountRulesParser = require('./AccountRulesParser');
@@ -12,6 +11,7 @@ const AccountsBookInfo = require('./AccountsBookInfo');
 const AccountMySqlDB = require('./AccountMySqlDB');
 const { rejects } = require('assert');
 const TransactionsMap = require('./TransactionsMap');
+
 
 module.exports = class AccountCsvImporter {
 
@@ -83,14 +83,14 @@ module.exports = class AccountCsvImporter {
                         this.#transactions.Add(transaction, sqlDB);
 
                     } catch (err) {
-                        //TODO Add failed to read row to an array for summary
+                        //FEATURE Add failed to read row to an array for summary
                         console.debug("Read transaction from CSV file is invalid " + err);
                     }
 
                 })
                 .on('end', async () => {
+                    console.debug("Transaction completed import");
                     resolve();
-
                 });
         }).catch(error => { console.log('Error importing CSV file: ', error.message); });
 

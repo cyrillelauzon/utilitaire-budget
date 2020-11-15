@@ -7,17 +7,22 @@ const Util = require('./Util');
 const Transaction = require('./Transaction');
 const TransactionsMap = require('./TransactionsMap');
 
+const TEST_ENV = "_test";
+
 
 module.exports = class AccountMySqlDB {
 
     connection;
+    #transactionsTable;
+
 
     /**
      * @constructor
      * @descriptionCreates an instance of Util.
      */
-    constructor() {
-
+    constructor(isTestEnv = false) {
+        this.#transactionsTable = "transactions";
+        if (isTestEnv) this.#transactionsTable += TEST_ENV;
     }
 
     /**
@@ -50,8 +55,16 @@ module.exports = class AccountMySqlDB {
      * @description
      */
     Disconnect() {
-        this.connection.end((err) => {
-            console.log('disconneted ' + this.connection.threadId);
+        return new Promise((resolve, reject) => {
+            this.connection.end((err) => {
+                if (err) {
+                    console.error('error Disconnecting: ' + err.stack);
+                    reject();
+                }
+
+                console.debug('MySQL disconnected ' + this.connection.threadId);
+                resolve();
+            });
         });
     }
 
@@ -60,7 +73,7 @@ module.exports = class AccountMySqlDB {
      * @description Create accountBook database and transactions tables
      */
     CreateAccountBookDB() {
-        /*         this.connection.query('CREATE DATABASE AccountsBook', (error, results, fields) => {
+        /*this.connection.query('CREATE DATABASE AccountsBook', (error, results, fields) => {
         
                 }); */
         /* this.connection.query('GRANT USER SELECT', (error, results, fields) => {
@@ -72,18 +85,21 @@ module.exports = class AccountMySqlDB {
 
     /**
      * @description Will select a range of transaction from DB based on filters
-     * TODO ex: by month, by tag, by category
+     * @param {string} criteria
      */
-    SelectTransactions() {
+    SelectTransactions(criteria) {
 
         var transactions = new TransactionsMap();
         return new Promise((resolve, reject) => {
 
             console.debug("MySQL: Reading entries from DB");
+            const searchCriteria = "description='Ikea'";
 
-            var query = this.connection.query('SELECT * FROM `transactions` ORDER BY `_id` DESC ', (error, results, fields) => {
+            var query = this.connection.query('SELECT * FROM `?` WHERE ? ORDER BY `_id` DESC ', this.#transactionsTable, searchCriteria, (error, results, fields) => {
                 if (error) reject(new Error("MySql error reading query " + error));
-                console.log("transaction are read from database: ");
+
+                console.log("MySQL: Reading from database completed ");
+
                 transactions.BuildFromArray(results)
                 resolve(transactions);
             });
@@ -96,13 +112,12 @@ module.exports = class AccountMySqlDB {
     /**
      * @description Add a transaction to DB
      * @param {Transaction} transaction
-     * //TODO Implement function as Promise? 
      */
-    AddTransaction(transaction) {
+    async AddTransaction(transaction) {
         //console.log("Transaction added to db:");
         //console.log(transaction);
 
-        //TODO integrate this line into transaction.GetDateString 
+        //FIXME integrate this line into transaction.GetDateString 
         var d = transaction.GetDate(); d.toISOString().split('T')[0] + ' ' + d.toTimeString().split(' ')[0];
 
         var post = {
@@ -115,16 +130,18 @@ module.exports = class AccountMySqlDB {
             owner: transaction.GetOwner()
         };
 
-        var query = this.connection.query('INSERT INTO transactions SET ?', post, (error, results, fields) => {
-            if (error) {
-                //    throw new Error("MySQL db: Could not add transaction to db" + error);
-            }
-            // Neat!
+        return new Promise((resolve, reject) => {
+            var query = this.connection.query('INSERT INTO ? SET ?', this.#transactionsTable, post, (error, results, fields) => {
+                if (error) {
+                    reject(new Error("MySQL db: Could not add transaction to db" + error));
+                }
+                resolve();
+            });
         });
 
     }
 
 
-   
+
 
 }

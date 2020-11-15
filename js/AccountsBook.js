@@ -41,9 +41,12 @@ module.exports = class AccountsBook {
      */
     async ImportCSV(fileName, accountName) {
 
+
+        //TODO Async: make sure await mechanism is functionnal for importing csv files
         await this.accountMySql.Connect();
         await this.accountImporter.Import(fileName, accountName, this.accountMySql);
-        this.accountMySql.Disconnect();
+        console.debug("Transaction imported: " + this.accountImporter.GetTransactions().GetLength());
+        await this.accountMySql.Disconnect();
 
     }
 
@@ -55,11 +58,17 @@ module.exports = class AccountsBook {
 
         await this.accountMySql.Connect();
 
-        let transactions = await this.accountMySql.SelectTransactions();
+        let transactions = await this.accountMySql.SelectTransactions("");
         let csvExport = new AccountCsvExporter();
-        csvExport.ExportCsv("./testexport2.csv", transactions);
+        csvExport.ExportCsv("./export_csv/testexport2.csv", transactions);
 
-        this.accountMySql.Disconnect();
+        await this.accountMySql.Disconnect();
     }
+
+
+
+
+
+
 
 }

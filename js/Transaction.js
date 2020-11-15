@@ -86,6 +86,7 @@ module.exports = class Transaction {
      * @returns {boolean}
      */
     IsEmpty() {
+        //FIXME test IsEmpty() in test suite or remove
         return (this.#amount === 0 || isNaN(this.#amount))
     }
 
