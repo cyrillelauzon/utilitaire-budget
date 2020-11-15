@@ -59,7 +59,7 @@ module.exports = class AccountCsvImporter {
     * @throws Error si le fichier est invalide
     * @async
     */
-    async Import(fileNameCsv, accountName, sqlDB) {
+    async Import(fileNameCsv, accountName, sqlDB = undefined) {
         const csv = require('fast-csv');
         const fs = require('fs');
 

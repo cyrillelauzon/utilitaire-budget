@@ -8,17 +8,25 @@ const app = express();
 const AccountsBook = require('./js/AccountsBook');
 
 let bankAccount = new AccountsBook;
-InitApp();
+
 
 /**
  * @description 
  */
-function InitApp(){
-/*     bankAccount.ImportCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille");
-    bankAccount.ImportCSV("./import_csv/credit.csv", "Mastercard de Cyrille");
- */    bankAccount.SelectTransactions();
+async function InitApp(){
+    await bankAccount.ImportCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille");
+    await bankAccount.ImportCSV("./import_csv/credit.csv", "Mastercard de Cyrille");
+//   bankAccount.SelectTransactions();
     
 }
+
+/**
+ * @description Tells express to listen to port 3000
+ */
+app.listen(3000, () => {
+    InitApp();
+    console.log("listening on port 3000");
+})
 
 
 /**
@@ -32,16 +40,20 @@ app.get('/', (req, resp) => {
 /**
  * @description Get Request for transactions
  */
-app.get('/transactions', (req, resp) => {
-    resp.send('Transaction list');
+app.get('/transactions/:description', async (req, resp) => {
+    //resp.send('The list of transactions where descriptions is: ' + req.params.description);
     
+    let transactions = await bankAccount.SelectTransactions(req.params.description);    
+    //resp.setHeader('Content-Type', 'application/json');
+    resp.send(transactions.GetArray());
 
 });
 
+
 /**
- * @description Tells express to listen to port 3000
+ * @description post request for new transactions
  */
-/* app.listen(3000, () => {
-    console.log("listening on port 3000");
-})
- */
+app.post('/importcsv', (req, resp) => {
+    resp.send('Import csv file will be done at this address');
+
+});

@@ -35,7 +35,8 @@ module.exports = class AccountMySqlDB {
             host: 'localhost',
             user: 'cyrillebudget',
             password: 'asv33Mtl06!',
-            database: 'accountsbook'
+            database: 'accountsbook',
+            timezone: 'local'
         });
 
         return new Promise((resolve, reject) => {
@@ -85,17 +86,16 @@ module.exports = class AccountMySqlDB {
 
     /**
      * @description Will select a range of transaction from DB based on filters
-     * @param {string} criteria
+     * @param {string} description
      */
-    SelectTransactions(criteria) {
+    SelectTransactions(description) {
 
         var transactions = new TransactionsMap();
         return new Promise((resolve, reject) => {
 
             console.debug("MySQL: Reading entries from DB");
-            const searchCriteria = "description='Ikea'";
 
-            var query = this.connection.query('SELECT * FROM `?` WHERE ? ORDER BY `_id` DESC ', this.#transactionsTable, searchCriteria, (error, results, fields) => {
+            var query = this.connection.query('SELECT * FROM '+ this.#transactionsTable+' WHERE description=? ORDER BY `_id` DESC ', [description], (error, results, fields) => {
                 if (error) reject(new Error("MySql error reading query " + error));
 
                 console.log("MySQL: Reading from database completed ");
@@ -104,6 +104,8 @@ module.exports = class AccountMySqlDB {
                 resolve(transactions);
             });
 
+        }).catch((err) => {
+            console.error("MySql error in SELECT transaction " + err);
         });
     }
 
@@ -113,32 +115,33 @@ module.exports = class AccountMySqlDB {
      * @description Add a transaction to DB
      * @param {Transaction} transaction
      */
-    AddTransaction(transaction) {
+    async AddTransaction(transaction) {
         //console.log("Transaction added to db:");
-        //console.log(transaction);
 
-        //FIXME integrate this line into transaction.GetDateString 
-        var d = transaction.GetDate(); d.toISOString().split('T')[0] + ' ' + d.toTimeString().split(' ')[0];
+        //var d = transaction.GetDate(); d.toISOString().split('T')[0] + ' ' + d.toTimeString().split(' ')[0];
 
         var post = {
             _id: transaction.GetID(),
-            date: d,
+            date: transaction.GetDate(),
             description: transaction.GetDescription(),
             category: transaction.GetCategory(),
             amount: transaction.GetAmount(),
             balance: transaction.GetBalance(),
             owner: transaction.GetOwner()
         };
+        
 
+        return new Promise((resolve, reject) => {
+            var query = this.connection.query('INSERT INTO transactions SET ?',  post, (error, results, fields) => {
+                if (error) {
+                    reject(new Error("MySQL db: Could not add transaction to db" + error));
+                }
+                resolve();
+            });
 
-        var query = this.connection.query('INSERT INTO ? SET ?', this.#transactionsTable, post, (error, results, fields) => {
-            if (error) {
-                //   reject(new Error("MySQL db: Could not add transaction to db" + error));
-            }
-            //resolve();
+        }).catch((err) => {
+            //console.error(err);
         });
-
-
     }
 
 

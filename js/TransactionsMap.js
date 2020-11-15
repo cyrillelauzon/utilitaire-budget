@@ -46,7 +46,7 @@ module.exports = class TransactionsMap {
         }
         
         this.#transactionsMap.set(newTransaction.GetID(), newTransaction);
-        //if(mySqlObj !== undefined) mySqlObj.AddTransaction(transaction);
+        if(mySqlObj != undefined) mySqlObj.AddTransaction(transaction);
     }
 
     /**
