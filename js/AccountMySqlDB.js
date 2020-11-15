@@ -113,7 +113,7 @@ module.exports = class AccountMySqlDB {
      * @description Add a transaction to DB
      * @param {Transaction} transaction
      */
-    async AddTransaction(transaction) {
+    AddTransaction(transaction) {
         //console.log("Transaction added to db:");
         //console.log(transaction);
 
@@ -130,14 +130,14 @@ module.exports = class AccountMySqlDB {
             owner: transaction.GetOwner()
         };
 
-        return new Promise((resolve, reject) => {
-            var query = this.connection.query('INSERT INTO ? SET ?', this.#transactionsTable, post, (error, results, fields) => {
-                if (error) {
-                    reject(new Error("MySQL db: Could not add transaction to db" + error));
-                }
-                resolve();
-            });
+
+        var query = this.connection.query('INSERT INTO ? SET ?', this.#transactionsTable, post, (error, results, fields) => {
+            if (error) {
+                //   reject(new Error("MySQL db: Could not add transaction to db" + error));
+            }
+            //resolve();
         });
+
 
     }
 

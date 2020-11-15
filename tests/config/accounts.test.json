@@ -1,0 +1,25 @@
+{
+    "Compte chèque de Cyrille": {
+        "owner": "Cyrille Lauzon",
+        "csv-delimiter": ",",
+        "date-format":"YYYY-MM-DD",
+        "date": "Date",
+        "description": "Description",
+        "category": "Categorie",
+        "deposit": "Debit",
+        "withdraw": "Credit",
+        "balance" : "Solde"
+    },
+    "Mastercard de Cyrille": {
+        "owner": "Cyrille Labrosse",
+        "csv-delimiter": ";",
+        "date-format":"YYYY-MM-DD",
+        "date": "Date",
+        "description": "Description",
+        "category": "Categorie",
+        "deposit": "Debit",
+        "withdraw": "Credit",
+        "balance" : "Solde"
+    }
+
+}

@@ -176,7 +176,9 @@ module.exports = class Transaction {
         }
         else{
             
-            if(Util.isNullOrUndefined(deposit) && Util.isNullOrUndefined(withdraw)) throw new Error("Transaction: neither withdraw, deposit or amount is defined");
+            if(Util.isNullOrUndefined(deposit) && Util.isNullOrUndefined(withdraw)) {
+                throw new Error("Transaction: neither withdraw, deposit or amount is defined");
+            }
     
             if(isNaN(withdraw) || isNaN(deposit))  throw new Error("Transaction: only numerical values are accepted for withdraw or deposit");
             

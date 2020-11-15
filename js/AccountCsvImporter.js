@@ -16,6 +16,7 @@ const TransactionsMap = require('./TransactionsMap');
 module.exports = class AccountCsvImporter {
 
     #transactions;
+    #failedRows;
 
     /**
      *Creates an instance of AccountCsvImporter.
@@ -25,6 +26,7 @@ module.exports = class AccountCsvImporter {
     constructor(rulesFileName, accountsFileName) {
 
         this.#transactions = new TransactionsMap();
+        this.#failedRows = new Array();
 
         this.ruleParser = new AccountRulesParser(rulesFileName);
         this.accountsInfo = new AccountsBookInfo(accountsFileName);
@@ -38,6 +40,13 @@ module.exports = class AccountCsvImporter {
         return this.#transactions;
     }
 
+    /**
+     * @description returns Rows that could not be read from last import
+     * @returns {Array<String>}
+     */
+    GetFailedRows() {
+        return this.#failedRows;
+    }
 
     /**
     *Import
@@ -56,44 +65,36 @@ module.exports = class AccountCsvImporter {
 
         console.log("Importing CSV File: " + fileNameCsv);
 
-        var accountName = accountName;
-        var fileNameCsv = fileNameCsv;
-        return new Promise((resolve, reject) => {
+        const readstream = fs.createReadStream(fileNameCsv);
+        const readstreamCSV = readstream.pipe(csv.parse({ headers: true, delimiter: this.accountsInfo.GetDelimiter(accountName) }));
+        for await (const row of readstreamCSV) {
 
-            fs.createReadStream(fileNameCsv)
-                .pipe(csv.parse({ headers: true, delimiter: this.accountsInfo.GetDelimiter(accountName) }))
-                .on('error', (err) => {
-                    reject();
-                })
-                .on('data', (row) => {
-                    //Processing of a new row of data 
-                    try {
-                        let mappedCols = this.accountsInfo.MapFieldNames(row, accountName);
-                        let transaction = new Transaction(mappedCols['date'],
-                            this.accountsInfo.GetDateFormat(accountName),
-                            mappedCols['description'],
-                            mappedCols['category'],
-                            mappedCols['withdraw'],
-                            mappedCols['deposit'],
-                            mappedCols['owner'],
-                            mappedCols['tags'],
-                            mappedCols['balance']);
+            try {
+                let mappedCols = this.accountsInfo.MapFieldNames(row, accountName);
+                let transaction = new Transaction(mappedCols['date'],
+                    this.accountsInfo.GetDateFormat(accountName),
+                    mappedCols['description'],
+                    mappedCols['category'],
+                    mappedCols['withdraw'],
+                    mappedCols['deposit'],
+                    mappedCols['owner'],
+                    mappedCols['tags'],
+                    mappedCols['balance']);
 
-                        transaction = this.ruleParser.ParseTransaction(transaction);
-                        this.#transactions.Add(transaction, sqlDB);
+                transaction = this.ruleParser.ParseTransaction(transaction);
+                this.#transactions.Add(transaction, sqlDB);
 
-                    } catch (err) {
-                        //FEATURE Add failed to read row to an array for summary
-                        console.debug("Read transaction from CSV file is invalid " + err);
-                    }
+            } catch (err) {
+                this.#failedRows.push(row);
+                //console.debug("Transaction from CSV file "+ fileNameCsv +" is invalid // " + err);
+                //console.debug("Imported row content: ");
+                //console.debug(row);
+            }
 
-                })
-                .on('end', async () => {
-                    console.debug("Transaction completed import");
-                    resolve();
-                });
-        }).catch(error => { console.log('Error importing CSV file: ', error.message); });
+        }
 
+        console.debug("Transaction completed import " + fileNameCsv);
+        console.debug("Number of transactions in map " + this.#transactions.GetLength());
     }
 
 }

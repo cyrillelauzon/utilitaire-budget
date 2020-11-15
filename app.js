@@ -14,8 +14,10 @@ InitApp();
  * @description 
  */
 function InitApp(){
-    bankAccount.ImportCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille");
+/*     bankAccount.ImportCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille");
     bankAccount.ImportCSV("./import_csv/credit.csv", "Mastercard de Cyrille");
+ */    bankAccount.SelectTransactions();
+    
 }
 
 
@@ -39,6 +41,7 @@ app.get('/transactions', (req, resp) => {
 /**
  * @description Tells express to listen to port 3000
  */
-app.listen(3000, () => {
+/* app.listen(3000, () => {
     console.log("listening on port 3000");
 })
+ */

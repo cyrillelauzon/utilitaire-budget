@@ -2,7 +2,7 @@
 const Transaction = require('../js/Transaction');
 const AccountRulesParser = require('../js/AccountRulesParser');
 
-const parser = new AccountRulesParser(__dirname + "/rulestest.json");
+const parser = new AccountRulesParser(__dirname +"/config/rules.test.json");
 
 //Valid executions and parameters
 describe('RulesParser category assignation using rules.test.json', () => {
