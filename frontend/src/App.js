@@ -1,4 +1,4 @@
-import './App.css';
+import './App.scss';
 
 import TransactionsTable from './components/transactionsTable';
 import Container from 'react-bootstrap/Container';
