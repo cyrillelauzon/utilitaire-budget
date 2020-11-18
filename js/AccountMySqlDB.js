@@ -96,9 +96,19 @@ module.exports = class AccountMySqlDB {
             console.debug("MySQL: Reading entries from DB");
 
             //SELECT * FROM transactions Where Month(date)='1' && YEAR(date)='2020' && description='Ikea'
+            let queryDate= "";
+
+            
+            let queryYear= "2020";
+            let queryMonth = "1";
+            
+            if (queryMonth !="") queryDate += " && Month(date)="+queryMonth+"";
+            if (queryYear !="") queryDate += " && YEAR(date)="+queryYear+"";
+            
 
             var query = this.connection.query('SELECT * FROM '+ this.#transactionsTable +
-                ' WHERE description=? ORDER BY `_id` DESC ', [description], (error, results, fields) => {
+                ' WHERE description=? '+ queryDate +
+                ' ORDER BY `_id` DESC ', [description], (error, results, fields) => {
                 
                 //FIXME include error detection in test suite
                 if (error){

@@ -20,7 +20,7 @@ async function InitApp(){
     console.debug("*******************************************");
     console.debug(" ");
     console.debug("=====Express: Initializing server=====");
-    console.log("listening on port 3000");
+    console.log("listening on port 5000");
     console.debug(" ");
 
     //TEMP (will change to import csv file from put request)
@@ -35,7 +35,7 @@ async function InitApp(){
 /**
  * @description Tells express to listen to port 3000
  */
-app.listen(3000, () => {
+app.listen(5000, () => {
     InitApp();
 })
 
