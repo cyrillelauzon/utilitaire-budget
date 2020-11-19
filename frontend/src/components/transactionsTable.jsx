@@ -1,9 +1,11 @@
 /*-------------------------------------------------------------------------
-Component   transactionsTable
+Component   TransactionsTable
 Description: 
 Display of a table of bank transactions objects
 -------------------------------------------------------------------------*/
 import React, { Component } from 'react';
+import Table from 'react-bootstrap/Table';
+import TransactionRow from './TtransactionRow';
 
 class TransactionsTable extends Component {
     state = { count: 1 }
@@ -23,8 +25,20 @@ class TransactionsTable extends Component {
     render() {
         return (
             <React.Fragment>
-                <span>Count: {this.state.count}</span>
-                <button onClick={() => this.renderLines("testrend")}>test</button>
+                <h3>Transactions: count: {this.state.count}</h3>
+                <Table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Description</th>
+                            <th>Catégorie</th>
+                            <th>Montant</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <TransactionRow key={10} description={"test desc"}/>
+                    </tbody>
+                </Table>
             </React.Fragment>
         )
     }
