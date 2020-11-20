@@ -15,12 +15,14 @@ class TransactionsTable extends Component {
         
     }
  */
-    renderLines = (idline) => {
+
+    //test functions
+/*     renderLines = (idline) => {
         if(this.state.count === 0) return <p>table is empty!</p>
         this.setState({count: this.state.count + 1});
         console.log(idline);
         return <p>Table content</p>
-    }
+    } */
 
     render() {
         return (
@@ -33,10 +35,12 @@ class TransactionsTable extends Component {
                             <th>Description</th>
                             <th>Catégorie</th>
                             <th>Montant</th>
+                            <th>Approved</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <TransactionRow key={10} description={"test desc"}/>
+                        <TransactionRow key={10} description={"test desc"} isApproved={true}/>
+                        <TransactionRow key={10} description={"test desc"} isApproved={false}/>
                     </tbody>
                 </Table>
             </React.Fragment>

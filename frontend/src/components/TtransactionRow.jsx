@@ -1,16 +1,25 @@
 import React, { Component } from 'react';
+import Form from 'react-bootstrap/Form'
+import './transactionsrow.scss';
 
 class TransactionRow extends Component {
-    state = {
-        description: this.props.description
-    }
+
     render() {
+
+        let bgClass = "bg-table-row";
+        if(this.props.isApproved) bgClass+="-selected";
+
         return (
-            <tr>
+            <tr className={bgClass}>
                 <td>bla</td>
-                <td>{this.state.description}</td>
+                <td>{this.props.description}</td>
                 <td>cat</td>
                 <td>10</td>
+                <td><Form.Check
+                custom
+                inline
+                id={"selected"}
+              /></td>
             </tr>)
     }
 }
