@@ -6,7 +6,6 @@ Main entry point for app and express requests handling
 const express = require('express');
 const app = express();
 const AccountsBook = require('./js/AccountsBook');
-
 let bankAccount = new AccountsBook;
 
 
@@ -56,6 +55,7 @@ app.get('/transactions/:description', async (req, resp) => {
     console.debug("=====Express: new Get transactions request=====");
 
     let transactions = await bankAccount.SelectTransactions(req.params.description);    
+    resp.set("Access-Control-Allow-Origin", "*");
     resp.send(transactions.GetArray());
 
     console.debug("=====En Request=====");

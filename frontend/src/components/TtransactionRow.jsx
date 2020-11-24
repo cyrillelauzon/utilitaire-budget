@@ -1,3 +1,8 @@
+/*-------------------------------------------------------------------------
+Component   TransactionsTable
+Description: 
+Display of a table of bank transactions objects
+-------------------------------------------------------------------------*/
 import React, { Component } from 'react';
 import Form from 'react-bootstrap/Form'
 import './transactionsrow.scss';
@@ -6,19 +11,23 @@ class TransactionRow extends Component {
 
     render() {
 
+        let transaction = this.props.transaction;
         let bgClass = "bg-table-row";
-        if(this.props.isApproved) bgClass+="-selected";
-
+        if(transaction.isapproved === true) bgClass+="-selected";
+        
         return (
             <tr className={bgClass}>
-                <td>bla</td>
-                <td>{this.props.description}</td>
-                <td>cat</td>
-                <td>10</td>
+                <td>{transaction.id}</td>
+                <td>{transaction.date}</td>
+                <td>{transaction.amount +"$"}</td>
+                <td>{transaction.description}</td>
+                <td>{transaction.category}</td>
                 <td><Form.Check
                 custom
                 inline
-                id={"selected"}
+                onChange={this.props.onApprove}
+                id={transaction.id}
+                checked={transaction.isapproved}
               /></td>
             </tr>)
     }

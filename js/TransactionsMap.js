@@ -88,11 +88,13 @@ module.exports = class TransactionsMap {
         
         for (const [key, value] of this.#transactionsMap.entries()) {
             let newEntry = { 
+                id: value.GetID(),
                 date: value.GetDateString(),
                 description: value.GetDescription(),
                 category: value.GetCategory(),
                 amount: value.GetAmount(),
-                balance: value.GetBalance()                
+                balance: value.GetBalance(),
+                isapproved: value.IsApproved()                
             };            
             
             transactions.push(newEntry);

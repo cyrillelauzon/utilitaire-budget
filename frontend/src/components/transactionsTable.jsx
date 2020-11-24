@@ -7,42 +7,46 @@ import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table';
 import TransactionRow from './TtransactionRow';
 
-class TransactionsTable extends Component {
-    state = { count: 1 }
 
-/*     constructor(){
-        super();
-        
-    }
- */
+class TransactionsTable extends Component {
+
 
     //test functions
-/*     renderLines = (idline) => {
-        if(this.state.count === 0) return <p>table is empty!</p>
-        this.setState({count: this.state.count + 1});
-        console.log(idline);
-        return <p>Table content</p>
-    } */
+    /*     renderLines = (idline) => {
+            if(this.state.count === 0) return <p>table is empty!</p>
+            this.setState({count: this.state.count + 1});
+            console.log(idline);
+            return <p>Table content</p>
+
+
+        } */
+
+
 
     render() {
         return (
             <React.Fragment>
-                <h3>Transactions: count: {this.state.count}</h3>
+                <p>Transactions: count: {this.props.transactions.length}</p>
                 <Table>
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Date</th>
+                            <th>Montant</th>
                             <th>Description</th>
                             <th>Catégorie</th>
-                            <th>Montant</th>
                             <th>Approved</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <TransactionRow key={10} description={"test desc"} isApproved={true}/>
-                        <TransactionRow key={10} description={"test desc"} isApproved={false}/>
+                        {this.props.transactions.map((transaction) => {
+                            return <TransactionRow key={transaction.id} transaction={transaction}  onApprove={() => this.props.onApprove(transaction)} />
+                        })}
                     </tbody>
                 </Table>
+                <ul>
+
+                </ul>
             </React.Fragment>
         )
     }

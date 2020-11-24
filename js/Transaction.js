@@ -20,8 +20,9 @@ module.exports = class Transaction {
     #owner;
     #tags;          //To be able to easily tag and group certain transactions : ex  holiday spendings...
     #counter;       //for cloning purposes
+    #isapproved;
 
-
+//TODO add if transaction is approved
     /**
      * @constructor
      *Creates an instance of Transaction.
@@ -38,7 +39,7 @@ module.exports = class Transaction {
      * @param {number} [counter=0]
      * @throws error if parameters are invalid
      */
-    constructor(date, dateFormat, description, category, deposit, withdraw, owner, tags, balance = undefined, amount = undefined, counter = 0) {
+    constructor(date, dateFormat, description, category, deposit, withdraw, owner, tags, balance = undefined, amount = undefined, counter = 0, isapproved=false) {
 
         this.#ProcessDate(date, dateFormat);
         this.#dateFormat = dateFormat;      //store for cloning purposes
@@ -56,6 +57,7 @@ module.exports = class Transaction {
         this.#tags = tags;
 
         this.#counter = counter;
+        this.#isapproved = isapproved;
         this.SetID(counter);
     }
 
@@ -64,6 +66,7 @@ module.exports = class Transaction {
      * @returns {string}
      */
     GetID() { return this.#_id; }
+    IsApproved() {return this.#isapproved;}
     GetDate() { return this.#date; }
     GetDateString() {
         const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
@@ -207,7 +210,8 @@ module.exports = class Transaction {
             this.#tags,
             this.#balance,
             this.#amount,
-            this.#counter);
+            this.#counter,
+            this.#isapproved);
     }
 
     /**
