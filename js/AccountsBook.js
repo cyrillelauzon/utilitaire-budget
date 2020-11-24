@@ -52,7 +52,7 @@ module.exports = class AccountsBook {
     /**
      * @description
      */
-    async SelectTransactions(description) {
+    async SelectTransactions(description, year,month) {
 
         await this.accountMySql.Connect();
         
@@ -63,7 +63,7 @@ module.exports = class AccountsBook {
 
         console.debug("***************Importing done************"); */
         
-         let transactions = await this.accountMySql.SelectTransactions(description);
+         let transactions = await this.accountMySql.SelectTransactions(description,year,month);
          await this.accountMySql.Disconnect();
          return transactions;
  

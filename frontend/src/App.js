@@ -16,10 +16,8 @@ import Col from 'react-bootstrap/Col';
 
 class App extends Component {
 
-  //Temp: will be loaded from AJAX
-  //TODO add isapproved and id inside of node transaction object
   state = {
-    transactions: []/* [{ "id": "01", "date": "2020-01-31", "description": "Ikea", "category": "Restaurant", "amount": -12, "balance": 546, "isapproved": false },
+    transactions: [],/* [{ "id": "01", "date": "2020-01-31", "description": "Ikea", "category": "Restaurant", "amount": -12, "balance": 546, "isapproved": false },
     { "id": "02", "date": "2020-01-30", "description": "Ikea", "category": "Restaurant", "amount": -9.49, "balance": null, "isapproved": false },
     { "id": "03", "date": "2020-01-29", "description": "Ikea", "category": "Restaurant", "amount": -6.44, "balance": 1583, "isapproved": false },
     { "id": "04", "date": "2020-01-27", "description": "Ikea", "category": "Restaurant", "amount": -4, "balance": 1312, "isapproved": false },
@@ -36,19 +34,28 @@ class App extends Component {
     { "id": "15", "date": "2020-01-10", "description": "Ikea", "category": "Restaurant", "amount": -4, "balance": 1318, "isapproved": false },
     { "id": "16", "date": "2020-01-05", "description": "Ikea", "category": "Restaurant", "amount": -4, "balance": null, "isapproved": false },
     { "id": "17", "date": "2020-01-02", "description": "Ikea", "category": "Restaurant", "amount": -3.91, "balance": 850 }]*/
+    curMonth:1
   };
 
 
-  async componentWillMount() {
-    const {data: transactions} = await axios.get('http://localhost:5000/transactions/Ikea' );
+  /**
+   * @description
+   * @memberof App
+   */
+  async componentDidMount() {
+    const { data: transactions } = await axios.get('http://localhost:5000/transactions/Marche%20Royal/2020/01');
 
     console.log("did mount");
     console.log(transactions);
 
-    this.setState({transactions});
+    this.setState({ transactions });
 
   }
 
+  /**
+   * @description
+   * @memberof App
+   */
   handleApprove = (tr) => {
     console.log("parent handleapp" + tr);
     const transactions = [...this.state.transactions];
@@ -58,6 +65,21 @@ class App extends Component {
     this.setState({ transactions });
   }
 
+  /**
+   * @description
+   * @memberof App
+   */
+  handleCurMonthClick = () =>{
+    let curMonth = this.state.curMonth;
+    curMonth = new Date().getMonth() + 1; //getMonth() returns value from 0-11
+    this.setState({curMonth});
+  }
+
+  /**
+   * @description
+   * @returns
+   * @memberof App
+   */
   render() {
     return (
       <div className="App">
@@ -65,7 +87,9 @@ class App extends Component {
           <Row >
             <Col md={"1"}></Col>
             <Col md={"10"}>
-              <TransactionsTable transactions={this.state.transactions} onApprove={this.handleApprove} />
+              <TransactionsTable curMonth={this.state.curMonth} transactions={this.state.transactions}
+                onApprove={this.handleApprove}
+                onCurMonthClick={() => this.handleCurMonthClick()} />
             </Col>
             <Col md={"1"}></Col>
           </Row>

@@ -50,11 +50,12 @@ app.get('/', (req, resp) => {
 /**
  * @description Get Request for transactions
  */
-app.get('/transactions/:description', async (req, resp) => {
+app.get('/transactions/:description/:year/:month', async (req, resp) => {
 
     console.debug("=====Express: new Get transactions request=====");
+    const {description, year, month} = req.params;
+    let transactions = await bankAccount.SelectTransactions(description, year, month);    
 
-    let transactions = await bankAccount.SelectTransactions(req.params.description);    
     resp.set("Access-Control-Allow-Origin", "*");
     resp.send(transactions.GetArray());
 

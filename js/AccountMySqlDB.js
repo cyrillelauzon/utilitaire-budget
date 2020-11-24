@@ -88,7 +88,7 @@ module.exports = class AccountMySqlDB {
      * @description Will select a range of transaction from DB based on filters
      * @param {string} description
      */
-    SelectTransactions(description) {
+    SelectTransactions(description, year, month) {
 
         var transactions = new TransactionsMap();
         return new Promise((resolve, reject) => {
@@ -99,11 +99,11 @@ module.exports = class AccountMySqlDB {
             let queryDate= "";
 
             
-            let queryYear= "2020";
-            let queryMonth = "1";
+            //let year= "2020";
+            //let month = "1";
             
-            if (queryMonth !="") queryDate += " && Month(date)="+queryMonth+"";
-            if (queryYear !="") queryDate += " && YEAR(date)="+queryYear+"";
+            if (month !="") queryDate += " && Month(date)="+month+"";
+            if (year !="") queryDate += " && YEAR(date)="+year+"";
             
 
             var query = this.connection.query('SELECT * FROM '+ this.#transactionsTable +
