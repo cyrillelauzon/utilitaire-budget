@@ -7,11 +7,13 @@ import './App.scss';
 
 import React, { Component } from 'react';
 import axios from 'axios';
-import TransactionsTable from './components/TransactionsTable';
+
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import TransactionsTable from './components/TransactionsTable';
+import NavBar from './components/NavBar';
 
 
 class App extends Component {
@@ -37,17 +39,42 @@ class App extends Component {
     curMonth:1
   };
 
+  /**
+   *Creates an instance of App.
+   * @param {*} props
+   * @memberof App
+   */
+  constructor(props) {
+    super(props);
+    let curMonth = this.getCurMonth();
+    this.state = {
+      transactions: [],
+      curMonth: curMonth
+    }
+  }
+
+
+  /**
+   * @description
+   * @returns
+   * @memberof App
+   */
+  getCurMonth() {
+    return new Date().getMonth() + 1;  //getMonth() returns value from 0-11
+  }
 
   /**
    * @description
    * @memberof App
    */
   async componentDidMount() {
-    const { data: transactions } = await axios.get('http://localhost:5000/transactions/Marche%20Royal/2020/01');
+    
+    console.log("did mount + " + this.state.curMonth)
+    const { data: transactions } = await axios.get(`http://localhost:5000/transactions/*/2020/${this.state.curMonth}`);
 
     console.log("did mount");
     console.log(transactions);
-
+    this.handleCurMonthClick();
     this.setState({ transactions });
 
   }
@@ -69,10 +96,10 @@ class App extends Component {
    * @description
    * @memberof App
    */
-  handleCurMonthClick = () =>{
+  handleCurMonthClick = () => {
     let curMonth = this.state.curMonth;
-    curMonth = new Date().getMonth() + 1; //getMonth() returns value from 0-11
-    this.setState({curMonth});
+    curMonth = this.getCurMonth();
+    this.setState({ curMonth });
   }
 
   /**
@@ -87,6 +114,7 @@ class App extends Component {
           <Row >
             <Col md={"1"}></Col>
             <Col md={"10"}>
+              <NavBar />
               <TransactionsTable curMonth={this.state.curMonth} transactions={this.state.transactions}
                 onApprove={this.handleApprove}
                 onCurMonthClick={() => this.handleCurMonthClick()} />

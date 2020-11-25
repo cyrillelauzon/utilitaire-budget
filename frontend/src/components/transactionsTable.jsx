@@ -6,10 +6,11 @@ Display of a table of bank transactions objects
 import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table';
 import TransactionRow from './TtransactionRow';
+
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
+import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-
 
 class TransactionsTable extends Component {
 
@@ -20,33 +21,49 @@ class TransactionsTable extends Component {
      * @returns string
      * @memberof TransactionsTable
      */
-    GetMonth(curMonth){
-        var m_names = ['January', 'February', 'March', 
-               'April', 'May', 'June', 'July', 
-               'August', 'September', 'October', 'November', 'December'];
-        return m_names[curMonth -1];   
+    GetMonth(curMonth) {
+        var m_names = ['Janvier', 'Février', 'Mars',
+            'Avril', 'Mai', 'Juin', 'Juillet',
+            'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+        return m_names[curMonth - 1];
     }
 
     render() {
+        if(this.props.transactions === undefined || this.props.transactions === ""  ) return (<p>No transactions found</p>)
+
         return (
+
             <React.Fragment>
 
                 <Row >
-                    <Col md={"4"}>
-                    <h3> {this.GetMonth(this.props.curMonth)}</h3>        
-                    <Button onClick={this.props.onCurMonthClick}>Mois courant</Button>
-                        
-
+                    <Col md={"3"}>
+                        <ButtonGroup aria-label="Month View">
+                            <Button variant="secondary"><svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-left-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z" />
+                            </svg></Button>
+                            <Button variant="secondary" onClick={this.props.onCurMonthClick}>{this.GetMonth(this.props.curMonth)}</Button>
+                            <Button variant="secondary"><svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
+                            </svg></Button>
+                        </ButtonGroup>
                     </Col>
-                    <Col md={"4"}>
-
+                    <Col md={"3"}>
+                        <ButtonGroup aria-label="Year View">
+                            <Button variant="secondary"><svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-left-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z" />
+                            </svg></Button>
+                            <Button variant="secondary">2020</Button>
+                            <Button variant="secondary"><svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
+                            </svg></Button>
+                        </ButtonGroup>
                     </Col>
                     <Col md={"4"}></Col>
                 </Row>
+
                 <Table>
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Date</th>
                             <th>Montant</th>
                             <th>Description</th>

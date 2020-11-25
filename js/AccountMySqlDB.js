@@ -96,30 +96,42 @@ module.exports = class AccountMySqlDB {
             console.debug("MySQL: Reading entries from DB");
 
             //SELECT * FROM transactions Where Month(date)='1' && YEAR(date)='2020' && description='Ikea'
-            let queryDate= "";
+            let queryDate = "";
+            let queryDescription = "";
 
-            
-            //let year= "2020";
-            //let month = "1";
-            
-            if (month !="") queryDate += " && Month(date)="+month+"";
-            if (year !="") queryDate += " && YEAR(date)="+year+"";
-            
+            if (description === "*") {
+                description="";
+                queryDescription = 'WHERE ?';
+                if (month != "") {
+                    queryDate += "Month(date)=" + month + "";
+                    if (year != "") queryDate += " && YEAR(date)=" + year + "";
+                }
+                else {
+                    if (year != "") queryDate += " YEAR(date)=" + year + "";
+                }
 
-            var query = this.connection.query('SELECT * FROM '+ this.#transactionsTable +
-                ' WHERE description=? '+ queryDate +
+            }
+            else {
+                queryDescription = "WHERE description=? ";
+                if (month != "") queryDate += "&& Month(date)=" + month + "";
+                if (year != "") queryDate += " && YEAR(date)=" + year + "";
+            }
+
+
+            var query = this.connection.query('SELECT * FROM ' + this.#transactionsTable +
+                queryDescription + queryDate +
                 ' ORDER BY `_id` DESC ', [description], (error, results, fields) => {
-                
-                //FIXME include error detection in test suite
-                if (error){
-                    reject(new Error("MySql error reading query " + error));
-                } 
 
-                console.log("MySQL: Reading from database completed ");
+                    //FIXME include error detection in test suite
+                    if (error) {
+                        reject(new Error("MySql error reading query " + error));
+                    }
 
-                transactions.BuildFromArray(results);
-                resolve(transactions);
-            });
+                    console.log("MySQL: Reading from database completed ");
+
+                    transactions.BuildFromArray(results);
+                    resolve(transactions);
+                });
 
         }).catch((err) => {
             console.error("MySql error in SELECT transaction " + err);
@@ -146,10 +158,10 @@ module.exports = class AccountMySqlDB {
             balance: transaction.GetBalance(),
             owner: transaction.GetOwner()
         };
-        
+
 
         return new Promise((resolve, reject) => {
-            var query = this.connection.query('INSERT INTO transactions SET ?',  post, (error, results, fields) => {
+            var query = this.connection.query('INSERT INTO transactions SET ?', post, (error, results, fields) => {
                 if (error) {
                     reject(new Error("MySQL db: Could not add transaction to db" + error));
                 }

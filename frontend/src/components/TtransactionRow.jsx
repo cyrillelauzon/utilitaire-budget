@@ -17,7 +17,6 @@ class TransactionRow extends Component {
         
         return (
             <tr className={bgClass}>
-                <td>{transaction.id}</td>
                 <td>{transaction.date}</td>
                 <td>{transaction.amount +"$"}</td>
                 <td>{transaction.description}</td>

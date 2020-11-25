@@ -9,43 +9,37 @@ const AccountsBook = require('./js/AccountsBook');
 let bankAccount = new AccountsBook;
 
 
+InitApp();
 /**
  * @description 
  */
-async function InitApp(){
+async function InitApp() {
     console.debug(" ");
     console.debug("*******************************************");
     console.debug("*******Bank transaction server running*****");
     console.debug("*******************************************");
     console.debug(" ");
     console.debug("=====Express: Initializing server=====");
-    console.log("listening on port 5000");
+
     console.debug(" ");
 
-    //TEMP (will change to import csv file from put request)
-    await bankAccount.ImportCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille");
-    await bankAccount.ImportCSV("./import_csv/credit.csv", "Mastercard de Cyrille");
-//   bankAccount.SelectTransactions();
-    
+    //TEMP //TODO (will change to import csv file from post request)
+   // await bankAccount.ImportCSV("f://2020-11-25-095220.csv", "Compte chèque de Cyrille");
+    //await bankAccount.ImportCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille");
+    //await bankAccount.ImportCSV("./import_csv/credit.csv", "Mastercard de Cyrille");
+    //   bankAccount.SelectTransactions();
+
     console.debug("=====Express: End init=====");
     console.debug(" ");
+
+    /**
+     * @description Listening on port 5000 after Init is done
+     */
+    app.listen(5000, () => {
+        console.log("listening on port 5000");
+    })
+
 }
-
-/**
- * @description Tells express to listen to port 3000
- */
-app.listen(5000, () => {
-    InitApp();
-})
-
-
-/**
- * @description Get Request for root page
- */
-app.get('/', (req, resp) => {
-    resp.send('Hello World');
-
-});
 
 /**
  * @description Get Request for transactions
@@ -53,12 +47,13 @@ app.get('/', (req, resp) => {
 app.get('/transactions/:description/:year/:month', async (req, resp) => {
 
     console.debug("=====Express: new Get transactions request=====");
-    const {description, year, month} = req.params;
-    let transactions = await bankAccount.SelectTransactions(description, year, month);    
+    const { description, year, month } = req.params;
+    console.debug(`Request Content: description=${description} year=${year} month=${month}`);
+    let transactions = await bankAccount.SelectTransactions(description, year, month);
 
     resp.set("Access-Control-Allow-Origin", "*");
-    resp.send(transactions.GetArray());
-
+    if(transactions !== undefined)resp.send(transactions.GetArray());
+    else resp.send("");
     console.debug("=====En Request=====");
     console.debug(" ");
 
