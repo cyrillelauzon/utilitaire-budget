@@ -83,58 +83,75 @@ module.exports = class AccountMySqlDB {
 
     }
 
-
+    
     /**
-     * @description Will select a range of transaction from DB based on filters
-     * @param {string} description
+     * @description Select transactions from MySQL db based on filters
+     * @param {*} description transaction description, * to omit
+     * @param {*} year transaction year, * to omit
+     * @param {*} month transaction month from 1 to 12, * to omit
+     * @returns TransactionList object, TransactionListobject with no transactions if empty or errors
      */
     SelectTransactions(description, year, month) {
 
         var transactions = new TransactionsMap();
+
         return new Promise((resolve, reject) => {
 
             console.debug("MySQL: Reading entries from DB");
 
-            //SELECT * FROM transactions Where Month(date)='1' && YEAR(date)='2020' && description='Ikea'
-            let queryDate = "";
-            let queryDescription = "";
-
-            if (description === "*") {
-                description="";
-                queryDescription = 'WHERE ?';
-                if (month != "") {
-                    queryDate += "Month(date)=" + month + "";
-                    if (year != "") queryDate += " && YEAR(date)=" + year + "";
+            //Function parameters validation:
+            try {
+                if (year !== "*") {
+                    if (/^\d{4}$/.test(year) === false) throw new Error("year format is invalid");
                 }
-                else {
-                    if (year != "") queryDate += " YEAR(date)=" + year + "";
+    
+                if (month !== "*") {
+                    if (/^\d{2}$/.test(month) === false) throw new Error("month format is invalid");
+                    if (month < 1 || month > 12) throw new Error("month is an invalid number");
                 }
-
-            }
-            else {
-                queryDescription = "WHERE description=? ";
-                if (month != "") queryDate += "&& Month(date)=" + month + "";
-                if (year != "") queryDate += " && YEAR(date)=" + year + "";
+                    
+            } catch (error) {
+                console.debug("MySQL:" + error);
+                reject(error);
+                return transactions;
             }
 
+            //Building the WHERE statement, even if not all parameters are defined
+            //easy to add more params in the future
+            //FIXME add SQL escaping for description
+            var isFirst = true;
+            let queryWHERE = "";
+            if (month !== "*") queryWHERE += ` ${getWHERE()} Month(date)=${month}`;
+            if (year !== "*") queryWHERE += ` ${getWHERE()} Year(date)=${year}`;
+            if (description !== "*") queryWHERE += ` ${getWHERE()} description=${description}`;
 
-            var query = this.connection.query('SELECT * FROM ' + this.#transactionsTable +
-                queryDescription + queryDate +
-                ' ORDER BY `_id` DESC ', [description], (error, results, fields) => {
+            function getWHERE() {
+                if (isFirst) {
+                    isFirst = false;
+                    return "WHERE";
+                }
+                return "&&";
+            }
 
-                    //FIXME include error detection in test suite
-                    if (error) {
-                        reject(new Error("MySql error reading query " + error));
-                    }
+            //Assembles query string and make call to DB
+            let strQuery = 'SELECT * FROM ' + this.#transactionsTable + queryWHERE + ' ORDER BY `_id` DESC ';
+            var query = this.connection.query(strQuery, (error, results, fields) => {
 
-                    console.log("MySQL: Reading from database completed ");
+                if (error){
+                    reject(new Error(`SQL query: ${strQuery}  ${error}`));
+                    return transactions;    //Empty transactionslist        
+                } 
 
-                    transactions.BuildFromArray(results);
-                    resolve(transactions);
-                });
+                console.debug(`MySQL: ${results.length} transactions found, reading from database completed `);
+                console.debug(`SQL query: ${strQuery}`);
+
+                transactions.BuildFromArray(results);
+                resolve(transactions);
+            });
 
         }).catch((err) => {
-            console.error("MySql error in SELECT transaction " + err);
+            console.error("MySql Error selecting transactions: " + err);
+            return transactions;    //Empty transactionslist
         });
     }
 
