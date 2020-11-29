@@ -6,6 +6,7 @@ Encapsulation of mysql database access
 const Util = require('./Util');
 const Transaction = require('./Transaction');
 const TransactionsMap = require('./TransactionsMap');
+const AccountCsvExporter = require('./AccountCsvExporter');
 
 const TEST_ENV = "_test";
 
@@ -42,6 +43,7 @@ module.exports = class AccountMySqlDB {
         return new Promise((resolve, reject) => {
             this.connection.connect((err) => {
                 if (err) {
+                    //TODO implement gracefull way to exit app if SQL connexion refused
                     console.error('error connecting: ' + err.stack);
                     reject();
                 }
@@ -83,6 +85,17 @@ module.exports = class AccountMySqlDB {
 
     }
 
+
+    /**
+     * @description Backups all DB records to a CSV file
+     * @param {*} fileName
+     */
+    async BackupDB(fileName) {
+        let csvExporter = new AccountCsvExporter();
+        let transactions = await this.SelectTransactions("*", "*", "*");
+        csvExporter.ExportCsv(fileName, transactions);
+    }
+
     
     /**
      * @description Select transactions from MySQL db based on filters
@@ -106,7 +119,7 @@ module.exports = class AccountMySqlDB {
                 }
     
                 if (month !== "*") {
-                    if (/^\d{2}$/.test(month) === false) throw new Error("month format is invalid");
+                    if (/^\d{1,2}$/.test(month) === false) throw new Error("month format is invalid");
                     if (month < 1 || month > 12) throw new Error("month is an invalid number");
                 }
                     

@@ -36,7 +36,7 @@ class App extends Component {
     { "id": "15", "date": "2020-01-10", "description": "Ikea", "category": "Restaurant", "amount": -4, "balance": 1318, "isapproved": false },
     { "id": "16", "date": "2020-01-05", "description": "Ikea", "category": "Restaurant", "amount": -4, "balance": null, "isapproved": false },
     { "id": "17", "date": "2020-01-02", "description": "Ikea", "category": "Restaurant", "amount": -3.91, "balance": 850 }]*/
-    curMonth:1
+    curMonth: 1
   };
 
   /**
@@ -68,38 +68,65 @@ class App extends Component {
    * @memberof App
    */
   async componentDidMount() {
-    
     console.log("did mount + " + this.state.curMonth)
     const { data: transactions } = await axios.get(`http://localhost:5000/transactions/*/2020/${this.state.curMonth}`);
-
-    console.log("did mount");
-    console.log(transactions);
     this.handleCurMonthClick();
     this.setState({ transactions });
+  }
 
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevState.curMonth !== this.state.curMonth) {
+      console.log("Month changed");
+      const { data: transactions } = await axios.get(`http://localhost:5000/transactions/*/2020/${this.state.curMonth}`);
+      this.setState({ transactions });
+    }
+  }
+
+
+  /**
+   * @description
+   * @memberof App
+   */
+  handleCurMonthClick = async () => {
+    let curMonth = this.state.curMonth;
+    curMonth = this.getCurMonth();
+    this.setState({ curMonth });
   }
 
   /**
    * @description
    * @memberof App
    */
-  handleApprove = (tr) => {
+  handlePreviousMonthClick = async () => {
+    let curMonth = this.state.curMonth;
+    curMonth -= 1;
+    if (curMonth <= 0) curMonth = 12;
+    this.setState({ curMonth });
+  }
+
+  /**
+   * @description
+   * @memberof App
+   */
+  handleNextMonthClick = async () => {
+    let curMonth = this.state.curMonth;
+    curMonth += 1;
+    if (curMonth >= 13) curMonth = 1;
+    this.setState({ curMonth });
+  }
+
+  /**
+   * @description
+   * @memberof App
+   */
+  handleApprove = async (tr) => {
     console.log("parent handleapp" + tr);
     const transactions = [...this.state.transactions];
     const index = transactions.indexOf(tr);
     transactions[index] = { ...transactions[index] };
     transactions[index].isapproved = !transactions[index].isapproved;
-    this.setState({ transactions });
-  }
 
-  /**
-   * @description
-   * @memberof App
-   */
-  handleCurMonthClick = () => {
-    let curMonth = this.state.curMonth;
-    curMonth = this.getCurMonth();
-    this.setState({ curMonth });
+    this.setState({ transactions });
   }
 
   /**
@@ -117,7 +144,9 @@ class App extends Component {
               <NavBar />
               <TransactionsTable curMonth={this.state.curMonth} transactions={this.state.transactions}
                 onApprove={this.handleApprove}
-                onCurMonthClick={() => this.handleCurMonthClick()} />
+                onCurMonthClick={() => this.handleCurMonthClick()}
+                onNextMonthClick={() => this.handleNextMonthClick()}
+                onPreviousMonthClick={() => this.handlePreviousMonthClick()} />
             </Col>
             <Col md={"1"}></Col>
           </Row>

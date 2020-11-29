@@ -22,7 +22,7 @@ module.exports = class Transaction {
     #counter;       //for cloning purposes
     #isapproved;
 
-//TODO add if transaction is approved
+
     /**
      * @constructor
      *Creates an instance of Transaction.
