@@ -51,46 +51,45 @@ module.exports = class AccountsBook {
     /**
      * @description
      */
-    async SelectTransactions(description, year,month) {
+    async SelectTransactions(description, year, month) {
 
         await this.accountMySql.Connect();
-        
+
         /* console.debug("***************Begin importing************");
 
         await this.ImportCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille");
         await this.ImportCSV("./import_csv/credit.csv", "Mastercard de Cyrille");
 
         console.debug("***************Importing done************"); */
-        
-         let transactions = await this.accountMySql.SelectTransactions(description,year,month);
-         await this.accountMySql.Disconnect();
-         return transactions;
- 
- //       let csvExport = new AccountCsvExporter();
-//        csvExport.ExportCsv("./export_csv/testexport2.csv", transactions);
- 
-        
+
+        let transactions = await this.accountMySql.SelectTransactions(description, year, month);
+        await this.accountMySql.Disconnect();
+        return transactions;
+
+        //       let csvExport = new AccountCsvExporter();
+        //        csvExport.ExportCsv("./export_csv/testexport2.csv", transactions);
+
+
     }
 
     /**
      * @description
      * @param {*} transactionData
      */
-    async UpdateTransaction(transactionData){
+    async UpdateTransaction(transactionData) {
         await this.accountMySql.Connect();
 
-        let transaction = new Transaction(transactionData.date, "YYYY-MM-DD", transactionData.description,"",0,10,"test","", 0, undefined,0,transactionData.isapproved);
-        await this.accountMySql.UpdateTransaction(transaction);
+        try {
+            let transaction = new Transaction(transactionData);
+            await this.accountMySql.UpdateTransaction(transaction);
+
+        } catch (error) {
+            console.log("Error building transaction:");
+            console.log(error);
+        }
 
         await this.accountMySql.Disconnect();
-
     }
-
-
-
-
-
-
 
 
 

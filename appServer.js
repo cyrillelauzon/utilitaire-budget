@@ -32,7 +32,7 @@ async function InitApp() {
 
     //TEMP //TODO (will change to import csv file from post request)
     // await bankAccount.ImportCSV("f://2020-11-25-095220.csv", "Compte chèque de Cyrille");
-    //await bankAccount.ImportCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille");
+    await bankAccount.ImportCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille");
     //await bankAccount.ImportCSV("./import_csv/credit.csv", "Mastercard de Cyrille");
     //   bankAccount.SelectTransactions();
 

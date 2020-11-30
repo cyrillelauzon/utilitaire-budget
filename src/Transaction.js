@@ -22,36 +22,24 @@ module.exports = class Transaction {
     #counter;       //for cloning purposes
     #isapproved;
 
-//TODO #5 update transaction constructor
+    //TODO #5 update transaction constructor
     /**
-     * @constructor
      *Creates an instance of Transaction.
-     * @param {*} date A date object or a String in a YYYY-MM-DD format /, - and space delimiters accepted
-     * @param {string} dateFormat
-     * @param {string} description
-     * @param {string} category
-     * @param {number} deposit
-     * @param {number} withdraw
-     * @param {string} owner
-     * @param {string} tags
-     * @param {number} [balance=undefined]
-     * @param {number} [amount=undefined]
-     * @param {number} [counter=0]
-     * @throws error if parameters are invalid
+     * @param {*} transactionData 
      */
-    constructor(date, dateFormat, description, category, deposit, withdraw, owner, tags, balance = undefined, amount = undefined, counter = 0, isapproved=false) {
-
-        this.#ProcessDate(date, dateFormat);
-        this.#dateFormat = dateFormat;      //store for cloning purposes
+    constructor(transactionData) {
+        const { date, dateformat="YYYY-MM-DD", description, category, deposit, withdraw, owner, tags, balance = undefined, amount = undefined, counter = 0, isapproved = false } = transactionData;
+        this.#ProcessDate(date, dateformat);
+        this.#dateFormat = dateformat;      //store for cloning purposes
         this.#dateString = date;            //store for cloning purposes
 
         this.#description = description;
         this.#category = category;
         if (this.#category === "") { this.#category = "Aucune Catégorie"; }
 
-        
-        this.#ProcessAmount(deposit, withdraw,amount);
-        
+
+        this.#ProcessAmount(deposit, withdraw, amount);
+
         this.#balance = balance;
         this.#owner = owner;
         this.#tags = tags;
@@ -61,33 +49,58 @@ module.exports = class Transaction {
         this.SetID(counter);
     }
 
+    
+    /**
+     * @description Return a copy of current transaction object
+     * @returns {Transaction}
+     */
+    Clone() {
+        
+        let transactionData = {
+            "date": this.#dateString,
+            "dateformat": this.#dateFormat,
+            "description": this.#description,
+            "category": this.#category, "deposit": undefined, "withdraw": undefined,
+            "owner": this.#owner,
+            "tags": this.#tags,
+            "balance": this.#balance,
+            "amount": this.#amount,
+            "counter": this.#counter,
+            "isapproved": this.#isapproved
+        }
+
+        return new Transaction(transactionData);
+    }
+
+
+
     /**
      * @description
      * @returns {string}
      */
     GetID() { return this.#_id; }
-    IsApproved() {return this.#isapproved;}
+    IsApproved() { return this.#isapproved; }
     GetDate() { return this.#date; }
     GetDateString() {
         const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
         return this.#date.toLocaleString(undefined, options);
     }
-    
+
     GetDescription() { return this.#description; }
-    
-    SetCategory(category) { this.#category = category;}    
+
+    SetCategory(category) { this.#category = category; }
     GetCategory() { return this.#category; }
-    
+
 
     GetAmount() { return this.#amount; }
     GetBalance() { return this.#balance; }
     GetOwner() { return this.#owner; }
     GetTags() { return this.#tags; }
 
- /**
-     * @description
-     * @returns {boolean}
-     */
+    /**
+        * @description
+        * @returns {boolean}
+        */
     IsEmpty() {
         //FIXME test IsEmpty() in test suite or remove
         return (this.#amount === 0 || isNaN(this.#amount))
@@ -105,27 +118,27 @@ module.exports = class Transaction {
     /**
      * @description Validate date format and date 
      * @param {*} strDate the new date string
-     * @param {string} dateFormat simple string delimited by - with YYYY-MM-DD in any order
+     * @param {string} dateformat simple string delimited by - with YYYY-MM-DD in any order
      * @throws {Error} if format is invalid or for any error inside date string
      */
-    #ProcessDate(strDate, dateFormat) {
+    #ProcessDate(strDate, dateformat) {
 
         //If date is already a date object, assign date to class member and skip all checks for string
-        if(strDate instanceof Date){
+        if (strDate instanceof Date) {
             this.#date = strDate;
             return;
         }
 
         //Verify if param is a valid string object
-        if((typeof strDate) !== 'string')  throw new Error("Transaction: Date is not a String object");
+        if ((typeof strDate) !== 'string') throw new Error("Transaction: Date is not a String object");
 
         //Date format validation:
         //For simplicity: valid tokens are:(YYYY MM DD) Delimiter is -
         //NB: this regular expression does not tests if all tokens are present ie YYYY-MM-MM would be valid
-        if (/^(YYYY|MM|DD){1}-(YYYY|MM|DD){1}-(YYYY|MM|DD){1}$/.test(dateFormat) === false)
+        if (/^(YYYY|MM|DD){1}-(YYYY|MM|DD){1}-(YYYY|MM|DD){1}$/.test(dateformat) === false)
             throw new Error("Transaction: date format is invalid");
 
-        let formatTokens = dateFormat.split("-");
+        let formatTokens = dateformat.split("-");
         let counter = 0;
         let year = -1;
         let month = -1;
@@ -142,15 +155,15 @@ module.exports = class Transaction {
         //Date validation:
         //Accepts space, / and - characters for date delimiters
         if (strDate.length != 10) throw new Error("Transaction: Date string length is invalid");
-        if(/^\d{2,4}[\/ -]\d{2,4}[\/ -]\d{2,4}$/.test(strDate) === false) throw new Error("Transaction: Date string is invalid");
-       
-       
+        if (/^\d{2,4}[\/ -]\d{2,4}[\/ -]\d{2,4}$/.test(strDate) === false) throw new Error("Transaction: Date string is invalid");
+
+
         //Validates date tokens:
         let dateTokens = strDate.split(/[\/ -]/);
         if (/^\d{4}$/.test(dateTokens[year]) === false) throw new Error("Transaction: date(year) is invalid");
         if (/^\d{2}$/.test(dateTokens[month]) === false) throw new Error("Transaction: date(month) is invalid");
         if (/^\d{2}$/.test(dateTokens[day]) === false) throw new Error("Transaction: date(day) is invalid");
-        if (Number(dateTokens[month]) > 12 || Number(dateTokens[month]) <= 0 ) throw new Error("Transaction: month is invalid");
+        if (Number(dateTokens[month]) > 12 || Number(dateTokens[month]) <= 0) throw new Error("Transaction: month is invalid");
         if (Number(dateTokens[day]) > 31 || Number(dateTokens[day]) <= 0) throw new Error("Transaction: day is invalid");
 
         //Build date string using the following format (javascript Date object requirement): YYYY-MM-DD
@@ -161,58 +174,41 @@ module.exports = class Transaction {
 
         this.#date = new Date(date);
     }
-   
+
     /**
      * @description Process withdraw, deposit or amount. Store withdraw internally as amount with negative value
      * @param {number} withdraw 
      * @param {number} deposit
      * @param {number} amount Amount variable has precedence over withdraw and deposit
      */
-    #ProcessAmount(deposit,withdraw, amount){
-        
+    #ProcessAmount(deposit, withdraw, amount) {
+
         //Amount variable has precedence over withdraw and deposit
         if (!Util.isNullOrUndefined(amount)) {
-            if(!Util.isNullOrUndefined(deposit)) throw new Error("Transaction: amount cannot be defined at same time of deposit");
-            if(!Util.isNullOrUndefined(withdraw)) throw new Error("Transaction: amount cannot be defined at same time of withdraw");
-            if(isNaN(amount)) throw new Error("Transaction: only numerical values are accepted for amount");
-            this.#amount = amount;
+            if (!Util.isNullOrUndefined(deposit)) throw new Error("Transaction: amount cannot be defined at same time of deposit");
+            if (!Util.isNullOrUndefined(withdraw)) throw new Error("Transaction: amount cannot be defined at same time of withdraw");
+            if (isNaN(amount)) throw new Error("Transaction: only numerical values are accepted for amount");
+            this.#amount = Number(amount);
         }
-        else{
-            
-            if(Util.isNullOrUndefined(deposit) && Util.isNullOrUndefined(withdraw)) {
-                throw new Error("Transaction: neither withdraw, deposit or amount is defined" + amount );
+        else {
+
+            if (Util.isNullOrUndefined(deposit) && Util.isNullOrUndefined(withdraw)) {
+                throw new Error("Transaction: neither withdraw, deposit or amount is defined" + amount);
             }
-    
-            if(isNaN(withdraw) || isNaN(deposit))  throw new Error("Transaction: only numerical values are accepted for withdraw or deposit");
-            
+
+            if (isNaN(withdraw) || isNaN(deposit)) throw new Error("Transaction: only numerical values are accepted for withdraw or deposit");
+
             //Convert to Number to make sure that these variables passed as string are still read properly
             withdraw = Number(withdraw);
             deposit = Number(deposit);
-            if(withdraw !== 0 && deposit !== 0)  throw new Error("Transaction: withdraw and deposit cannot be defined at the same time");
-            if(withdraw < 0 || deposit < 0)  throw new Error("Transaction: withdraw or deposit cannot have a negative value");
-            
+            if (withdraw !== 0 && deposit !== 0) throw new Error("Transaction: withdraw and deposit cannot be defined at the same time");
+            if (withdraw < 0 || deposit < 0) throw new Error("Transaction: withdraw or deposit cannot have a negative value");
+
             //Assign negative amount to withdraw to store internaly
             this.#amount = withdraw > 0 ? (-1 * Number(withdraw)) : Number(deposit);
         }
     }
 
-
-    /**
-     * @description Return a copy of current transaction object
-     * @returns {Transaction}
-     */
-    Clone() {
-        return new Transaction(this.#dateString,
-            this.#dateFormat,
-            this.#description,
-            this.#category, undefined, undefined,
-            this.#owner,
-            this.#tags,
-            this.#balance,
-            this.#amount,
-            this.#counter,
-            this.#isapproved);
-    }
 
     /**
      * SetID

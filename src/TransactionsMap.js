@@ -60,10 +60,7 @@ module.exports = class TransactionsMap {
         for (const entry of entries) {
             try {
 
-                let newTransaction = new Transaction(entry.date, "",
-                    entry.description, entry.category,
-                    undefined, undefined, "", "", entry.balance, entry.amount, 0);
-                
+                let newTransaction = new Transaction(entry);
                 this.Add(newTransaction);
 
             }

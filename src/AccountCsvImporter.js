@@ -71,24 +71,27 @@ module.exports = class AccountCsvImporter {
 
             try {
                 let mappedCols = this.accountsInfo.MapFieldNames(row, accountName);
-                let transaction = new Transaction(mappedCols['date'],
-                    this.accountsInfo.GetDateFormat(accountName),
-                    mappedCols['description'],
-                    mappedCols['category'],
-                    mappedCols['withdraw'],
-                    mappedCols['deposit'],
-                    mappedCols['owner'],
-                    mappedCols['tags'],
-                    mappedCols['balance']);
+                let transactionData = {
+                    "date": mappedCols['date'],
+                    "dateformat": this.accountsInfo.GetDateFormat(accountName),
+                    "description" : mappedCols['description'],
+                    "category" : mappedCols['category'],
+                    "withdraw" : mappedCols['withdraw'],
+                    "deposit" : mappedCols['deposit'],
+                    "owner" : mappedCols['owner'],
+                    "tags" : mappedCols['tags'],
+                    "balance" : mappedCols['balance']
+                };
+                let transaction = new Transaction(transactionData);
 
                 transaction = this.ruleParser.ParseTransaction(transaction);
                 this.#transactions.Add(transaction, sqlDB);
 
             } catch (err) {
                 this.#failedRows.push(row);
-                //console.debug("Transaction from CSV file "+ fileNameCsv +" is invalid // " + err);
-                //console.debug("Imported row content: ");
-                //console.debug(row);
+            //    console.debug("Transaction from CSV file "+ fileNameCsv +" is invalid // " + err);
+            //    console.debug("Imported row content: ");
+            //    console.debug(row);
             }
 
         }
