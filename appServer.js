@@ -5,7 +5,7 @@ Main entry point for app and express requests handling
 -------------------------------------------------------------------------*/
 const express = require('express');
 const app = express();
-const AccountsBook = require('./js/AccountsBook');
+const AccountsBook = require('./src/AccountsBook');
 let bankAccount = new AccountsBook;
 
 
