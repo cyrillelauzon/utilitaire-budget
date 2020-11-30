@@ -72,6 +72,20 @@ module.exports = class AccountsBook {
         
     }
 
+    /**
+     * @description
+     * @param {*} transactionData
+     */
+    async UpdateTransaction(transactionData){
+        await this.accountMySql.Connect();
+
+        let transaction = new Transaction(transactionData.date, "YYYY-MM-DD", transactionData.description,"",0,10,"test","", 0, undefined,0,transactionData.isapproved);
+        await this.accountMySql.UpdateTransaction(transaction);
+
+        await this.accountMySql.Disconnect();
+
+    }
+
 
 
 

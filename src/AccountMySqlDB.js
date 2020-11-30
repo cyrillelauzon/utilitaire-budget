@@ -96,7 +96,40 @@ module.exports = class AccountMySqlDB {
         csvExporter.ExportCsv(fileName, transactions);
     }
 
-    
+        /**
+     * @description Add a transaction to DB
+     * @param {Transaction} transaction
+     */
+    async AddTransaction(transaction) {
+        //console.log("Transaction added to db:");
+
+        //var d = transaction.GetDate(); d.toISOString().split('T')[0] + ' ' + d.toTimeString().split(' ')[0];
+
+        var post = {
+            _id: transaction.GetID(),
+            date: transaction.GetDate(),
+            description: transaction.GetDescription(),
+            category: transaction.GetCategory(),
+            amount: transaction.GetAmount(),
+            balance: transaction.GetBalance(),
+            owner: transaction.GetOwner(),
+            isapproved: transaction.IsApproved()
+        };
+
+
+        return new Promise((resolve, reject) => {
+            var query = this.connection.query('INSERT INTO transactions SET ?', post, (error, results, fields) => {
+                if (error) {
+                    reject(new Error("MySQL db: Could not add transaction to db" + error));
+                }
+                resolve();
+            });
+
+        }).catch((err) => {
+            //console.error(err);
+        });
+    }
+
     /**
      * @description Select transactions from MySQL db based on filters
      * @param {*} description transaction description, * to omit
@@ -169,38 +202,15 @@ module.exports = class AccountMySqlDB {
     }
 
 
-
     /**
-     * @description Add a transaction to DB
+     * @description
      * @param {Transaction} transaction
      */
-    async AddTransaction(transaction) {
-        //console.log("Transaction added to db:");
+    async UpdateTransaction(transaction){
 
-        //var d = transaction.GetDate(); d.toISOString().split('T')[0] + ' ' + d.toTimeString().split(' ')[0];
-
-        var post = {
-            _id: transaction.GetID(),
-            date: transaction.GetDate(),
-            description: transaction.GetDescription(),
-            category: transaction.GetCategory(),
-            amount: transaction.GetAmount(),
-            balance: transaction.GetBalance(),
-            owner: transaction.GetOwner()
-        };
-
-
-        return new Promise((resolve, reject) => {
-            var query = this.connection.query('INSERT INTO transactions SET ?', post, (error, results, fields) => {
-                if (error) {
-                    reject(new Error("MySQL db: Could not add transaction to db" + error));
-                }
-                resolve();
-            });
-
-        }).catch((err) => {
-            //console.error(err);
-        });
+        console.log("MySql: Transaction to update: ");
+        console.log(transaction);
+        
     }
 
 

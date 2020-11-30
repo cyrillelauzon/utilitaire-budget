@@ -80,6 +80,19 @@ class App extends Component {
       const { data: transactions } = await axios.get(`http://localhost:5000/transactions/*/2020/${this.state.curMonth}`);
       this.setState({ transactions });
     }
+
+
+    if(prevState.transactions !== this.state.transactions){
+      console.log("change in transactions state object");
+
+      for(let i = 0; i < this.state.transactions.length; i++){
+        if(prevState.transactions[i] !== this.state.transactions[i]){
+          //console.log("trans found changed: ");
+         // console.log(this.state.transactions[i]);
+        }
+      }
+    }
+
   }
 
 
@@ -125,6 +138,10 @@ class App extends Component {
     const index = transactions.indexOf(tr);
     transactions[index] = { ...transactions[index] };
     transactions[index].isapproved = !transactions[index].isapproved;
+
+    
+    const res = await axios.put("http://localhost:5000/update", transactions[index]);
+    console.log(res);
 
     this.setState({ transactions });
   }
