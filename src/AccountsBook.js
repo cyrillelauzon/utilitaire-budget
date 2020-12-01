@@ -81,6 +81,8 @@ module.exports = class AccountsBook {
 
         try {
             let transaction = new Transaction(transactionData);
+            console.log("Builded transaction");
+            console.log(JSON.stringify(transaction));
             await this.accountMySql.UpdateTransaction(transaction);
 
         } catch (error) {

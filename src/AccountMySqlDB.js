@@ -96,10 +96,10 @@ module.exports = class AccountMySqlDB {
         csvExporter.ExportCsv(fileName, transactions);
     }
 
-        /**
-     * @description Add a transaction to DB
-     * @param {Transaction} transaction
-     */
+    /**
+ * @description Add a transaction to DB
+ * @param {Transaction} transaction
+ */
     async AddTransaction(transaction) {
         //console.log("Transaction added to db:");
 
@@ -150,12 +150,12 @@ module.exports = class AccountMySqlDB {
                 if (year !== "*") {
                     if (/^\d{4}$/.test(year) === false) throw new Error("year format is invalid");
                 }
-    
+
                 if (month !== "*") {
                     if (/^\d{1,2}$/.test(month) === false) throw new Error("month format is invalid");
                     if (month < 1 || month > 12) throw new Error("month is an invalid number");
                 }
-                    
+
             } catch (error) {
                 console.debug("MySQL:" + error);
                 reject(error);
@@ -183,10 +183,10 @@ module.exports = class AccountMySqlDB {
             let strQuery = 'SELECT * FROM ' + this.#transactionsTable + queryWHERE + ' ORDER BY `_id` DESC ';
             var query = this.connection.query(strQuery, (error, results, fields) => {
 
-                if (error){
+                if (error) {
                     reject(new Error(`SQL query: ${strQuery}  ${error}`));
                     return transactions;    //Empty transactionslist        
-                } 
+                }
 
                 console.debug(`MySQL: ${results.length} transactions found, reading from database completed `);
                 console.debug(`SQL query: ${strQuery}`);
@@ -206,11 +206,29 @@ module.exports = class AccountMySqlDB {
      * @description
      * @param {Transaction} transaction
      */
-    async UpdateTransaction(transaction){
+    async UpdateTransaction(transaction) {
 
         console.log("MySql: Transaction to update: ");
         console.log(transaction);
-        
+
+        var update = {
+            isapproved: transaction.IsApproved()
+        };
+
+        return new Promise((resolve, reject) => {
+            var query = this.connection.query('UPDATE transactions SET ? WHERE _id = ?', [update, transaction.GetID()], (error, results, fields) => {
+                if (error) {
+                    //TODO add error management to express server: should return 404 if not sucessfull
+                    reject(new Error("MySQL db: Could not add transaction to db" + error));
+                }
+                resolve();
+                console.log("MySQl transaction updated");
+        });
+
+        }).catch((err) => {
+            console.error(err);
+        });
+
     }
 
 

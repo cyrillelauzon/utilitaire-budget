@@ -13,7 +13,7 @@ class TransactionRow extends Component {
 
         let transaction = this.props.transaction;
         let bgClass = "bg-table-row";
-        if(transaction.isapproved === true) bgClass+="-selected";
+        if(transaction.isapproved == true) bgClass+="-selected";
         
         return (
             <tr className={bgClass}>

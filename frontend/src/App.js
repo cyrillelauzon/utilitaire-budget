@@ -36,7 +36,8 @@ class App extends Component {
     { "id": "15", "date": "2020-01-10", "description": "Ikea", "category": "Restaurant", "amount": -4, "balance": 1318, "isapproved": false },
     { "id": "16", "date": "2020-01-05", "description": "Ikea", "category": "Restaurant", "amount": -4, "balance": null, "isapproved": false },
     { "id": "17", "date": "2020-01-02", "description": "Ikea", "category": "Restaurant", "amount": -3.91, "balance": 850 }]*/
-    curMonth: 1
+    curMonth: 1,
+    curYear: 0
   };
 
   /**
@@ -47,9 +48,11 @@ class App extends Component {
   constructor(props) {
     super(props);
     let curMonth = this.getCurMonth();
+    let curYear = this.getCurYear();
     this.state = {
       transactions: [],
-      curMonth: curMonth
+      curMonth: curMonth,
+      curYear: curYear
     }
   }
 
@@ -64,38 +67,67 @@ class App extends Component {
   }
 
   /**
+ * @description
+ * @returns
+ * @memberof App
+ */
+  getCurYear() {
+    return new Date().getFullYear();
+  }
+
+
+  /**
    * @description
    * @memberof App
    */
   async componentDidMount() {
     console.log("did mount + " + this.state.curMonth)
-    const { data: transactions } = await axios.get(`http://localhost:5000/transactions/*/2020/${this.state.curMonth}`);
+    const { data: transactions } = await axios.get(`http://localhost:5000/transactions/*/${this.state.curYear}/${this.state.curMonth}`);
     this.handleCurMonthClick();
     this.setState({ transactions });
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (prevState.curMonth !== this.state.curMonth) {
+    if (prevState.curMonth !== this.state.curMonth || prevState.curYear !== this.state.curYear) {
       console.log("Month changed");
-      const { data: transactions } = await axios.get(`http://localhost:5000/transactions/*/2020/${this.state.curMonth}`);
+      const { data: transactions } = await axios.get(`http://localhost:5000/transactions/*/${this.state.curYear}/${this.state.curMonth}`);
       this.setState({ transactions });
     }
 
 
-    if(prevState.transactions !== this.state.transactions){
-      console.log("change in transactions state object");
-
-      for(let i = 0; i < this.state.transactions.length; i++){
-        if(prevState.transactions[i] !== this.state.transactions[i]){
-          //console.log("trans found changed: ");
-         // console.log(this.state.transactions[i]);
-        }
-      }
-    }
+    /*  if (prevState.transactions !== this.state.transactions) {
+       console.log("change in transactions state object");
+ 
+       for (let i = 0; i < this.state.transactions.length; i++) {
+         if (prevState.transactions[i] !== this.state.transactions[i]) {
+           //console.log("trans found changed: ");
+           // console.log(this.state.transactions[i]);
+         }
+       }
+     } */
 
   }
 
+  handlePreviousYearClick() {
+    let curYear = this.state.curYear;
+    curYear -= 1;
+    if (curYear <= 1900) {
+      curYear -= this.getCurYear();
+    }
+    this.setState({ curYear });
+  }
+  handleNextYearClick() {
+    let curYear = this.state.curYear;
+    curYear += 1;
+    if (curYear >= this.getCurYear()) curYear = this.getCurYear();
+    this.setState({ curYear });
+  }
 
+  handleCurYearClick() {
+    let curYear = this.state.curYear;
+    curYear = this.getCurYear();
+    this.setState({ curYear });
+  }
   /**
    * @description
    * @memberof App
@@ -112,9 +144,13 @@ class App extends Component {
    */
   handlePreviousMonthClick = async () => {
     let curMonth = this.state.curMonth;
+    let curYear = this.state.curYear;
     curMonth -= 1;
-    if (curMonth <= 0) curMonth = 12;
-    this.setState({ curMonth });
+    if (curMonth <= 0) {
+      curMonth = 12;
+      curYear -= 1;
+    }
+    this.setState({ curMonth, curYear });
   }
 
   /**
@@ -123,9 +159,20 @@ class App extends Component {
    */
   handleNextMonthClick = async () => {
     let curMonth = this.state.curMonth;
+    let curYear = this.state.curYear;
     curMonth += 1;
-    if (curMonth >= 13) curMonth = 1;
-    this.setState({ curMonth });
+    if (curMonth >= this.getCurMonth() && curYear === this.getCurYear()) {
+      curMonth = this.getCurMonth();
+      curYear = this.getCurYear();
+    }
+    else {
+      if (curMonth >= 13) {
+        curMonth = 1;
+        curYear += 1;
+      }
+    }
+
+    this.setState({ curMonth, curYear });
   }
 
   /**
@@ -139,7 +186,7 @@ class App extends Component {
     transactions[index] = { ...transactions[index] };
     transactions[index].isapproved = !transactions[index].isapproved;
 
-    
+
     const res = await axios.put("http://localhost:5000/update", transactions[index]);
     console.log(res);
 
@@ -159,8 +206,11 @@ class App extends Component {
             <Col md={"1"}></Col>
             <Col md={"10"}>
               <NavBar />
-              <TransactionsTable curMonth={this.state.curMonth} transactions={this.state.transactions}
+              <TransactionsTable curYear={this.state.curYear} curMonth={this.state.curMonth} transactions={this.state.transactions}
                 onApprove={this.handleApprove}
+                onCurYearClick={() => this.handleCurYearClick()}
+                onNextYearClick={() => this.handleNextYearClick()}
+                onPreviousYearClick={() => this.handlePreviousYearClick()}
                 onCurMonthClick={() => this.handleCurMonthClick()}
                 onNextMonthClick={() => this.handleNextMonthClick()}
                 onPreviousMonthClick={() => this.handlePreviousMonthClick()} />
@@ -172,6 +222,7 @@ class App extends Component {
       </div>
     );
   }
+
 }
 
 export default App;

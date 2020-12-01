@@ -70,8 +70,8 @@ module.exports = class AccountCsvImporter {
         for await (const row of readstreamCSV) {
 
             try {
-                let mappedCols = this.accountsInfo.MapFieldNames(row, accountName);
-                let transactionData = {
+                const mappedCols = this.accountsInfo.MapFieldNames(row, accountName);
+                const transactionData = {
                     "date": mappedCols['date'],
                     "dateformat": this.accountsInfo.GetDateFormat(accountName),
                     "description" : mappedCols['description'],
