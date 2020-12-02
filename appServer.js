@@ -13,6 +13,7 @@ app.use(cors());
 // parse application/json;
 app.use(bodyParser.json())
 const AccountsBook = require('./src/AccountsBook');
+const { response } = require('express');
 let bankAccount = new AccountsBook;
 
 
@@ -32,7 +33,7 @@ async function InitApp() {
 
     //TEMP //TODO (will change to import csv file from post request)
     // await bankAccount.ImportCSV("f://2020-11-25-095220.csv", "Compte chèque de Cyrille");
-    await bankAccount.ImportCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille");
+    //await bankAccount.ImportCSV("./import_csv/epargne.csv", "Compte chèque de Cyrille");
     //await bankAccount.ImportCSV("./import_csv/credit.csv", "Mastercard de Cyrille");
     //   bankAccount.SelectTransactions();
 
@@ -55,7 +56,7 @@ async function InitApp() {
 }
 
 /**
- * @description Get Request for transactions
+ * @description Get Request for getting array of transactions
  */
 app.get('/transactions/:description/:year/:month', async (req, res) => {
 
@@ -72,7 +73,9 @@ app.get('/transactions/:description/:year/:month', async (req, res) => {
 
 });
 
-
+/**
+ * @description Put Request for updating transactions
+ */
 app.put('/update/', async (req, res) => {
 
     console.debug("=====Express: new Put test request=====");
@@ -80,15 +83,17 @@ app.put('/update/', async (req, res) => {
     //const { transaction } = req.body;
     console.debug("Put request content:");// transaction=${transaction}`);
     console.debug(req.body);
-
-    bankAccount.UpdateTransaction(req.body);
-    
-    
-
     res.set("Access-Control-Allow-Origin", "*");
-    res.send('Got a PUT test request at /update');
 
-    console.debug("=====En Request=====");
+    try {
+        await bankAccount.UpdateTransaction(req.body);
+        res.send('OK');
+
+    } catch (error) {
+        res.status(400).send("Error updating transaction");
+    }
+
+    console.debug("=====En Put Request=====");
     console.debug(" ");
 
 });

@@ -82,15 +82,20 @@ module.exports = class AccountsBook {
         try {
             let transaction = new Transaction(transactionData);
             console.log("Builded transaction");
-            console.log(JSON.stringify(transaction));
+            console.log(transaction.GetID());
             await this.accountMySql.UpdateTransaction(transaction);
 
         } catch (error) {
-            console.log("Error building transaction:");
+            console.log("Error updating transaction:");
             console.log(error);
+            throw new Error("Error updating transaction");
+        }
+        finally{
+            console.log("disconnecting db");
+            await this.accountMySql.Disconnect();
         }
 
-        await this.accountMySql.Disconnect();
+        
     }
 
 

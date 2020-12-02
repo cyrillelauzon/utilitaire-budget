@@ -13,21 +13,22 @@ class TransactionRow extends Component {
 
         let transaction = this.props.transaction;
         let bgClass = "bg-table-row";
-        if(transaction.isapproved == true) bgClass+="-selected";
-        
+        if (transaction.isapproved == true) bgClass += "-selected";
+
         return (
             <tr className={bgClass}>
                 <td>{transaction.date}</td>
-                <td>{transaction.amount +"$"}</td>
+                <td>{transaction.amount + "$"}</td>
                 <td>{transaction.description}</td>
                 <td>{transaction.category}</td>
                 <td><Form.Check
-                custom
-                inline
-                onChange={this.props.onApprove}
-                id={transaction.id}
-                checked={transaction.isapproved}
-              /></td>
+                    custom
+                    inline
+                    onChange={this.props.onApprove}
+                    id={transaction.id}
+                    checked={transaction.isapproved}
+                />
+                </td>
             </tr>)
     }
 }

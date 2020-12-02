@@ -28,7 +28,7 @@ module.exports = class Transaction {
      * @param {*} transactionData 
      */
     constructor(transactionData) {
-        const { date, dateformat="YYYY-MM-DD", description, category, deposit, withdraw, owner, tags, balance = undefined, amount = undefined, counter = 0, isapproved = false } = transactionData;
+        const { id, date, dateformat="YYYY-MM-DD", description, category, deposit, withdraw, owner, tags, balance = undefined, amount = undefined, counter = 0, isapproved = false } = transactionData;
         this.#ProcessDate(date, dateformat);
         this.#dateFormat = dateformat;      //store for cloning purposes
         this.#dateString = date;            //store for cloning purposes
@@ -46,7 +46,9 @@ module.exports = class Transaction {
 
         this.#counter = counter;
         this.#isapproved = isapproved;
-        this.SetID(counter);
+        
+        if(Util.isNullOrUndefined(id)) this.SetID(counter);
+        else this.#_id = id;
     }
 
     

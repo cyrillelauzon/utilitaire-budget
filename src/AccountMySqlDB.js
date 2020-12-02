@@ -217,18 +217,15 @@ module.exports = class AccountMySqlDB {
 
         return new Promise((resolve, reject) => {
             var query = this.connection.query('UPDATE transactions SET ? WHERE _id = ?', [update, transaction.GetID()], (error, results, fields) => {
-                if (error) {
-                    //TODO add error management to express server: should return 404 if not sucessfull
-                    reject(new Error("MySQL db: Could not add transaction to db" + error));
+                if (error || results.affectedRows === 0) {
+                    console.log("Error detected UPDATE transaction mysql");
+                    reject(new Error("MySQL db: Could not add transaction to db"));
+                    return;
                 }
                 resolve();
                 console.log("MySQl transaction updated");
+            });
         });
-
-        }).catch((err) => {
-            console.error(err);
-        });
-
     }
 
 

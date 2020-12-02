@@ -81,7 +81,6 @@ class App extends Component {
    * @memberof App
    */
   async componentDidMount() {
-    console.log("did mount + " + this.state.curMonth)
     const { data: transactions } = await axios.get(`http://localhost:5000/transactions/*/${this.state.curYear}/${this.state.curMonth}`);
     this.handleCurMonthClick();
     this.setState({ transactions });
@@ -180,17 +179,24 @@ class App extends Component {
    * @memberof App
    */
   handleApprove = async (tr) => {
-    console.log("parent handleapp" + tr);
     const transactions = [...this.state.transactions];
+    const originalTransactions = [...this.state.transactions];
+
     const index = transactions.indexOf(tr);
     transactions[index] = { ...transactions[index] };
     transactions[index].isapproved = !transactions[index].isapproved;
 
+    //TESTING to send a request with bad ID to server:
+    //transactions[index].id += "temp_to_verify_if_errors";
 
-    const res = await axios.put("http://localhost:5000/update", transactions[index]);
-    console.log(res);
-
-    this.setState({ transactions });
+    try {
+      await axios.put("http://localhost:5000/update", transactions[index]);
+      this.setState({ transactions });
+ 
+    } catch (error) {
+      console.log("Error while updating post: ");
+      this.setState({ originalTransactions });
+    }    
   }
 
   /**
