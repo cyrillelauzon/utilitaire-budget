@@ -70,7 +70,7 @@ class TransactionsTable extends Component {
                     </thead>
                     <tbody>
                         {this.props.transactions.map((transaction) => {
-                            return <TransactionRow key={transaction.id} transaction={transaction} onApprove={() => this.props.onApprove(transaction)} />
+                            return <TransactionRow key={transaction.id} transaction={transaction} categories={this.props.categories} onApprove={() => this.props.onApprove(transaction)} />
                         })}
                     </tbody>
                 </Table>

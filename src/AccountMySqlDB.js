@@ -97,14 +97,10 @@ module.exports = class AccountMySqlDB {
     }
 
     /**
- * @description Add a transaction to DB
- * @param {Transaction} transaction
- */
+     * @description Add a transaction to DB
+     * @param {Transaction} transaction
+     */
     async AddTransaction(transaction) {
-        //console.log("Transaction added to db:");
-
-        //var d = transaction.GetDate(); d.toISOString().split('T')[0] + ' ' + d.toTimeString().split(' ')[0];
-
         var post = {
             _id: transaction.GetID(),
             date: transaction.GetDate(),
@@ -138,11 +134,9 @@ module.exports = class AccountMySqlDB {
      * @returns TransactionList object, TransactionListobject with no transactions if empty or errors
      */
     SelectTransactions(description, year, month) {
-
         var transactions = new TransactionsMap();
 
         return new Promise((resolve, reject) => {
-
             console.debug("MySQL: Reading entries from DB");
 
             //Function parameters validation:
@@ -207,7 +201,6 @@ module.exports = class AccountMySqlDB {
      * @param {Transaction} transaction
      */
     async UpdateTransaction(transaction) {
-
         console.log("MySql: Transaction to update: ");
         console.log(transaction);
 
@@ -228,7 +221,52 @@ module.exports = class AccountMySqlDB {
         });
     }
 
+    /**
+     * @description
+     * @param {*} category
+     */
+    async AddCategory(category) {
+        console.log(`adding category to DB${category}`);
+        console.log(`name:${category.name}`);
+        console.log(`description:${category.description}`);
+        console.log(`parent:${category.parent}`);
 
+
+        return new Promise((resolve, reject) => {
+            var query = this.connection.query('INSERT INTO categories SET ?', category, (error, results, fields) => {
+                if (error) {
+                    reject(new Error("MySQL db: Could not add category to db " + error));
+                    return;
+                }
+                resolve(results.insertId);
+                console.log("MySQl category added ");
+            });
+        });
+    }
+
+    /**
+     * @description
+     * @param {*} name
+     */
+    async SelectCategories(name) {
+
+        return new Promise((resolve, reject) => {
+            //Assembles query string and make call to DB
+            let strQuery = 'SELECT * FROM categories ORDER BY `_id` DESC ';
+            var query = this.connection.query(strQuery, (error, results, fields) => {
+
+                if (error) {
+                    reject(new Error(`SQL query: ${strQuery}  ${error}`));
+                    return;
+                }
+
+                console.debug(`MySQL: ${results.length} categories found, reading from database completed `);
+                console.debug(`SQL query: ${strQuery}`);
+
+                resolve(results);
+            });
+        });
+    }
 
 
 }

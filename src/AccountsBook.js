@@ -15,7 +15,7 @@ const AccountMySqlDB = require('./AccountMySqlDB');
 
 
 module.exports = class AccountsBook {
-
+    
 
     /**
      * @constructor
@@ -69,7 +69,6 @@ module.exports = class AccountsBook {
         //       let csvExport = new AccountCsvExporter();
         //        csvExport.ExportCsv("./export_csv/testexport2.csv", transactions);
 
-
     }
 
     /**
@@ -90,12 +89,50 @@ module.exports = class AccountsBook {
             console.log(error);
             throw new Error("Error updating transaction");
         }
-        finally{
-            console.log("disconnecting db");
+        finally {
             await this.accountMySql.Disconnect();
         }
+    }
 
-        
+    /**
+     * @description
+     * @param {*} category
+     */
+    async AddCategory(category) {
+        await this.accountMySql.Connect();
+
+        try {
+           const idNewCategory = await this.accountMySql.AddCategory(category);
+           return idNewCategory;
+
+        } catch (error) {
+            console.log(error);
+            throw new Error("Error adding category");
+        }
+        finally {
+            await this.accountMySql.Disconnect();
+        }
+    }
+
+    /**
+     * @description
+     * @param {*} name
+     * @returns
+     */
+    async SelectCategories(name) {
+        await this.accountMySql.Connect();
+
+        try {
+           const catList = await this.accountMySql.SelectCategories(name);
+           return catList;
+
+        } catch (error) {
+            console.log(error);
+            throw new Error("Error selecting categories");
+        }
+        finally {
+            await this.accountMySql.Disconnect();
+        }
     }
 
 

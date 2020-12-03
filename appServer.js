@@ -59,9 +59,9 @@ async function InitApp() {
  * @description Get Request for getting array of transactions
  */
 app.get('/transactions/:description/:year/:month', async (req, res) => {
-
     console.debug("=====Express: new Get transactions request=====");
     const { description, year, month } = req.params;
+    
     console.debug(`Request Content: description=${description} year=${year} month=${month}`);
     let transactions = await bankAccount.SelectTransactions(description, year, month);
 
@@ -76,13 +76,8 @@ app.get('/transactions/:description/:year/:month', async (req, res) => {
 /**
  * @description Put Request for updating transactions
  */
-app.put('/update/', async (req, res) => {
-
-    console.debug("=====Express: new Put test request=====");
-
-    //const { transaction } = req.body;
-    console.debug("Put request content:");// transaction=${transaction}`);
-    console.debug(req.body);
+app.put('/transactions/', async (req, res) => {
+    console.debug("=====Express: new Put update request=====");
     res.set("Access-Control-Allow-Origin", "*");
 
     try {
@@ -102,7 +97,40 @@ app.put('/update/', async (req, res) => {
 /**
  * @description post request for new transactions
  */
-app.post('/importcsv', (req, res) => {
-    res.send('Import csv file will be done at this address');
+app.post('/categories', async (req, res) => {
+    console.debug("=====Express: new Post Category request=====");
+    res.set("Access-Control-Allow-Origin", "*");
 
+    try {
+        const idNewCategory = await bankAccount.AddCategory(req.body);
+        res.send(String(idNewCategory));
+
+    } catch (error) {
+        res.status(400).send("Error adding category");
+    }
+
+    console.debug("=====End POST Request=====");
+    console.debug(" ");    
+
+});
+
+
+/**
+ * @description post request for new transactions
+ */
+app.get('/categories/:name', async (req, res) => {
+    console.debug("=====Express: new GET Category request=====");
+    res.set("Access-Control-Allow-Origin", "*");
+    const { name } = req.params;
+
+    try {
+        const categories = await bankAccount.SelectCategories(name);
+        res.send(categories);
+
+    } catch (error) {
+        res.status(400).send("Error selecting category");
+    }
+
+    console.debug("=====End GET Request=====");
+    console.debug(" ");    
 });

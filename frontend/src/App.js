@@ -36,6 +36,7 @@ class App extends Component {
     { "id": "15", "date": "2020-01-10", "description": "Ikea", "category": "Restaurant", "amount": -4, "balance": 1318, "isapproved": false },
     { "id": "16", "date": "2020-01-05", "description": "Ikea", "category": "Restaurant", "amount": -4, "balance": null, "isapproved": false },
     { "id": "17", "date": "2020-01-02", "description": "Ikea", "category": "Restaurant", "amount": -3.91, "balance": 850 }]*/
+    categories: [],
     curMonth: 1,
     curYear: 0
   };
@@ -51,6 +52,7 @@ class App extends Component {
     let curYear = this.getCurYear();
     this.state = {
       transactions: [],
+      categories: [],
       curMonth: curMonth,
       curYear: curYear
     }
@@ -82,8 +84,9 @@ class App extends Component {
    */
   async componentDidMount() {
     const { data: transactions } = await axios.get(`http://localhost:5000/transactions/*/${this.state.curYear}/${this.state.curMonth}`);
+    const { data: categories } = await axios.get(`http://localhost:5000/categories/test`);
     this.handleCurMonthClick();
-    this.setState({ transactions });
+    this.setState({ transactions, categories });
   }
 
   async componentDidUpdate(prevProps, prevState) {
@@ -92,19 +95,6 @@ class App extends Component {
       const { data: transactions } = await axios.get(`http://localhost:5000/transactions/*/${this.state.curYear}/${this.state.curMonth}`);
       this.setState({ transactions });
     }
-
-
-    /*  if (prevState.transactions !== this.state.transactions) {
-       console.log("change in transactions state object");
- 
-       for (let i = 0; i < this.state.transactions.length; i++) {
-         if (prevState.transactions[i] !== this.state.transactions[i]) {
-           //console.log("trans found changed: ");
-           // console.log(this.state.transactions[i]);
-         }
-       }
-     } */
-
   }
 
   handlePreviousYearClick() {
@@ -190,7 +180,7 @@ class App extends Component {
     //transactions[index].id += "temp_to_verify_if_errors";
 
     try {
-      await axios.put("http://localhost:5000/update", transactions[index]);
+      await axios.put("http://localhost:5000/transactions", transactions[index]);
       this.setState({ transactions });
  
     } catch (error) {
@@ -213,6 +203,7 @@ class App extends Component {
             <Col md={"10"}>
               <NavBar />
               <TransactionsTable curYear={this.state.curYear} curMonth={this.state.curMonth} transactions={this.state.transactions}
+                categories={this.state.categories}
                 onApprove={this.handleApprove}
                 onCurYearClick={() => this.handleCurYearClick()}
                 onNextYearClick={() => this.handleNextYearClick()}
