@@ -89,6 +89,7 @@ module.exports = class TransactionsMap {
                 date: transaction.GetDateString(),
                 description: transaction.GetDescription(),
                 category: transaction.GetCategory(),
+                category_id: transaction.GetCategoryID(),
                 amount: transaction.GetAmount(),
                 balance: transaction.GetBalance(),
                 isapproved: transaction.IsApproved()                

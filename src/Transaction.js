@@ -15,6 +15,7 @@ module.exports = class Transaction {
     #dateFormat;    //for cloning purposes
     #description;
     #category;
+    #category_id;
     #amount;
     #balance;       //Account balance if available
     #owner;
@@ -28,13 +29,14 @@ module.exports = class Transaction {
      * @param {*} transactionData 
      */
     constructor(transactionData) {
-        const { id, date, dateformat="YYYY-MM-DD", description, category, deposit, withdraw, owner, tags, balance = undefined, amount = undefined, counter = 0, isapproved = false } = transactionData;
+        const { id, date, dateformat="YYYY-MM-DD", description, category, category_id = 0, deposit, withdraw, owner, tags, balance = undefined, amount = undefined, counter = 0, isapproved = false } = transactionData;
         this.#ProcessDate(date, dateformat);
         this.#dateFormat = dateformat;      //store for cloning purposes
         this.#dateString = date;            //store for cloning purposes
 
         this.#description = description;
         this.#category = category;
+        this.#category_id = category_id;
         if (this.#category === "") { this.#category = "Aucune Catégorie"; }
 
 
@@ -62,7 +64,9 @@ module.exports = class Transaction {
             "date": this.#dateString,
             "dateformat": this.#dateFormat,
             "description": this.#description,
-            "category": this.#category, "deposit": undefined, "withdraw": undefined,
+            "category": this.#category,
+            "category_id": this.#category_id,
+            "deposit": undefined, "withdraw": undefined,
             "owner": this.#owner,
             "tags": this.#tags,
             "balance": this.#balance,
@@ -92,6 +96,7 @@ module.exports = class Transaction {
 
     SetCategory(category) { this.#category = category; }
     GetCategory() { return this.#category; }
+    GetCategoryID() { return this.#category_id; }
 
 
     GetAmount() { return this.#amount; }

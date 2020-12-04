@@ -80,8 +80,6 @@ module.exports = class AccountsBook {
 
         try {
             let transaction = new Transaction(transactionData);
-            console.log("Builded transaction");
-            console.log(transaction.GetID());
             await this.accountMySql.UpdateTransaction(transaction);
 
         } catch (error) {

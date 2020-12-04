@@ -10,8 +10,8 @@ class NavBar extends Component {
     state = {}
     render() {
         return (
-            <Navbar expand="lg" variant="light" bg="light">
-                <Navbar.Brand href="#">Simple budget</Navbar.Brand>
+            <Navbar expand="lg" bg="white">
+                <Navbar.Brand href="#">Transactions</Navbar.Brand>
             </Navbar>
 
 

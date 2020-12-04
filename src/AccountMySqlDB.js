@@ -174,7 +174,11 @@ module.exports = class AccountMySqlDB {
             }
 
             //Assembles query string and make call to DB
-            let strQuery = 'SELECT * FROM ' + this.#transactionsTable + queryWHERE + ' ORDER BY `_id` DESC ';
+            let strQuery = 'SELECT t._id, t.date, t.description, c.name as category, t.amount, t.balance, t.owner, t.isapproved FROM transactions AS t '
+                 +'JOIN categories as c ON t.category_id = c._id'
+                 + queryWHERE + ' ORDER BY `_id` DESC ';
+
+
             var query = this.connection.query(strQuery, (error, results, fields) => {
 
                 if (error) {
@@ -185,9 +189,13 @@ module.exports = class AccountMySqlDB {
                 console.debug(`MySQL: ${results.length} transactions found, reading from database completed `);
                 console.debug(`SQL query: ${strQuery}`);
 
+               
                 transactions.BuildFromArray(results);
                 resolve(transactions);
             });
+
+           
+
 
         }).catch((err) => {
             console.error("MySql Error selecting transactions: " + err);
@@ -201,11 +209,11 @@ module.exports = class AccountMySqlDB {
      * @param {Transaction} transaction
      */
     async UpdateTransaction(transaction) {
-        console.log("MySql: Transaction to update: ");
-        console.log(transaction);
+        console.log(`MySql: Transaction to update: ${transaction.GetID()}`);
 
         var update = {
-            isapproved: transaction.IsApproved()
+            isapproved: transaction.IsApproved(),
+            category_id: transaction.GetCategoryID()
         };
 
         return new Promise((resolve, reject) => {
@@ -266,6 +274,10 @@ module.exports = class AccountMySqlDB {
                 resolve(results);
             });
         });
+    }
+
+    async UpdateCategory(category){
+        console.log("MySql: UpdateCategory not implemented");
     }
 
 

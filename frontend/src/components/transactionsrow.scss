@@ -23,3 +23,18 @@ th{
   .custom-checkbox .custom-control-input:checked~.custom-control-label::before{
     background-color:rgb(175, 175, 175);
   }
+
+.dropdown-toggle{
+    color:black !important;
+    background-color: transparent !important;
+    border-color: transparent !important;
+    padding-left: 0px !important;
+    box-shadow: transparent !important;
+    outline: none !important;
+
+    &:focus{
+        border-color: transparent !important;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+}

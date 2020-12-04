@@ -182,12 +182,42 @@ class App extends Component {
     try {
       await axios.put("http://localhost:5000/transactions", transactions[index]);
       this.setState({ transactions });
- 
+
     } catch (error) {
       console.log("Error while updating post: ");
       this.setState({ originalTransactions });
-    }    
+    }
   }
+
+  //FIXME Refactor these 2 functions to eliminate redundant code
+  /**
+   * @description
+   * @memberof App
+   */
+  handleCategory = async (tr, category) => {
+    console.log("new category" + category);
+
+    const transactions = [...this.state.transactions];
+    const originalTransactions = [...this.state.transactions];
+
+    const index = transactions.indexOf(tr);
+    transactions[index] = { ...transactions[index] };
+    transactions[index].category = category.name;
+    transactions[index].category_id = category._id;
+
+    try {
+      console.log("updating cat");
+      console.log(transactions[index]);
+      await axios.put("http://localhost:5000/transactions", transactions[index]);
+      this.setState({ transactions });
+
+    } catch (error) {
+      console.log("Error while updating post: ");
+      this.setState({ originalTransactions });
+    }
+
+  }
+
 
   /**
    * @description
@@ -210,7 +240,8 @@ class App extends Component {
                 onPreviousYearClick={() => this.handlePreviousYearClick()}
                 onCurMonthClick={() => this.handleCurMonthClick()}
                 onNextMonthClick={() => this.handleNextMonthClick()}
-                onPreviousMonthClick={() => this.handlePreviousMonthClick()} />
+                onPreviousMonthClick={() => this.handlePreviousMonthClick()}
+                onCategory={this.handleCategory} />
             </Col>
             <Col md={"1"}></Col>
           </Row>
