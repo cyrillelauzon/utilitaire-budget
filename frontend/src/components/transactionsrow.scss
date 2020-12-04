@@ -4,7 +4,7 @@
 }
 
 .bg-table-row-selected{
-    background-color: rgb(238, 246, 255) !important;
+    background-color: rgb(243, 243, 243) !important;
     transition: background-color 0.5s;
 }
 
@@ -14,8 +14,16 @@
 }
 
 th{
-    background-color: beige !important;
+    background-color: rgba(233, 227, 227, 0.5) !important;
+    font-weight: 300 !important;
+    color: #4c4d4e !important;
 }
+
+th,td{
+    border-top: 1px solid #d4dbe1 !important;
+    border-bottom: 1px solid #d4dbe1 !important;
+}
+
 
 .custom-control-label:before{
   //  background-color:red;
@@ -24,7 +32,8 @@ th{
     background-color:rgb(175, 175, 175);
   }
 
-.dropdown-toggle{
+  
+.plain-btn{
     color:black !important;
     background-color: transparent !important;
     border-color: transparent !important;

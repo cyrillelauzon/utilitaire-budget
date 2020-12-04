@@ -11,6 +11,7 @@ const AccountRulesParser = require('./AccountRulesParser');
 const AccountCsvImporter = require('./AccountCsvImporter');
 const AccountCsvExporter = require('./AccountCsvExporter');
 const AccountMySqlDB = require('./AccountMySqlDB');
+const AccountCategories = require('./AccountCategories');
 
 
 
@@ -122,7 +123,8 @@ module.exports = class AccountsBook {
 
         try {
            const catList = await this.accountMySql.SelectCategories(name);
-           return catList;
+           const categoriesFormat = new AccountCategories(catList);
+           return categoriesFormat.GetArray();
 
         } catch (error) {
             console.log(error);

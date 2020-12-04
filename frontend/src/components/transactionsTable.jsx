@@ -10,8 +10,7 @@ import TransactionRow from './TransactionRow';
 import ButtonToolbar from 'react-bootstrap/ButtonToolbar'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+
 
 class TransactionsTable extends Component {
 
@@ -38,21 +37,21 @@ class TransactionsTable extends Component {
 
                 <ButtonToolbar>
                     <ButtonGroup className="mr-2" aria-label="Month View">
-                        <Button variant="secondary" onClick={this.props.onPreviousMonthClick}><svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-left-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <Button className="plain-btn" onClick={this.props.onPreviousMonthClick}><svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-left-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path fillRule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z" />
                         </svg></Button>
-                        <Button className="btnCurMonth" variant="secondary" onClick={this.props.onCurMonthClick}>{this.GetMonth(this.props.curMonth)}</Button>
-                        <Button variant="secondary" onClick={this.props.onNextMonthClick}><svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <Button className="plain-btn btnCurMonth" variant="secondary" onClick={this.props.onCurMonthClick}>{this.GetMonth(this.props.curMonth)}</Button>
+                        <Button className="plain-btn" onClick={this.props.onNextMonthClick}><svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path fillRule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
                         </svg></Button>
                     </ButtonGroup>
 
                     <ButtonGroup aria-label="Year View">
-                        <Button variant="secondary" onClick={this.props.onPreviousYearClick} ><svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-left-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <Button className="plain-btn" onClick={this.props.onPreviousYearClick} ><svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-left-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path fillRule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5z" />
                         </svg></Button>
-                        <Button variant="secondary" onClick={this.props.onCurYearClick}>{this.props.curYear}</Button>
-                        <Button variant="secondary" onClick={this.props.onNextYearClick}><svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <Button className="plain-btn" onClick={this.props.onCurYearClick}>{this.props.curYear}</Button>
+                        <Button className="plain-btn" onClick={this.props.onNextYearClick}><svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-arrow-right-short" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                             <path fillRule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
                         </svg></Button>
                     </ButtonGroup>

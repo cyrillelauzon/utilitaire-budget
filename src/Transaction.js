@@ -95,7 +95,10 @@ module.exports = class Transaction {
     GetDescription() { return this.#description; }
 
     SetCategory(category) { this.#category = category; }
+    
+    //FIXME remove GetCategory method: is replaced by GetCategoryID
     GetCategory() { return this.#category; }
+
     GetCategoryID() { return this.#category_id; }
 
 
