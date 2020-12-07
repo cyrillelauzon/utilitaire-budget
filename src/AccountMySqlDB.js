@@ -174,7 +174,7 @@ module.exports = class AccountMySqlDB {
             }
 
             //Assembles query string and make call to DB
-            let strQuery = 'SELECT t._id, t.date, t.description, c.name as category, t.amount, t.balance, t.owner, t.isapproved FROM transactions AS t '
+            let strQuery = 'SELECT t._id, t.date, t.description, t.category_id, c.name as category, t.amount, t.balance, t.owner, t.isapproved FROM transactions AS t '
                  +'JOIN categories as c ON t.category_id = c._id'
                  + queryWHERE + ' ORDER BY `_id` DESC ';
 

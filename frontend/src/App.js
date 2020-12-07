@@ -85,7 +85,8 @@ class App extends Component {
    */
   async componentDidMount() {
     const { data: transactions } = await axios.get(`http://localhost:5000/transactions/*/${this.state.curYear}/${this.state.curMonth}`);
-    const { data: categories } = await axios.get(`http://localhost:5000/categories/test`);
+    let { data: categories } = await axios.get(`http://localhost:5000/categories/test`);
+    categories = this.CountCatSpendingTotal(transactions, categories);
     this.handleCurMonthClick();
     this.setState({ transactions, categories });
   }
@@ -94,9 +95,49 @@ class App extends Component {
     if (prevState.curMonth !== this.state.curMonth || prevState.curYear !== this.state.curYear) {
       console.log("Month changed");
       const { data: transactions } = await axios.get(`http://localhost:5000/transactions/*/${this.state.curYear}/${this.state.curMonth}`);
-      this.setState({ transactions });
+      let { data: categories } = await axios.get(`http://localhost:5000/categories/test`);
+      categories = this.CountCatSpendingTotal(transactions, categories);
+      this.setState({ transactions, categories });
     }
+
+    //TODO Check for transactions changes
+
+
   }
+
+
+  /**
+   * @description Adds up total spending per category for display in budget mini panel
+   * @param {*} transactions
+   * @param {*} categories
+   * @returns
+   * @memberof App
+   */
+  CountCatSpendingTotal(transactions, categories) {
+    for (let category of categories) {
+      category.total = parseFloat(0);
+
+      for (let child_category of category.child_categories) {
+        child_category.total = parseFloat(0);
+
+        for (let transaction of transactions) {
+          if (child_category._id === transaction.category_id) {
+              child_category.total += transaction.amount;
+          }
+          
+          //child_category.total = parseFloat(child_category.total).toFixed(2);
+        }
+
+        category.total += child_category.total;
+      }
+      //category.total = parseFloat(category.total).toFixed(2);     
+    }
+  
+
+    return categories;
+  }
+
+
 
   handlePreviousYearClick() {
     let curYear = this.state.curYear;
@@ -210,10 +251,15 @@ class App extends Component {
       console.log("updating cat");
       console.log(transactions[index]);
       await axios.put("http://localhost:5000/transactions", transactions[index]);
-      this.setState({ transactions });
+
+      //Update category object based on new transaction data:
+      let categories = [...this.state.categories];
+      categories = this.CountCatSpendingTotal(transactions, categories);
+
+      this.setState({ transactions, categories });
 
     } catch (error) {
-      console.log("Error while updating post: ");
+      console.log("Error while updating post: " + error);
       this.setState({ originalTransactions });
     }
 
@@ -228,11 +274,16 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Container fluid="md">
+        <Container fluid>
           <Row >
-            <Col md={"1"}></Col>
-            <Col md={"10"}>
+            <Col md={"3"}></Col>
+            <Col md={"6"}>
               <NavBar />
+            </Col>
+          </Row>
+          <Row>
+            <Col md={"3"}></Col>
+            <Col md={"6"}>
               <TransactionsTable curYear={this.state.curYear} curMonth={this.state.curMonth} transactions={this.state.transactions}
                 categories={this.state.categories}
                 onApprove={this.handleApprove}
@@ -244,8 +295,8 @@ class App extends Component {
                 onPreviousMonthClick={() => this.handlePreviousMonthClick()}
                 onCategory={this.handleCategory} />
             </Col>
-            <Col md={"1"}>
-             <CategoriesBudgetPanel/>
+            <Col md={"3"}>
+              <CategoriesBudgetPanel categories={this.state.categories} />
             </Col>
           </Row>
         </Container>

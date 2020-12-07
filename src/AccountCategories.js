@@ -23,7 +23,8 @@ module.exports = class AccountCategories {
 
 
     /**
-     * @description
+     * @description Assemble the categories objects in Javascript objects based on parentId relationship
+     * written in database
      */
     BuildFromArray(entries) {
 
