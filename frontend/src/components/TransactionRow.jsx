@@ -6,8 +6,7 @@ Display of a table of bank transactions objects
 import React, { Component } from 'react';
 import Dropdown from 'react-bootstrap/Dropdown'
 import Button from 'react-bootstrap/esm/Button';
-import Form from 'react-bootstrap/Form'
-import './transactionsrow.scss';
+import './css/transactionsrow.scss';
 
 class TransactionRow extends Component {
     constructor() {
@@ -18,6 +17,11 @@ class TransactionRow extends Component {
         }
     }
 
+    /**
+     * @description Display checked or unchecked Icon for isApproved button for transaction
+     * @param {*} isapproved
+     * @memberof TransactionRow
+     */
     GetIcon(isapproved) {
         if (isapproved) {
             return (<svg width="1em" height="1em" viewBox="0 0 16 16" className="bi bi-check2" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -31,6 +35,12 @@ class TransactionRow extends Component {
         }
     }
 
+    /**
+     * @description Display a single category in category Dropdown
+     * @param {*} transaction
+     * @param {*} category
+     * @memberof TransactionRow
+     */
     GetSingleCategory(transaction, category) {
         
         if (category.child_categories != null) {

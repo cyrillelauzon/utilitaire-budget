@@ -14,6 +14,7 @@ import Col from 'react-bootstrap/Col';
 
 import TransactionsTable from './components/TransactionsTable';
 import NavBar from './components/NavBar';
+import CategoriesBudgetPanel from './components/CategoriesBudgetPanel';
 
 
 class App extends Component {
@@ -243,7 +244,9 @@ class App extends Component {
                 onPreviousMonthClick={() => this.handlePreviousMonthClick()}
                 onCategory={this.handleCategory} />
             </Col>
-            <Col md={"1"}></Col>
+            <Col md={"1"}>
+             <CategoriesBudgetPanel/>
+            </Col>
           </Row>
         </Container>
 
